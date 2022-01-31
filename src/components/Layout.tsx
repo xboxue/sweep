@@ -16,6 +16,10 @@ const items = [
     to: "/",
   },
   {
+    title: "Calendar",
+    to: "/calendar",
+  },
+  {
     title: "Bookings",
     to: "/bookings",
   },
@@ -23,10 +27,14 @@ const items = [
     title: "Customers",
     to: "/customers",
   },
+  {
+    title: "Experiences",
+    to: "/experiences",
+  },
 ];
 
 const Layout = () => (
-  <>
+  <Box sx={{ display: "flex" }}>
     <AppBar
       position="fixed"
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -56,8 +64,11 @@ const Layout = () => (
         </List>
       </Box>
     </Drawer>
-    <Outlet />
-  </>
+    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Toolbar />
+      <Outlet />
+    </Box>
+  </Box>
 );
 
 export default Layout;
