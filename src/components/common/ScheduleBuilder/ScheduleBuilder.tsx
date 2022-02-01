@@ -84,8 +84,11 @@ const Column = ({
           </Box>
         </>
       </Menu>
-      <Paper variant="outlined" sx={{ display: "flex", p: 1, pr: 0 }}>
-        <Typography variant="subtitle1" mr={3}>
+      <Paper
+        variant="outlined"
+        sx={{ display: "flex", alignItems: "center", p: 1, pr: 0 }}
+      >
+        <Typography variant="subtitle2" mr={3}>
           {Info.weekdays("short")[day]}
         </Typography>
         <IconButton
@@ -99,47 +102,47 @@ const Column = ({
         </IconButton>
       </Paper>
       {timeSlots.map((time, index) => (
-        <Box key={time} sx={{ display: "flex" }}>
-          <Select
-            value={time}
-            onChange={(event) => onChange(day, index, event.target.value)}
-            IconComponent={null}
-            MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
-            size="small"
-            sx={{
-              flex: 1,
-              pr: 1,
-              "& .MuiSelect-select": { pr: "0 !important" },
-            }}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={() => onDelete(day, index)}>
-                  <DeleteOutlined fontSize="small" />
-                </IconButton>
-              </InputAdornment>
-            }
-          >
-            {Interval.fromDateTimes(
-              DateTime.now().startOf("year"),
-              DateTime.now().startOf("year").plus({ days: 1 })
-            )
-              .splitBy({ minutes: 15 })
-              .map((duration) => {
-                const time = duration.start.toFormat("h:mm a");
-                return (
-                  <MenuItem key={time} value={time}>
-                    {time}
-                  </MenuItem>
-                );
-              })}
-          </Select>
-        </Box>
+        <Select
+          fullWidth
+          key={time}
+          value={time}
+          onChange={(event) => onChange(day, index, event.target.value)}
+          IconComponent={null}
+          MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+          size="small"
+          sx={{
+            mt: 1,
+            pr: 1,
+            "& .MuiSelect-select": { pr: "0 !important" },
+          }}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton size="small" onClick={() => onDelete(day, index)}>
+                <DeleteOutlined fontSize="small" />
+              </IconButton>
+            </InputAdornment>
+          }
+        >
+          {Interval.fromDateTimes(
+            DateTime.now().startOf("year"),
+            DateTime.now().startOf("year").plus({ days: 1 })
+          )
+            .splitBy({ minutes: 15 })
+            .map((duration) => {
+              const time = duration.start.toFormat("h:mm a");
+              return (
+                <MenuItem key={time} value={time}>
+                  {time}
+                </MenuItem>
+              );
+            })}
+        </Select>
       ))}
     </Box>
   );
 };
 
-const ScheduleBuilder = () => {
+const ScheduleBuilder = ({ duration }: { duration: number }) => {
   const [schedule, setSchedule] = useState({
     0: [],
     1: [],
@@ -188,7 +191,7 @@ const ScheduleBuilder = () => {
     const lastTimeSlot = schedule[day][schedule[day].length - 1];
     const newTimeSlot = lastTimeSlot
       ? DateTime.fromFormat(lastTimeSlot, "h:mm a")
-          .plus({ hours: 1 })
+          .plus({ minutes: duration })
           .toFormat("h:mm a")
       : DateTime.now().set({ hour: 9, minute: 0 }).toFormat("h:mm a");
 
@@ -199,9 +202,9 @@ const ScheduleBuilder = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex" }} mx="-4px">
       {Object.values(schedule).map((timeSlots, day) => (
-        <Box key={day} width={1 / 7}>
+        <Box key={day} width={1 / 7} mx="4px">
           <Column
             day={day}
             onAdd={() => handleAdd(day)}
