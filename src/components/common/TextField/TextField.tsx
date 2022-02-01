@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 
 const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
-  ...theme.typography.subtitle1,
+  transform: "none",
+  ...theme.typography.subtitle2,
   color: theme.palette.text.primary,
 }));
 
@@ -22,7 +23,7 @@ const StyledInput = styled(InputBase)(({ theme }) => ({
     borderRadius: 4,
     backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
     border: "1px solid #ced4da",
-    fontSize: 16,
+    fontSize: theme.typography.body2.fontSize,
     padding: "10px 12px",
     transition: theme.transitions.create([
       "border-color",

@@ -13,7 +13,6 @@ const theme = createTheme({
     ].join(","),
     subtitle1: {
       fontWeight: 500,
-      fontSize: "1.125rem",
     },
   },
   components: {
