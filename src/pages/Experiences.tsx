@@ -8,7 +8,7 @@ const Experiences = () => {
 
   if (creating)
     return (
-      <Box mx="auto" maxWidth="900px">
+      <Box mx="auto" maxWidth="960px">
         <CreateExperienceForm />
       </Box>
     );

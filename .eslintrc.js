@@ -35,6 +35,8 @@ module.exports = {
     "react-hooks/exhaustive-deps": "warn",
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
+    "arrow-body-style": "off",
+    "react/no-array-index-key": "off",
   },
   overrides: [
     {

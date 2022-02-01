@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import Dropzone from "../common/Dropzone/Dropzone";
 import Editor from "../common/Editor/Editor";
+import ScheduleBuilder from "../common/ScheduleBuilder/ScheduleBuilder";
 import TextField from "../common/TextField/TextField";
 
 const Card = ({
@@ -290,6 +291,9 @@ const CreateExperienceForm = () => {
             </>
           )}
         </Stack>
+      </Card>
+      <Card title="Schedule">
+        <ScheduleBuilder />
       </Card>
       <Button type="submit" variant="contained">
         Save
