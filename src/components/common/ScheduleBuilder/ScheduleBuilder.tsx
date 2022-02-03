@@ -86,9 +86,9 @@ const Column = ({
       </Menu>
       <Paper
         variant="outlined"
-        sx={{ display: "flex", alignItems: "center", p: 1, pr: 0 }}
+        sx={{ flex: 1, display: "flex", alignItems: "center", p: 1 }}
       >
-        <Typography variant="subtitle2" mr={3}>
+        <Typography variant="subtitle2" sx={{ mr: "auto" }}>
           {Info.weekdays("short")[day]}
         </Typography>
         <IconButton
@@ -114,6 +114,7 @@ const Column = ({
             mt: 1,
             pr: 1,
             "& .MuiSelect-select": { pr: "0 !important" },
+            fontSize: (theme) => theme.typography.body2,
           }}
           endAdornment={
             <InputAdornment position="end">

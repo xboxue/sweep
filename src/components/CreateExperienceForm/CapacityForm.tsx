@@ -1,25 +1,23 @@
 import { Box, Stack } from "@mui/material";
-import { useFormik } from "formik";
+import React from "react";
 import * as yup from "yup";
 import TextField from "../common/TextField/TextField";
 
-const CapacityForm = () => {
-  const validationSchema = yup.object({
-    minGuests: yup.number().required("Required"),
-    maxGuests: yup.number().required("Required"),
-  });
+interface Props {
+  formik: any;
+}
 
-  const formik = useFormik({
-    initialValues: {
-      minGuests: undefined,
-      maxGuests: undefined,
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+export const validationSchema = yup.object({
+  minGuests: yup.number().required("Required"),
+  maxGuests: yup.number().required("Required"),
+});
 
+export const initialValues = {
+  minGuests: undefined,
+  maxGuests: undefined,
+};
+
+const CapacityForm = ({ formik }: Props) => {
   return (
     <Stack spacing={2}>
       <Box>

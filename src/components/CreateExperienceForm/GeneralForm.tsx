@@ -1,25 +1,23 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { useFormik } from "formik";
+import React from "react";
 import * as yup from "yup";
 import Editor from "../common/Editor/Editor";
 import TextField from "../common/TextField/TextField";
 
-const GeneralForm = () => {
-  const validationSchema = yup.object({
-    name: yup.string().required("Required"),
-  });
+interface Props {
+  formik: any;
+}
 
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      description: "",
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+export const validationSchema = yup.object({
+  name: yup.string().required("Required"),
+});
 
+export const initialValues = {
+  name: "",
+  description: "",
+};
+
+const GeneralForm = ({ formik }: Props) => {
   return (
     <Stack spacing={2}>
       <Box>

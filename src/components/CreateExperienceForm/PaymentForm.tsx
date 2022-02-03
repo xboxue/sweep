@@ -1,49 +1,40 @@
-import { Box, Button, MenuItem, Paper, Stack, Typography } from "@mui/material";
-import { useFormik } from "formik";
+import { Box, MenuItem, Stack } from "@mui/material";
+import React from "react";
 import * as yup from "yup";
-import Dropzone from "../common/Dropzone/Dropzone";
-import Editor from "../common/Editor/Editor";
-import ScheduleBuilder from "../common/ScheduleBuilder/ScheduleBuilder";
 import TextField from "../common/TextField/TextField";
-import CapacityForm from "./CapacityForm";
-import GeneralForm from "./GeneralForm";
-import PricingForm from "./PricingForm";
 
-const PaymentForm = () => {
-  const validationSchema = yup.object({
-    paymentType: yup.string(),
-    depositType: yup.string(),
-    depositPerPerson: yup.number().when(["paymentType", "depositType"], {
-      is: (paymentType: string, depositType: string) =>
-        paymentType === "deposit" && depositType === "perPerson",
-      then: yup.number().required("Required"),
-    }),
-    depositFixedAmount: yup.number().when(["paymentType", "depositType"], {
-      is: (paymentType: string, depositType: string) =>
-        paymentType === "deposit" && depositType === "fixedAmount",
-      then: yup.number().required("Required"),
-    }),
-    depositPercent: yup.number().when(["paymentType", "depositType"], {
-      is: (paymentType: string, depositType: string) =>
-        paymentType === "deposit" && depositType === "percent",
-      then: yup.number().required("Required"),
-    }),
-  });
+interface Props {
+  formik: any;
+}
 
-  const formik = useFormik({
-    initialValues: {
-      paymentType: "none",
-      depositType: "fixedAmount",
-      depositPerPerson: undefined,
-      depositFixedAmount: undefined,
-      depositPercent: undefined,
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+export const validationSchema = yup.object({
+  paymentType: yup.string(),
+  depositType: yup.string(),
+  depositPerPerson: yup.number().when(["paymentType", "depositType"], {
+    is: (paymentType: string, depositType: string) =>
+      paymentType === "deposit" && depositType === "perPerson",
+    then: yup.number().required("Required"),
+  }),
+  depositFixedAmount: yup.number().when(["paymentType", "depositType"], {
+    is: (paymentType: string, depositType: string) =>
+      paymentType === "deposit" && depositType === "fixedAmount",
+    then: yup.number().required("Required"),
+  }),
+  depositPercent: yup.number().when(["paymentType", "depositType"], {
+    is: (paymentType: string, depositType: string) =>
+      paymentType === "deposit" && depositType === "percent",
+    then: yup.number().required("Required"),
+  }),
+});
 
+export const initialValues = {
+  paymentType: "none",
+  depositType: "fixedAmount",
+  depositPerPerson: undefined,
+  depositFixedAmount: undefined,
+  depositPercent: undefined,
+};
+const PaymentForm = ({ formik }: Props) => {
   const paymentTypes = [
     { type: "none", title: "No payment" },
     { type: "fullAmount", title: "Pay full amount" },

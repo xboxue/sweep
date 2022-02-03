@@ -1,27 +1,25 @@
 import { Box, MenuItem, Stack, Typography } from "@mui/material";
-import { useFormik } from "formik";
+import React from "react";
 import * as yup from "yup";
 import ScheduleBuilder from "../common/ScheduleBuilder/ScheduleBuilder";
 import TextField from "../common/TextField/TextField";
 
-const ScheduleForm = () => {
-  const validationSchema = yup.object({});
+interface Props {
+  formik: any;
+}
 
-  const formik = useFormik({
-    initialValues: {
-      duration: 60,
-      durationFormat: "minute",
-      minAdvance: 1,
-      minAdvanceFormat: "day",
-      maxAdvance: 6,
-      maxAdvanceFormat: "month",
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+export const initialValues = {
+  duration: 60,
+  durationFormat: "minute",
+  minAdvance: 1,
+  minAdvanceFormat: "day",
+  maxAdvance: 6,
+  maxAdvanceFormat: "month",
+};
 
+export const validationSchema = yup.object({});
+
+const ScheduleForm = ({ formik }: Props) => {
   const durationFormats = [
     { type: "hour", title: "hours" },
     { type: "minute", title: "minutes" },

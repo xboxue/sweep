@@ -1,5 +1,4 @@
 import {
-  AccountCircleOutlined,
   AssignmentOutlined,
   CalendarTodayOutlined,
   CreditCardOutlined,
@@ -7,122 +6,114 @@ import {
   LocalOfferOutlined,
   PeopleOutline,
 } from "@mui/icons-material";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { blue } from "@mui/material/colors";
-import { useState } from "react";
+import { AppBar, Button, Stack, Toolbar } from "@mui/material";
+import { useFormik } from "formik";
 import Dropzone from "../common/Dropzone/Dropzone";
-import CapacityForm from "./CapacityForm";
-import GeneralForm from "./GeneralForm";
-import PaymentForm from "./PaymentForm";
-import PricingForm from "./PricingForm";
-import ScheduleForm from "./ScheduleForm";
-
-const Card = ({
-  title,
-  children,
-  Icon,
-}: {
-  title: string;
-  children: React.ReactNode;
-  Icon: JSX.Element;
-}) => {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <Accordion
-      variant="outlined"
-      disableGutters
-      sx={{ "&:before": { display: "none" } }}
-      expanded={expanded}
-      onChange={(_, isExpanded) => setExpanded(isExpanded)}
-    >
-      <AccordionSummary>
-        <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
-          <Avatar
-            variant="rounded"
-            sx={{ bgcolor: "rgb(224, 242, 254)", mr: 1 }}
-          >
-            <Icon sx={{ color: "rgb(2, 132, 199)" }} />
-          </Avatar>
-          <Typography variant="subtitle1">{title}</Typography>
-          {expanded && (
-            <>
-              <Button size="small" sx={{ ml: "auto" }}>
-                Cancel
-              </Button>
-              <Button size="small" variant="contained">
-                Save & Close
-              </Button>
-            </>
-          )}
-        </Box>
-      </AccordionSummary>
-      <AccordionDetails
-        sx={{ borderTop: 1, borderColor: (theme) => theme.palette.divider }}
-      >
-        {children}
-      </AccordionDetails>
-    </Accordion>
-  );
-};
+import CapacityForm, {
+  initialValues as capacityInitialValues,
+  validationSchema as capacityValidationSchema,
+} from "./CapacityForm";
+import GeneralForm, {
+  initialValues as generalInitialValues,
+  validationSchema as generalValidationSchema,
+} from "./GeneralForm";
+import PaymentForm, {
+  initialValues as paymentInitialValues,
+  validationSchema as paymentValidationSchema,
+} from "./PaymentForm";
+import PricingForm, {
+  initialValues as pricingInitialValues,
+  validationSchema as pricingValidationSchema,
+} from "./PricingForm";
+import ScheduleForm, {
+  initialValues as scheduleInitialValues,
+  validationSchema as scheduleValidationSchema,
+} from "./ScheduleForm";
+import SettingsCard from "./SettingsCard";
 
 const CreateExperienceForm = () => {
+  const formik = useFormik({
+    initialValues: {
+      ...capacityInitialValues,
+      ...generalInitialValues,
+      ...paymentInitialValues,
+      ...pricingInitialValues,
+      ...scheduleInitialValues,
+    },
+    validationSchema: capacityValidationSchema
+      .concat(generalValidationSchema)
+      .concat(paymentValidationSchema)
+      .concat(pricingValidationSchema)
+      .concat(scheduleValidationSchema),
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+
   const sections = [
     {
       title: "General",
-      icon: AssignmentOutlined,
+      Icon: AssignmentOutlined,
       Component: GeneralForm,
     },
 
     {
       title: "Capacity",
-      icon: PeopleOutline,
+      Icon: PeopleOutline,
       Component: CapacityForm,
     },
     {
       title: "Media",
-      icon: ImageOutlined,
+      Icon: ImageOutlined,
       Component: Dropzone,
     },
 
     {
       title: "Pricing",
-      icon: LocalOfferOutlined,
+      Icon: LocalOfferOutlined,
       Component: PricingForm,
     },
 
     {
       title: "Payment and Deposit",
-      icon: CreditCardOutlined,
+      Icon: CreditCardOutlined,
       Component: PaymentForm,
     },
 
     {
       title: "Schedule",
-      icon: CalendarTodayOutlined,
+      Icon: CalendarTodayOutlined,
       Component: ScheduleForm,
     },
   ];
 
   return (
-    <Stack spacing={2}>
-      {sections.map(({ title, icon, Component }) => (
-        <Card key={title} title={title} Icon={icon}>
-          <Component />
-        </Card>
-      ))}
-    </Stack>
+    <>
+      <Stack spacing={2}>
+        {sections.map(({ title, Icon, Component }) => (
+          <SettingsCard key={title} title={title} Icon={Icon}>
+            <Component formik={formik} />
+          </SettingsCard>
+        ))}
+      </Stack>
+
+      <AppBar
+        position="fixed"
+        sx={{
+          top: "auto",
+          bottom: 0,
+          bgcolor: (theme) => theme.palette.background.paper,
+        }}
+      >
+        <Toolbar>
+          <Button sx={{ ml: "auto" }}>Cancel</Button>
+          <Button variant="contained" onClick={() => formik.handleSubmit()}>
+            Save
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Toolbar />
+    </>
   );
 };
 

@@ -1,33 +1,31 @@
-import { Box, MenuItem, Paper, Stack, Typography } from "@mui/material";
-import { useFormik } from "formik";
+import { Box, MenuItem, Stack } from "@mui/material";
+import React from "react";
 import * as yup from "yup";
 import TextField from "../common/TextField/TextField";
 
-const PricingForm = () => {
-  const validationSchema = yup.object({
-    pricingType: yup.string(),
-    pricePerPerson: yup.number().when("pricingType", {
-      is: "perPerson",
-      then: yup.number().required("Required"),
-    }),
-    priceTotalAmount: yup.number().when("pricingType", {
-      is: "totalAmount",
-      then: yup.number().required("Required"),
-    }),
-  });
+interface Props {
+  formik: any;
+}
 
-  const formik = useFormik({
-    initialValues: {
-      pricingType: "perPerson",
-      pricePerPerson: undefined,
-      priceTotalAmount: undefined,
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+export const validationSchema = yup.object({
+  pricingType: yup.string(),
+  pricePerPerson: yup.number().when("pricingType", {
+    is: "perPerson",
+    then: yup.number().required("Required"),
+  }),
+  priceTotalAmount: yup.number().when("pricingType", {
+    is: "totalAmount",
+    then: yup.number().required("Required"),
+  }),
+});
 
+export const initialValues = {
+  pricingType: "perPerson",
+  pricePerPerson: undefined,
+  priceTotalAmount: undefined,
+};
+
+const PricingForm = ({ formik }: Props) => {
   const pricingTypes = [
     { type: "perPerson", title: "Per person" },
     { type: "totalAmount", title: "Total amount" },
