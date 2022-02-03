@@ -95,7 +95,7 @@ const ScheduleForm = ({ formik }: Props) => {
               </MenuItem>
             ))}
           </TextField>
-          <Typography>in advance</Typography>
+          <Typography variant="body2">in advance</Typography>
         </Stack>
       </Box>
 
@@ -128,7 +128,7 @@ const ScheduleForm = ({ formik }: Props) => {
               </MenuItem>
             ))}
           </TextField>
-          <Typography>in advance</Typography>
+          <Typography variant="body2">in advance</Typography>
         </Stack>
       </Box>
 

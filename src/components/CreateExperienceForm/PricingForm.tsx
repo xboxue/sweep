@@ -1,7 +1,9 @@
-import { Box, MenuItem, Stack } from "@mui/material";
+import { ChairOutlined, SellOutlined } from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import * as yup from "yup";
 import TextField from "../common/TextField/TextField";
+import CardSelect from "./CardSelect";
 
 interface Props {
   formik: any;
@@ -26,28 +28,22 @@ export const initialValues = {
 };
 
 const PricingForm = ({ formik }: Props) => {
-  const pricingTypes = [
-    { type: "perPerson", title: "Per person" },
-    { type: "totalAmount", title: "Total amount" },
+  const pricingOptions = [
+    { Icon: ChairOutlined, value: "perPerson", title: "Per person" },
+    { Icon: SellOutlined, value: "totalAmount", title: "Total amount" },
   ];
 
   return (
     <Stack spacing={2}>
       <Box>
-        <TextField
-          select
-          label="Pricing type"
-          id="pricingType"
-          name="pricingType"
+        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+          Pricing Type
+        </Typography>
+        <CardSelect
+          options={pricingOptions}
+          onChange={(value) => formik.setFieldValue("pricingType", value)}
           value={formik.values.pricingType}
-          onChange={formik.handleChange}
-        >
-          {pricingTypes.map(({ type, title }) => (
-            <MenuItem key={type} value={type}>
-              {title}
-            </MenuItem>
-          ))}
-        </TextField>
+        />
       </Box>
 
       <Box>

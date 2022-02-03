@@ -6,8 +6,9 @@ import {
   LocalOfferOutlined,
   PeopleOutline,
 } from "@mui/icons-material";
-import { AppBar, Button, Stack, Toolbar } from "@mui/material";
+import { AppBar, Box, Button, Divider, Stack, Toolbar } from "@mui/material";
 import { useFormik } from "formik";
+import React from "react";
 import Dropzone from "../common/Dropzone/Dropzone";
 import CapacityForm, {
   initialValues as capacityInitialValues,
@@ -29,7 +30,7 @@ import ScheduleForm, {
   initialValues as scheduleInitialValues,
   validationSchema as scheduleValidationSchema,
 } from "./ScheduleForm";
-import SettingsCard from "./SettingsCard";
+import SettingsSection from "./SettingsSection";
 
 const CreateExperienceForm = () => {
   const formik = useFormik({
@@ -53,35 +54,41 @@ const CreateExperienceForm = () => {
   const sections = [
     {
       title: "General",
+      description: "Basic information about your activity.",
       Icon: AssignmentOutlined,
       Component: GeneralForm,
     },
 
     {
       title: "Capacity",
+      description: "Manage how people can participate in your activity.",
       Icon: PeopleOutline,
       Component: CapacityForm,
     },
     {
       title: "Media",
+      description: "Upload images to show off your activity.",
       Icon: ImageOutlined,
       Component: Dropzone,
     },
 
     {
       title: "Pricing",
+      description: "Manage pricing of your activity.",
       Icon: LocalOfferOutlined,
       Component: PricingForm,
     },
 
     {
       title: "Payment and Deposit",
+      description: "Manage payments and deposits for your activity.",
       Icon: CreditCardOutlined,
       Component: PaymentForm,
     },
 
     {
       title: "Schedule",
+      description: "Manage your activity schedule.",
       Icon: CalendarTodayOutlined,
       Component: ScheduleForm,
     },
@@ -89,11 +96,18 @@ const CreateExperienceForm = () => {
 
   return (
     <>
-      <Stack spacing={2}>
-        {sections.map(({ title, Icon, Component }) => (
-          <SettingsCard key={title} title={title} Icon={Icon}>
-            <Component formik={formik} />
-          </SettingsCard>
+      <Stack spacing={4}>
+        {sections.map(({ title, Icon, Component, description }, index) => (
+          <Box key={title}>
+            {index > 0 && <Divider sx={{ mb: 4 }} />}
+            <SettingsSection
+              title={title}
+              Icon={Icon}
+              description={description}
+            >
+              <Component formik={formik} />
+            </SettingsSection>
+          </Box>
         ))}
       </Stack>
 
@@ -106,7 +120,7 @@ const CreateExperienceForm = () => {
         }}
       >
         <Toolbar>
-          <Button sx={{ ml: "auto" }}>Cancel</Button>
+          <Button sx={{ ml: "auto" }}>Discard</Button>
           <Button variant="contained" onClick={() => formik.handleSubmit()}>
             Save
           </Button>

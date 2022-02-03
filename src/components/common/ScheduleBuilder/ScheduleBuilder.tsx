@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   Paper,
+  Popover,
   Select,
   TextField,
   Typography,
@@ -35,11 +36,12 @@ const Column = ({
 
   return (
     <Box>
-      <Menu
+      <Popover
         id="copy-menu"
         anchorEl={anchorEl}
-        open={anchorEl}
+        open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
+        sx={{ p: 2 }}
       >
         <>
           <Box sx={{ px: 2, py: 1 }}>
@@ -83,7 +85,7 @@ const Column = ({
             </Button>
           </Box>
         </>
-      </Menu>
+      </Popover>
       <Paper
         variant="outlined"
         sx={{ flex: 1, display: "flex", alignItems: "center", p: 1 }}

@@ -1,7 +1,14 @@
-import { Box, MenuItem, Stack } from "@mui/material";
+import {
+  ChairOutlined,
+  Percent,
+  CreditCardOffOutlined,
+  SellOutlined,
+} from "@mui/icons-material";
+import { Box, MenuItem, Stack, Typography } from "@mui/material";
 import React from "react";
 import * as yup from "yup";
 import TextField from "../common/TextField/TextField";
+import CardSelect from "./CardSelect";
 
 interface Props {
   formik: any;
@@ -35,54 +42,48 @@ export const initialValues = {
   depositPercent: undefined,
 };
 const PaymentForm = ({ formik }: Props) => {
-  const paymentTypes = [
-    { type: "none", title: "No payment" },
-    { type: "fullAmount", title: "Pay full amount" },
-    { type: "deposit", title: "Pay deposit" },
+  const paymentOptions = [
+    { Icon: CreditCardOffOutlined, value: "none", title: "No payment" },
+    { Icon: SellOutlined, value: "fullAmount", title: "Pay full amount" },
+    {
+      Icon: ChairOutlined,
+      value: "deposit",
+      title: "Pay deposit",
+    },
   ];
 
-  const depositTypes = [
-    { type: "perPerson", title: "Per person" },
-    { type: "fixedAmount", title: "Fixed amount" },
-    { type: "percent", title: "Percentage" },
+  const depositOptions = [
+    { Icon: ChairOutlined, value: "perPerson", title: "Per person" },
+    { Icon: SellOutlined, value: "fixedAmount", title: "Fixed amount" },
+    { Icon: Percent, value: "percent", title: "Percentage" },
   ];
 
   return (
     <Stack spacing={2}>
       <Box>
-        <TextField
-          select
-          label="Payment Type"
-          id="paymentType"
-          name="paymentType"
+        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+          Payment Type
+        </Typography>
+        <CardSelect
+          options={paymentOptions}
+          onChange={(value) => formik.setFieldValue("paymentType", value)}
           value={formik.values.paymentType}
-          onChange={formik.handleChange}
-        >
-          {paymentTypes.map(({ type, title }) => (
-            <MenuItem key={type} value={type}>
-              {title}
-            </MenuItem>
-          ))}
-        </TextField>
+        />
       </Box>
+
       {formik.values.paymentType === "deposit" && (
         <>
           <Box>
-            <TextField
-              select
-              label="Deposit Type"
-              id="depositType"
-              name="depositType"
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Deposit Type
+            </Typography>
+            <CardSelect
+              options={depositOptions}
+              onChange={(value) => formik.setFieldValue("depositType", value)}
               value={formik.values.depositType}
-              onChange={formik.handleChange}
-            >
-              {depositTypes.map(({ type, title }) => (
-                <MenuItem key={type} value={type}>
-                  {title}
-                </MenuItem>
-              ))}
-            </TextField>
+            />
           </Box>
+
           <Box>
             {formik.values.depositType === "percent" && (
               <TextField
