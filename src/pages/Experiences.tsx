@@ -1,7 +1,6 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useState } from "react";
-import Dropzone from "../components/common/Dropzone/Dropzone";
-import CreateExperienceForm from "../components/CreateExperienceForm/CreateExperienceForm";
+import CreateOfferingForm from "../components/CreateExperienceForm/CreateOfferingForm";
 
 const Experiences = () => {
   const [creating, setCreating] = useState(true);
@@ -9,7 +8,7 @@ const Experiences = () => {
   if (creating)
     return (
       <Box mx="auto" maxWidth="960px">
-        <CreateExperienceForm />
+        <CreateOfferingForm />
       </Box>
     );
 

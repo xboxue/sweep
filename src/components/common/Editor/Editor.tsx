@@ -1,10 +1,12 @@
-import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-const Editor = () => {
-  const [value, setValue] = useState("");
+interface Props {
+  value: string;
+  onChange: ReactQuill["props"]["onChange"];
+}
 
+const Editor = ({ value, onChange }: Props) => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -32,7 +34,7 @@ const Editor = () => {
     <ReactQuill
       theme="snow"
       value={value}
-      onChange={setValue}
+      onChange={onChange}
       formats={formats}
       modules={modules}
     />

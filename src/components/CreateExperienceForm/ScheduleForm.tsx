@@ -1,41 +1,63 @@
 import { Box, MenuItem, Stack, Typography } from "@mui/material";
-import React from "react";
 import * as yup from "yup";
+import {
+  DurationFormat,
+  MaxAdvanceFormat,
+  MinAdvanceFormat,
+} from "../../generated/graphql";
+import FormikTextField from "../common/FormikTextField/FormikTextField";
 import ScheduleBuilder from "../common/ScheduleBuilder/ScheduleBuilder";
-import TextField from "../common/TextField/TextField";
 
 interface Props {
   formik: any;
 }
 
 export const initialValues = {
-  duration: 60,
-  durationFormat: "minute",
+  durationMinutes: 60,
+  durationHours: 1,
+  durationFormat: DurationFormat.Minute,
   minAdvance: 1,
-  minAdvanceFormat: "day",
+  minAdvanceFormat: MinAdvanceFormat.Day,
   maxAdvance: 6,
-  maxAdvanceFormat: "month",
+  maxAdvanceFormat: MaxAdvanceFormat.Month,
 };
 
-export const validationSchema = yup.object({});
+export const validationSchema = yup.object({
+  durationMinutes: yup
+    .number()
+    .required("Required")
+    .integer()
+    .when("durationFormat", {
+      is: DurationFormat.Minute,
+      then: (schema) => schema.positive("Required"),
+      otherwise: (schema) => schema.min(0).max(59),
+    }),
+  durationHours: yup.number().when("durationFormat", {
+    is: DurationFormat.Hour,
+    then: (schema) =>
+      schema.required("Required").positive("Required").integer(),
+  }),
+  minAdvance: yup.number().required("Required").positive("Required").integer(),
+  maxAdvance: yup.number().required("Required").positive("Required").integer(),
+});
 
 const ScheduleForm = ({ formik }: Props) => {
   const durationFormats = [
-    { type: "hour", title: "hours" },
-    { type: "minute", title: "minutes" },
+    { type: DurationFormat.Hour, title: "hours" },
+    { type: DurationFormat.Minute, title: "minutes" },
   ];
 
   const minAdvanceFormats = [
-    { type: "hour", title: "hours" },
-    { type: "minute", title: "minutes" },
-    { type: "day", title: "days" },
+    { type: MinAdvanceFormat.Hour, title: "hours" },
+    { type: MinAdvanceFormat.Minute, title: "minutes" },
+    { type: MinAdvanceFormat.Day, title: "days" },
   ];
 
   const maxAdvanceFormats = [
-    { type: "hour", title: "hours" },
-    { type: "day", title: "days" },
-    { type: "week", title: "weeks" },
-    { type: "month", title: "months" },
+    { type: MaxAdvanceFormat.Hour, title: "hours" },
+    { type: MaxAdvanceFormat.Day, title: "days" },
+    { type: MaxAdvanceFormat.Week, title: "weeks" },
+    { type: MaxAdvanceFormat.Month, title: "months" },
   ];
 
   return (
@@ -43,27 +65,63 @@ const ScheduleForm = ({ formik }: Props) => {
       <Box>
         <Typography variant="subtitle2">Duration</Typography>
         <Stack direction="row" spacing={1}>
-          <TextField
-            type="number"
-            id="duration"
-            value={formik.values.duration}
-            onChange={formik.handleChange}
-            error={formik.touched.duration && Boolean(formik.errors.duration)}
-            helperText={formik.touched.duration && formik.errors.duration}
-          />
-          <TextField
-            select
-            id="durationFormat"
-            name="durationFormat"
-            value={formik.values.durationFormat}
-            onChange={formik.handleChange}
-          >
-            {durationFormats.map(({ type, title }) => (
-              <MenuItem key={type} value={type}>
-                {title}
-              </MenuItem>
-            ))}
-          </TextField>
+          {formik.values.durationFormat === DurationFormat.Hour ? (
+            <>
+              <FormikTextField
+                sx={{ width: 100 }}
+                type="number"
+                field="durationHours"
+                formik={formik}
+                numberOptions={{ integer: true }}
+              />
+              <FormikTextField select field="durationFormat" formik={formik}>
+                {durationFormats.map(({ type, title }) => (
+                  <MenuItem key={type} value={type}>
+                    {title}
+                  </MenuItem>
+                ))}
+              </FormikTextField>
+              <FormikTextField
+                sx={{ width: 100 }}
+                type="number"
+                field="durationMinutes"
+                formik={formik}
+                numberOptions={{ integer: true, max: 59 }}
+              />
+              <Typography variant="body2" sx={{ alignSelf: "center" }}>
+                minutes
+              </Typography>
+            </>
+          ) : (
+            <>
+              <FormikTextField
+                sx={{ width: 100 }}
+                type="number"
+                field="durationMinutes"
+                formik={formik}
+                numberOptions={{ integer: true }}
+              />
+              <FormikTextField
+                select
+                field="durationFormat"
+                onChange={(event) => {
+                  if (
+                    event.target.value === DurationFormat.Hour &&
+                    formik.values.durationMinutes > 59
+                  )
+                    formik.setFieldValue("durationMinutes", 0);
+                  formik.handleChange(event);
+                }}
+                formik={formik}
+              >
+                {durationFormats.map(({ type, title }) => (
+                  <MenuItem key={type} value={type}>
+                    {title}
+                  </MenuItem>
+                ))}
+              </FormikTextField>
+            </>
+          )}
         </Stack>
       </Box>
 
@@ -71,31 +129,24 @@ const ScheduleForm = ({ formik }: Props) => {
         <Typography variant="subtitle2">
           Customers must book at least
         </Typography>
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-          <TextField
+        <Stack direction="row" spacing={1}>
+          <FormikTextField
+            sx={{ width: 100 }}
             type="number"
-            id="duration"
-            value={formik.values.minAdvance}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.minAdvance && Boolean(formik.errors.minAdvance)
-            }
-            helperText={formik.touched.minAdvance && formik.errors.minAdvance}
+            field="minAdvance"
+            formik={formik}
+            numberOptions={{ integer: true }}
           />
-          <TextField
-            select
-            id="minAdvanceFormat"
-            name="minAdvanceFormat"
-            value={formik.values.minAdvanceFormat}
-            onChange={formik.handleChange}
-          >
+          <FormikTextField select field="minAdvanceFormat" formik={formik}>
             {minAdvanceFormats.map(({ type, title }) => (
               <MenuItem key={type} value={type}>
                 {title}
               </MenuItem>
             ))}
-          </TextField>
-          <Typography variant="body2">in advance</Typography>
+          </FormikTextField>
+          <Typography variant="body2" sx={{ alignSelf: "center" }}>
+            in advance
+          </Typography>
         </Stack>
       </Box>
 
@@ -104,31 +155,24 @@ const ScheduleForm = ({ formik }: Props) => {
           Customers cannot book more than
         </Typography>
 
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-          <TextField
+        <Stack direction="row" spacing={1}>
+          <FormikTextField
+            sx={{ width: 100 }}
             type="number"
-            id="maxAdvance"
-            value={formik.values.maxAdvance}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.maxAdvance && Boolean(formik.errors.maxAdvance)
-            }
-            helperText={formik.touched.maxAdvance && formik.errors.maxAdvance}
+            field="maxAdvance"
+            formik={formik}
+            numberOptions={{ integer: true }}
           />
-          <TextField
-            select
-            id="maxAdvanceFormat"
-            name="maxAdvanceFormat"
-            value={formik.values.maxAdvanceFormat}
-            onChange={formik.handleChange}
-          >
+          <FormikTextField select field="maxAdvanceFormat" formik={formik}>
             {maxAdvanceFormats.map(({ type, title }) => (
               <MenuItem key={type} value={type}>
                 {title}
               </MenuItem>
             ))}
-          </TextField>
-          <Typography variant="body2">in advance</Typography>
+          </FormikTextField>
+          <Typography variant="body2" sx={{ alignSelf: "center" }}>
+            in advance
+          </Typography>
         </Stack>
       </Box>
 
@@ -136,9 +180,9 @@ const ScheduleForm = ({ formik }: Props) => {
         <Typography variant="subtitle2">Schedule</Typography>
         <ScheduleBuilder
           duration={
-            formik.values.durationFormat === "minute"
-              ? formik.values.duration
-              : formik.values.duration * 60
+            formik.values.durationFormat === DurationFormat.Minute
+              ? formik.values.durationMinutes
+              : formik.values.durationHours * 60 + formik.values.durationMinutes
           }
         />
       </Box>

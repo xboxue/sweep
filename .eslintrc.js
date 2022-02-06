@@ -37,6 +37,7 @@ module.exports = {
     "react/jsx-props-no-spreading": "off",
     "arrow-body-style": "off",
     "react/no-array-index-key": "off",
+    "react/require-default-props": "off",
   },
   overrides: [
     {

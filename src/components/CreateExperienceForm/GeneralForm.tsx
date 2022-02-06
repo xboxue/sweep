@@ -1,19 +1,18 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React from "react";
 import * as yup from "yup";
 import Editor from "../common/Editor/Editor";
-import TextField from "../common/TextField/TextField";
+import FormikTextField from "../common/FormikTextField/FormikTextField";
 
 interface Props {
   formik: any;
 }
 
 export const validationSchema = yup.object({
-  name: yup.string().required("Required"),
+  name: yup.string().trim().required("Required"),
 });
 
 export const initialValues = {
-  name: "",
+  name: undefined,
   description: "",
 };
 
@@ -21,19 +20,14 @@ const GeneralForm = ({ formik }: Props) => {
   return (
     <Stack spacing={2}>
       <Box>
-        <TextField
-          label="Name"
-          id="name"
-          name="name"
-          value={formik.values.name}
-          onChange={formik.handleChange}
-          error={formik.touched.name && Boolean(formik.errors.name)}
-          helperText={formik.touched.name && formik.errors.name}
-        />
+        <FormikTextField label="Name" field="name" formik={formik} />
       </Box>
       <Box>
         <Typography variant="subtitle2">Description</Typography>
-        <Editor />
+        <Editor
+          value={formik.values.description}
+          onChange={(content) => formik.setFieldValue("description", content)}
+        />
       </Box>
     </Stack>
   );

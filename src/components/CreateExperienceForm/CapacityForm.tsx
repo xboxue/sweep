@@ -1,15 +1,19 @@
 import { Box, Stack } from "@mui/material";
-import React from "react";
 import * as yup from "yup";
-import TextField from "../common/TextField/TextField";
+import FormikTextField from "../common/FormikTextField/FormikTextField";
 
 interface Props {
   formik: any;
 }
 
 export const validationSchema = yup.object({
-  minGuests: yup.number().required("Required"),
-  maxGuests: yup.number().required("Required"),
+  minGuests: yup.number().required("Required").positive("Required").integer(),
+  maxGuests: yup
+    .number()
+    .required("Required")
+    .positive("Required")
+    .integer()
+    .min(yup.ref("minGuests"), "Cannot be less than minimum capacity"),
 });
 
 export const initialValues = {
@@ -21,25 +25,21 @@ const CapacityForm = ({ formik }: Props) => {
   return (
     <Stack spacing={2}>
       <Box>
-        <TextField
+        <FormikTextField
           type="number"
           label="Max guests"
-          id="maxGuests"
-          value={formik.values.maxGuests}
-          onChange={formik.handleChange}
-          error={formik.touched.maxGuests && Boolean(formik.errors.maxGuests)}
-          helperText={formik.touched.maxGuests && formik.errors.maxGuests}
+          field="maxGuests"
+          formik={formik}
+          numberOptions={{ integer: true }}
         />
       </Box>
       <Box>
-        <TextField
+        <FormikTextField
           type="number"
           label="Min guests"
-          id="minGuests"
-          value={formik.values.minGuests}
-          onChange={formik.handleChange}
-          error={formik.touched.minGuests && Boolean(formik.errors.minGuests)}
-          helperText={formik.touched.minGuests && formik.errors.minGuests}
+          field="minGuests"
+          formik={formik}
+          numberOptions={{ integer: true }}
         />
       </Box>
     </Stack>

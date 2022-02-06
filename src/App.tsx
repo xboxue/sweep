@@ -1,5 +1,6 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Bookings from "./pages/Bookings";
 import Calendar from "./pages/Calendar";
@@ -10,21 +11,31 @@ import theme from "./styles/theme";
 
 const NotFound = () => <Typography>Not found</Typography>;
 
+const client = new ApolloClient({
+  uri: "http://localhost:8000/graphql",
+  cache: new InMemoryCache(),
+});
+
 const App = () => (
   <>
     <CssBaseline />
-    <ThemeProvider theme={theme}>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="bookings" element={<Bookings />} />
-          <Route path="customers" element={<Customers />} />
-          <Route path="experiences" element={<Experiences />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </ThemeProvider>
+
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="calendar" element={<Calendar />} />
+              <Route path="bookings" element={<Bookings />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="experiences" element={<Experiences />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </ApolloProvider>
   </>
 );
 

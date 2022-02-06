@@ -2,7 +2,8 @@ import { ChairOutlined, SellOutlined } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import * as yup from "yup";
-import TextField from "../common/TextField/TextField";
+import { PricingType } from "../../generated/graphql";
+import FormikTextField from "../common/FormikTextField/FormikTextField";
 import CardSelect from "./CardSelect";
 
 interface Props {
@@ -12,25 +13,29 @@ interface Props {
 export const validationSchema = yup.object({
   pricingType: yup.string(),
   pricePerPerson: yup.number().when("pricingType", {
-    is: "perPerson",
+    is: PricingType.PerPerson,
     then: yup.number().required("Required"),
   }),
   priceTotalAmount: yup.number().when("pricingType", {
-    is: "totalAmount",
+    is: PricingType.TotalAmount,
     then: yup.number().required("Required"),
   }),
 });
 
 export const initialValues = {
-  pricingType: "perPerson",
+  pricingType: PricingType.PerPerson,
   pricePerPerson: undefined,
   priceTotalAmount: undefined,
 };
 
 const PricingForm = ({ formik }: Props) => {
   const pricingOptions = [
-    { Icon: ChairOutlined, value: "perPerson", title: "Per person" },
-    { Icon: SellOutlined, value: "totalAmount", title: "Total amount" },
+    { Icon: ChairOutlined, value: PricingType.PerPerson, title: "Per person" },
+    {
+      Icon: SellOutlined,
+      value: PricingType.TotalAmount,
+      title: "Total amount",
+    },
   ];
 
   return (
@@ -47,35 +52,20 @@ const PricingForm = ({ formik }: Props) => {
       </Box>
 
       <Box>
-        {formik.values.pricingType === "perPerson" ? (
-          <TextField
+        {formik.values.pricingType === PricingType.PerPerson && (
+          <FormikTextField
             type="number"
             label="Price per person"
-            id="pricePerPerson"
-            value={formik.values.pricePerPerson}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.pricePerPerson &&
-              Boolean(formik.errors.pricePerPerson)
-            }
-            helperText={
-              formik.touched.pricePerPerson && formik.errors.pricePerPerson
-            }
+            field="pricePerPerson"
+            formik={formik}
           />
-        ) : (
-          <TextField
+        )}
+        {formik.values.pricingType === PricingType.TotalAmount && (
+          <FormikTextField
             type="number"
             label="Total price"
-            id="priceTotalAmount"
-            value={formik.values.priceTotalAmount}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.priceTotalAmount &&
-              Boolean(formik.errors.priceTotalAmount)
-            }
-            helperText={
-              formik.touched.priceTotalAmount && formik.errors.priceTotalAmount
-            }
+            field="priceTotalAmount"
+            formik={formik}
           />
         )}
       </Box>

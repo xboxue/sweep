@@ -6,9 +6,21 @@ import {
   LocalOfferOutlined,
   PeopleOutline,
 } from "@mui/icons-material";
-import { AppBar, Box, Button, Divider, Stack, Toolbar } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import {
+  Alert,
+  AppBar,
+  Box,
+  Button,
+  Divider,
+  Stack,
+  Toolbar,
+} from "@mui/material";
 import { useFormik } from "formik";
-import React from "react";
+import {
+  DurationFormat,
+  useCreateOfferingMutation,
+} from "../../generated/graphql";
 import Dropzone from "../common/Dropzone/Dropzone";
 import CapacityForm, {
   initialValues as capacityInitialValues,
@@ -32,7 +44,9 @@ import ScheduleForm, {
 } from "./ScheduleForm";
 import SettingsSection from "./SettingsSection";
 
-const CreateExperienceForm = () => {
+const CreateOfferingForm = () => {
+  const [createOffering, { loading, error }] = useCreateOfferingMutation();
+
   const formik = useFormik({
     initialValues: {
       ...capacityInitialValues,
@@ -46,8 +60,35 @@ const CreateExperienceForm = () => {
       .concat(paymentValidationSchema)
       .concat(pricingValidationSchema)
       .concat(scheduleValidationSchema),
-    onSubmit: (values) => {
-      console.log(values);
+    validateOnChange: false,
+    onSubmit: async ({
+      durationMinutes,
+      durationHours,
+      durationFormat,
+      pricePerPerson,
+      priceTotalAmount,
+      depositFixedAmount,
+      depositPerPerson,
+      ...rest
+    }) => {
+      try {
+        await createOffering({
+          variables: {
+            input: {
+              duration:
+                durationFormat === DurationFormat.Minute
+                  ? durationMinutes
+                  : durationHours * 60 + durationMinutes,
+              pricePerPerson: pricePerPerson && pricePerPerson * 100,
+              priceTotalAmount: priceTotalAmount && priceTotalAmount * 100,
+              depositFixedAmount:
+                depositFixedAmount && depositFixedAmount * 100,
+              depositPerPerson: depositPerPerson && depositPerPerson * 100,
+              ...rest,
+            } as any,
+          },
+        });
+      } catch (error) {}
     },
   });
 
@@ -80,23 +121,28 @@ const CreateExperienceForm = () => {
     },
 
     {
-      title: "Payment and Deposit",
-      description: "Manage payments and deposits for your activity.",
-      Icon: CreditCardOutlined,
-      Component: PaymentForm,
-    },
-
-    {
       title: "Schedule",
       description: "Manage your activity schedule.",
       Icon: CalendarTodayOutlined,
       Component: ScheduleForm,
     },
+
+    {
+      title: "Payment and Deposit",
+      description: "Manage payments and deposits for your activity.",
+      Icon: CreditCardOutlined,
+      Component: PaymentForm,
+    },
   ];
 
   return (
     <>
-      <Stack spacing={4}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Oops, something went wrong. Please try again.
+        </Alert>
+      )}
+      <Stack spacing={4} sx={{ pb: 5 }}>
         {sections.map(({ title, Icon, Component, description }, index) => (
           <Box key={title}>
             {index > 0 && <Divider sx={{ mb: 4 }} />}
@@ -121,9 +167,14 @@ const CreateExperienceForm = () => {
       >
         <Toolbar>
           <Button sx={{ ml: "auto" }}>Discard</Button>
-          <Button variant="contained" onClick={() => formik.handleSubmit()}>
+          <LoadingButton
+            loading={loading}
+            loadingPosition="start"
+            variant="contained"
+            onClick={() => formik.handleSubmit()}
+          >
             Save
-          </Button>
+          </LoadingButton>
         </Toolbar>
       </AppBar>
       <Toolbar />
@@ -131,4 +182,4 @@ const CreateExperienceForm = () => {
   );
 };
 
-export default CreateExperienceForm;
+export default CreateOfferingForm;
