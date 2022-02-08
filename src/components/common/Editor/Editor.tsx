@@ -15,6 +15,9 @@ const Editor = ({ value, onChange }: Props) => {
       ["link", "image"],
       ["clean"],
     ],
+    clipboard: {
+      matchVisual: false,
+    },
   };
 
   const formats = [

@@ -17,33 +17,42 @@ interface Props {
 export const validationSchema = yup.object({
   paymentType: yup.string(),
   depositType: yup.string(),
-  depositPerPerson: yup.number().when(["paymentType", "depositType"], {
-    is: (paymentType: PaymentType, depositType: DepositType) =>
-      paymentType === PaymentType.Deposit &&
-      depositType === DepositType.PerPerson,
-    then: (schema) => schema.required("Required").positive("Required"),
-  }),
-  depositFixedAmount: yup.number().when(["paymentType", "depositType"], {
-    is: (paymentType: PaymentType, depositType: DepositType) =>
-      paymentType === PaymentType.Deposit &&
-      depositType === DepositType.FixedAmount,
-    then: (schema) => schema.required("Required").positive("Required"),
-  }),
-  depositPercent: yup.number().when(["paymentType", "depositType"], {
-    is: (paymentType: PaymentType, depositType: DepositType) =>
-      paymentType === PaymentType.Deposit &&
-      depositType === DepositType.Percent,
-    then: (schema) =>
-      schema.required("Required").positive("Required").integer(),
-  }),
+  depositPerPerson: yup
+    .number()
+    .nullable()
+    .when(["paymentType", "depositType"], {
+      is: (paymentType: PaymentType, depositType: DepositType) =>
+        paymentType === PaymentType.Deposit &&
+        depositType === DepositType.PerPerson,
+      then: (schema) => schema.required("Required").positive("Required"),
+    }),
+  depositFixedAmount: yup
+    .number()
+    .nullable()
+    .when(["paymentType", "depositType"], {
+      is: (paymentType: PaymentType, depositType: DepositType) =>
+        paymentType === PaymentType.Deposit &&
+        depositType === DepositType.FixedAmount,
+      then: (schema) => schema.required("Required").positive("Required"),
+    }),
+  depositPercent: yup
+    .number()
+    .nullable()
+    .when(["paymentType", "depositType"], {
+      is: (paymentType: PaymentType, depositType: DepositType) =>
+        paymentType === PaymentType.Deposit &&
+        depositType === DepositType.Percent,
+      then: (schema) =>
+        schema.required("Required").positive("Required").integer(),
+    }),
 });
 
 export const initialValues = {
   paymentType: PaymentType.None,
   depositType: DepositType.FixedAmount,
-  depositPerPerson: undefined,
-  depositFixedAmount: undefined,
-  depositPercent: undefined,
+  depositPerPerson: null,
+  depositFixedAmount: null,
+  depositPercent: null,
 };
 const PaymentForm = ({ formik }: Props) => {
   const paymentOptions = [

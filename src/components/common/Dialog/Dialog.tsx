@@ -1,7 +1,8 @@
 import { Close, EditOutlined } from "@mui/icons-material";
 import {
   Button,
-  Dialog,
+  ButtonProps,
+  Dialog as MuiDialog,
   DialogActions,
   DialogContent,
   DialogProps,
@@ -13,15 +14,17 @@ import {
 interface Props {
   title: string;
   children: React.ReactNode;
+  actions: ButtonProps[];
 }
 
-const BasicDialog = ({
+const Dialog = ({
   title,
   children,
   onClose,
+  actions,
   open,
 }: Props & DialogProps) => (
-  <Dialog maxWidth="lg" onClose={onClose} open={open}>
+  <MuiDialog maxWidth="lg" onClose={onClose} open={open}>
     <DialogTitle>
       {title}
       <IconButton
@@ -37,8 +40,12 @@ const BasicDialog = ({
       </IconButton>
     </DialogTitle>
     <DialogContent dividers>{children}</DialogContent>
-    {/* <DialogActions>
-      <Button variant="contained">Save</Button>
-    </DialogActions> */}
-  </Dialog>
+    <DialogActions>
+      {actions.map((action, index) => (
+        <Button key={index} {...action} />
+      ))}
+    </DialogActions>
+  </MuiDialog>
 );
+
+export default Dialog;

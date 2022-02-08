@@ -1,6 +1,8 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
+import { Box, CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CreateOfferingForm from "./components/CreateExperienceForm/CreateOfferingForm";
+import OfferingDetailsForm from "./components/CreateExperienceForm/OfferingDetailsForm";
 import Layout from "./components/Layout";
 import Bookings from "./pages/Bookings";
 import Calendar from "./pages/Calendar";
@@ -30,6 +32,22 @@ const App = () => (
               <Route path="bookings" element={<Bookings />} />
               <Route path="customers" element={<Customers />} />
               <Route path="experiences" element={<Experiences />} />
+              <Route
+                path="experiences/new"
+                element={
+                  <Box mx="auto" maxWidth="960px">
+                    <CreateOfferingForm />
+                  </Box>
+                }
+              />
+              <Route
+                path="experiences/:id"
+                element={
+                  <Box mx="auto" maxWidth="960px">
+                    <OfferingDetailsForm />
+                  </Box>
+                }
+              />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

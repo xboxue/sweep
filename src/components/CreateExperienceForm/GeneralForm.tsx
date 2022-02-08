@@ -12,7 +12,7 @@ export const validationSchema = yup.object({
 });
 
 export const initialValues = {
-  name: undefined,
+  name: "",
   description: "",
 };
 

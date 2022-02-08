@@ -7,9 +7,15 @@ interface Props {
 }
 
 export const validationSchema = yup.object({
-  minGuests: yup.number().required("Required").positive("Required").integer(),
+  minGuests: yup
+    .number()
+    .nullable()
+    .required("Required")
+    .positive("Required")
+    .integer(),
   maxGuests: yup
     .number()
+    .nullable()
     .required("Required")
     .positive("Required")
     .integer()
@@ -17,8 +23,8 @@ export const validationSchema = yup.object({
 });
 
 export const initialValues = {
-  minGuests: undefined,
-  maxGuests: undefined,
+  minGuests: null,
+  maxGuests: null,
 };
 
 const CapacityForm = ({ formik }: Props) => {

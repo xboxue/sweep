@@ -30,10 +30,11 @@ const StyledInput = styled(InputBase)(({ theme }) => ({
       "background-color",
       "box-shadow",
     ]),
-    "&:focus": {
-      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      borderColor: theme.palette.primary.main,
-    },
+  },
+  "&.Mui-focused": {
+    borderRadius: 4,
+    boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+    borderColor: theme.palette.primary.main,
   },
 }));
 

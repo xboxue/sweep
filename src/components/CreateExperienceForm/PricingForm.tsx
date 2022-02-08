@@ -12,20 +12,26 @@ interface Props {
 
 export const validationSchema = yup.object({
   pricingType: yup.string(),
-  pricePerPerson: yup.number().when("pricingType", {
-    is: PricingType.PerPerson,
-    then: yup.number().required("Required"),
-  }),
-  priceTotalAmount: yup.number().when("pricingType", {
-    is: PricingType.TotalAmount,
-    then: yup.number().required("Required"),
-  }),
+  pricePerPerson: yup
+    .number()
+    .nullable()
+    .when("pricingType", {
+      is: PricingType.PerPerson,
+      then: (schema) => schema.required("Required"),
+    }),
+  priceTotalAmount: yup
+    .number()
+    .nullable()
+    .when("pricingType", {
+      is: PricingType.TotalAmount,
+      then: (schema) => schema.required("Required"),
+    }),
 });
 
 export const initialValues = {
   pricingType: PricingType.PerPerson,
-  pricePerPerson: undefined,
-  priceTotalAmount: undefined,
+  pricePerPerson: null,
+  priceTotalAmount: null,
 };
 
 const PricingForm = ({ formik }: Props) => {

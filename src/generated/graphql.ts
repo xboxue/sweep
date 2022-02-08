@@ -50,11 +50,6 @@ export type Business = {
   photoUrls?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
-
-export type BusinessOfferingsArgs = {
-  numGuests?: InputMaybe<Scalars['Int']>;
-};
-
 export type CreateBookingInput = {
   numGuests: Scalars['Int'];
   offeringId: Scalars['ID'];
@@ -66,26 +61,6 @@ export type CreateBookingInput = {
 export type CreateBookingPayload = {
   __typename?: 'CreateBookingPayload';
   booking?: Maybe<Booking>;
-};
-
-export type CreateOfferingInput = {
-  depositFixedAmount?: InputMaybe<Scalars['Int']>;
-  depositPerPerson?: InputMaybe<Scalars['Int']>;
-  depositPercent?: InputMaybe<Scalars['Int']>;
-  depositType?: InputMaybe<DepositType>;
-  description?: InputMaybe<Scalars['String']>;
-  duration: Scalars['Int'];
-  maxAdvance: Scalars['Int'];
-  maxAdvanceFormat: MaxAdvanceFormat;
-  maxGuests: Scalars['Int'];
-  minAdvance: Scalars['Int'];
-  minAdvanceFormat: MinAdvanceFormat;
-  minGuests: Scalars['Int'];
-  name: Scalars['String'];
-  paymentType: PaymentType;
-  pricePerPerson?: InputMaybe<Scalars['Int']>;
-  priceTotalAmount?: InputMaybe<Scalars['Int']>;
-  pricingType: PricingType;
 };
 
 export type CreateOfferingPayload = {
@@ -132,6 +107,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createBooking: CreateBookingPayload;
   createOffering: CreateOfferingPayload;
+  updateOffering: UpdateOfferingPayload;
 };
 
 
@@ -141,7 +117,12 @@ export type MutationCreateBookingArgs = {
 
 
 export type MutationCreateOfferingArgs = {
-  input: CreateOfferingInput;
+  input: OfferingInput;
+};
+
+
+export type MutationUpdateOfferingArgs = {
+  input: OfferingInput;
 };
 
 export type Offering = {
@@ -167,6 +148,7 @@ export type Offering = {
   pricePerPerson?: Maybe<Scalars['Int']>;
   priceTotalAmount?: Maybe<Scalars['Int']>;
   pricingType: PricingType;
+  status: OfferingStatus;
 };
 
 
@@ -174,6 +156,34 @@ export type OfferingAvailableTimesArgs = {
   dateTime: Scalars['DateTime'];
   numGuests?: InputMaybe<Scalars['Int']>;
 };
+
+export type OfferingInput = {
+  depositFixedAmount?: InputMaybe<Scalars['Int']>;
+  depositPerPerson?: InputMaybe<Scalars['Int']>;
+  depositPercent?: InputMaybe<Scalars['Int']>;
+  depositType?: InputMaybe<DepositType>;
+  description?: InputMaybe<Scalars['String']>;
+  duration: Scalars['Int'];
+  id?: InputMaybe<Scalars['ID']>;
+  maxAdvance: Scalars['Int'];
+  maxAdvanceFormat: MaxAdvanceFormat;
+  maxGuests: Scalars['Int'];
+  minAdvance: Scalars['Int'];
+  minAdvanceFormat: MinAdvanceFormat;
+  minGuests: Scalars['Int'];
+  name: Scalars['String'];
+  paymentType: PaymentType;
+  pricePerPerson?: InputMaybe<Scalars['Int']>;
+  priceTotalAmount?: InputMaybe<Scalars['Int']>;
+  pricingType: PricingType;
+  status: OfferingStatus;
+};
+
+export enum OfferingStatus {
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED',
+  Draft = 'DRAFT'
+}
 
 export enum PaymentStatus {
   Failed = 'FAILED',
@@ -243,9 +253,9 @@ export type TimeSlot = {
   startTime: Scalars['String'];
 };
 
-export type TimeSlotInput = {
-  day: Scalars['Int'];
-  startTime: Scalars['String'];
+export type UpdateOfferingPayload = {
+  __typename?: 'UpdateOfferingPayload';
+  offering?: Maybe<Offering>;
 };
 
 export type User = {
@@ -258,15 +268,36 @@ export type User = {
 };
 
 export type CreateOfferingMutationVariables = Exact<{
-  input: CreateOfferingInput;
+  input: OfferingInput;
 }>;
 
 
 export type CreateOfferingMutation = { __typename?: 'Mutation', createOffering: { __typename?: 'CreateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
 
+export type UpdateOfferingMutationVariables = Exact<{
+  input: OfferingInput;
+}>;
+
+
+export type UpdateOfferingMutation = { __typename?: 'Mutation', updateOffering: { __typename?: 'UpdateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
+
+export type GetOfferingQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat } };
+
+export type GetOfferingsQueryVariables = Exact<{
+  businessId: Scalars['ID'];
+}>;
+
+
+export type GetOfferingsQuery = { __typename?: 'Query', business: { __typename?: 'Business', id: string, name: string, description: string, email: string, phoneNumber: string, address: string, photoUrls?: Array<string | null> | null, offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat }> } };
+
 
 export const CreateOfferingDocument = gql`
-    mutation createOffering($input: CreateOfferingInput!) {
+    mutation createOffering($input: OfferingInput!) {
   createOffering(input: $input) {
     offering {
       id
@@ -300,3 +331,153 @@ export function useCreateOfferingMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateOfferingMutationHookResult = ReturnType<typeof useCreateOfferingMutation>;
 export type CreateOfferingMutationResult = Apollo.MutationResult<CreateOfferingMutation>;
 export type CreateOfferingMutationOptions = Apollo.BaseMutationOptions<CreateOfferingMutation, CreateOfferingMutationVariables>;
+export const UpdateOfferingDocument = gql`
+    mutation updateOffering($input: OfferingInput!) {
+  updateOffering(input: $input) {
+    offering {
+      id
+    }
+  }
+}
+    `;
+export type UpdateOfferingMutationFn = Apollo.MutationFunction<UpdateOfferingMutation, UpdateOfferingMutationVariables>;
+
+/**
+ * __useUpdateOfferingMutation__
+ *
+ * To run a mutation, you first call `useUpdateOfferingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOfferingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOfferingMutation, { data, loading, error }] = useUpdateOfferingMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateOfferingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOfferingMutation, UpdateOfferingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOfferingMutation, UpdateOfferingMutationVariables>(UpdateOfferingDocument, options);
+      }
+export type UpdateOfferingMutationHookResult = ReturnType<typeof useUpdateOfferingMutation>;
+export type UpdateOfferingMutationResult = Apollo.MutationResult<UpdateOfferingMutation>;
+export type UpdateOfferingMutationOptions = Apollo.BaseMutationOptions<UpdateOfferingMutation, UpdateOfferingMutationVariables>;
+export const GetOfferingDocument = gql`
+    query getOffering($id: ID!) {
+  offering(id: $id) {
+    id
+    name
+    status
+    minGuests
+    maxGuests
+    description
+    pricingType
+    pricePerPerson
+    priceTotalAmount
+    paymentType
+    depositType
+    depositPerPerson
+    depositFixedAmount
+    depositPercent
+    duration
+    maxAdvance
+    maxAdvanceFormat
+    minAdvance
+    minAdvanceFormat
+  }
+}
+    `;
+
+/**
+ * __useGetOfferingQuery__
+ *
+ * To run a query within a React component, call `useGetOfferingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOfferingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOfferingQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetOfferingQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingQuery, GetOfferingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOfferingQuery, GetOfferingQueryVariables>(GetOfferingDocument, options);
+      }
+export function useGetOfferingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferingQuery, GetOfferingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOfferingQuery, GetOfferingQueryVariables>(GetOfferingDocument, options);
+        }
+export type GetOfferingQueryHookResult = ReturnType<typeof useGetOfferingQuery>;
+export type GetOfferingLazyQueryHookResult = ReturnType<typeof useGetOfferingLazyQuery>;
+export type GetOfferingQueryResult = Apollo.QueryResult<GetOfferingQuery, GetOfferingQueryVariables>;
+export const GetOfferingsDocument = gql`
+    query getOfferings($businessId: ID!) {
+  business(id: $businessId) {
+    id
+    name
+    description
+    email
+    phoneNumber
+    address
+    photoUrls
+    offerings {
+      id
+      name
+      status
+      minGuests
+      maxGuests
+      description
+      pricingType
+      pricePerPerson
+      priceTotalAmount
+      paymentType
+      depositType
+      depositPerPerson
+      depositFixedAmount
+      depositPercent
+      duration
+      maxAdvance
+      maxAdvanceFormat
+      minAdvance
+      minAdvanceFormat
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOfferingsQuery__
+ *
+ * To run a query within a React component, call `useGetOfferingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOfferingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOfferingsQuery({
+ *   variables: {
+ *      businessId: // value for 'businessId'
+ *   },
+ * });
+ */
+export function useGetOfferingsQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingsQuery, GetOfferingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOfferingsQuery, GetOfferingsQueryVariables>(GetOfferingsDocument, options);
+      }
+export function useGetOfferingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferingsQuery, GetOfferingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOfferingsQuery, GetOfferingsQueryVariables>(GetOfferingsDocument, options);
+        }
+export type GetOfferingsQueryHookResult = ReturnType<typeof useGetOfferingsQuery>;
+export type GetOfferingsLazyQueryHookResult = ReturnType<typeof useGetOfferingsLazyQuery>;
+export type GetOfferingsQueryResult = Apollo.QueryResult<GetOfferingsQuery, GetOfferingsQueryVariables>;

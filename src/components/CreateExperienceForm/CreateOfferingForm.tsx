@@ -1,54 +1,44 @@
-import {
-  AssignmentOutlined,
-  CalendarTodayOutlined,
-  CreditCardOutlined,
-  ImageOutlined,
-  LocalOfferOutlined,
-  PeopleOutline,
-} from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import {
-  Alert,
-  AppBar,
-  Box,
-  Button,
-  Divider,
-  Stack,
-  Toolbar,
-} from "@mui/material";
+import { Alert, AppBar, Box, Button, Toolbar } from "@mui/material";
 import { useFormik } from "formik";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   DurationFormat,
+  OfferingStatus,
   useCreateOfferingMutation,
 } from "../../generated/graphql";
-import Dropzone from "../common/Dropzone/Dropzone";
-import CapacityForm, {
+import Dialog from "../common/Dialog/Dialog";
+import {
   initialValues as capacityInitialValues,
   validationSchema as capacityValidationSchema,
 } from "./CapacityForm";
-import GeneralForm, {
+import {
   initialValues as generalInitialValues,
   validationSchema as generalValidationSchema,
 } from "./GeneralForm";
-import PaymentForm, {
+import OfferingForm from "./OfferingForm";
+import {
   initialValues as paymentInitialValues,
   validationSchema as paymentValidationSchema,
 } from "./PaymentForm";
-import PricingForm, {
+import {
   initialValues as pricingInitialValues,
   validationSchema as pricingValidationSchema,
 } from "./PricingForm";
-import ScheduleForm, {
+import {
   initialValues as scheduleInitialValues,
   validationSchema as scheduleValidationSchema,
 } from "./ScheduleForm";
-import SettingsSection from "./SettingsSection";
 
 const CreateOfferingForm = () => {
   const [createOffering, { loading, error }] = useCreateOfferingMutation();
+  const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
+      status: OfferingStatus.Draft,
       ...capacityInitialValues,
       ...generalInitialValues,
       ...paymentInitialValues,
@@ -72,7 +62,7 @@ const CreateOfferingForm = () => {
       ...rest
     }) => {
       try {
-        await createOffering({
+        const { data } = await createOffering({
           variables: {
             input: {
               duration:
@@ -88,75 +78,47 @@ const CreateOfferingForm = () => {
             } as any,
           },
         });
+        navigate(`/experiences/${data?.createOffering.offering?.id}`);
       } catch (error) {}
     },
   });
 
-  const sections = [
-    {
-      title: "General",
-      description: "Basic information about your activity.",
-      Icon: AssignmentOutlined,
-      Component: GeneralForm,
-    },
-
-    {
-      title: "Capacity",
-      description: "Manage how people can participate in your activity.",
-      Icon: PeopleOutline,
-      Component: CapacityForm,
-    },
-    {
-      title: "Media",
-      description: "Upload images to show off your activity.",
-      Icon: ImageOutlined,
-      Component: Dropzone,
-    },
-
-    {
-      title: "Pricing",
-      description: "Manage pricing of your activity.",
-      Icon: LocalOfferOutlined,
-      Component: PricingForm,
-    },
-
-    {
-      title: "Schedule",
-      description: "Manage your activity schedule.",
-      Icon: CalendarTodayOutlined,
-      Component: ScheduleForm,
-    },
-
-    {
-      title: "Payment and Deposit",
-      description: "Manage payments and deposits for your activity.",
-      Icon: CreditCardOutlined,
-      Component: PaymentForm,
-    },
-  ];
-
   return (
-    <>
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          Oops, something went wrong. Please try again.
-        </Alert>
-      )}
-      <Stack spacing={4} sx={{ pb: 5 }}>
-        {sections.map(({ title, Icon, Component, description }, index) => (
-          <Box key={title}>
-            {index > 0 && <Divider sx={{ mb: 4 }} />}
-            <SettingsSection
-              title={title}
-              Icon={Icon}
-              description={description}
-            >
-              <Component formik={formik} />
-            </SettingsSection>
-          </Box>
-        ))}
-      </Stack>
-
+    <Box component="form" onSubmit={formik.handleSubmit}>
+      {/* <Dialog
+        open={discardDialogOpen}
+        title="Discard all unsaved changes"
+        onClose={() => setDiscardDialogOpen(false)}
+        actions={[
+          {
+            children: "Continue editing",
+            onClick: () => setDiscardDialogOpen(false),
+          },
+          {
+            children: "Discard changes",
+            variant: "contained",
+            onClick: () => {
+              formik.resetForm();
+              navigate("/experiences");
+              setDiscardDialogOpen(false);
+            },
+          },
+        ]}
+      >
+        If you discard changes, you’ll delete any edits you made since you last
+        saved.
+      </Dialog> */}
+      <OfferingForm
+        title="Add experience"
+        error={
+          error ? (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              Oops, something went wrong. Please try again.
+            </Alert>
+          ) : undefined
+        }
+        formik={formik}
+      />
       <AppBar
         position="fixed"
         sx={{
@@ -166,19 +128,16 @@ const CreateOfferingForm = () => {
         }}
       >
         <Toolbar>
-          <Button sx={{ ml: "auto" }}>Discard</Button>
-          <LoadingButton
-            loading={loading}
-            loadingPosition="start"
-            variant="contained"
-            onClick={() => formik.handleSubmit()}
-          >
+          <Button sx={{ ml: "auto" }} onClick={() => navigate("/experiences")}>
+            Discard
+          </Button>
+          <LoadingButton loading={loading} variant="contained" type="submit">
             Save
           </LoadingButton>
         </Toolbar>
       </AppBar>
       <Toolbar />
-    </>
+    </Box>
   );
 };
 

@@ -22,7 +22,7 @@ const FormikTextField = ({
   const { min = 0, max, integer = false } = numberOptions;
 
   const numberProps: TextFieldProps = {
-    inputProps: { min, max },
+    inputProps: { min, max, step: integer ? undefined : "any" },
     onKeyPress: (event) => {
       if (
         (min >= 0 && event.key === "-") ||
@@ -53,7 +53,7 @@ const FormikTextField = ({
       type={type}
       id={field}
       name={field}
-      value={formik.values[field]}
+      value={formik.values[field] ?? ""}
       onChange={(event) => {
         if (formik.errors[field]) formik.setFieldError(field, undefined);
         formik.handleChange(event);

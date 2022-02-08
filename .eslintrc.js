@@ -38,6 +38,7 @@ module.exports = {
     "arrow-body-style": "off",
     "react/no-array-index-key": "off",
     "react/require-default-props": "off",
+    "no-shadow": "off",
   },
   overrides: [
     {
