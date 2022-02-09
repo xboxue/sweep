@@ -22,6 +22,12 @@ const GET_OFFERING = gql`
       maxAdvanceFormat
       minAdvance
       minAdvanceFormat
+      schedule {
+        timeSlots {
+          startTime
+          day
+        }
+      }
     }
   }
 `;

@@ -1,6 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import { Alert, AppBar, Box, Button, Toolbar } from "@mui/material";
 import { useFormik } from "formik";
+import { DateTime } from "luxon";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -59,8 +60,21 @@ const CreateOfferingForm = () => {
       priceTotalAmount,
       depositFixedAmount,
       depositPerPerson,
+      schedule,
       ...rest
     }) => {
+      const scheduleInput = {
+        timeSlots: Object.entries(schedule)
+          .map(([day, times]) =>
+            times.map((time) => ({
+              startTime: DateTime.fromFormat(time, "h:mm a").toFormat(
+                "HH:mm:ss"
+              ),
+              day: parseInt(day, 10),
+            }))
+          )
+          .flat(),
+      };
       try {
         const { data } = await createOffering({
           variables: {
@@ -74,11 +88,15 @@ const CreateOfferingForm = () => {
               depositFixedAmount:
                 depositFixedAmount && depositFixedAmount * 100,
               depositPerPerson: depositPerPerson && depositPerPerson * 100,
+              schedule: scheduleInput,
               ...rest,
             } as any,
           },
         });
-        navigate(`/experiences/${data?.createOffering.offering?.id}`);
+        formik.resetForm();
+        navigate(`/experiences/${data?.createOffering.offering?.id}`, {
+          replace: true,
+        });
       } catch (error) {}
     },
   });

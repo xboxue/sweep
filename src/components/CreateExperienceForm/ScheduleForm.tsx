@@ -20,6 +20,15 @@ export const initialValues = {
   minAdvanceFormat: MinAdvanceFormat.Day,
   maxAdvance: 6,
   maxAdvanceFormat: MaxAdvanceFormat.Month,
+  schedule: {
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+  },
 };
 
 export const validationSchema = yup.object({
@@ -184,6 +193,8 @@ const ScheduleForm = ({ formik }: Props) => {
               ? formik.values.durationMinutes
               : formik.values.durationHours * 60 + formik.values.durationMinutes
           }
+          schedule={formik.values.schedule}
+          setSchedule={(schedule) => formik.setFieldValue("schedule", schedule)}
         />
       </Box>
     </Stack>

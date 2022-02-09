@@ -148,6 +148,7 @@ export type Offering = {
   pricePerPerson?: Maybe<Scalars['Int']>;
   priceTotalAmount?: Maybe<Scalars['Int']>;
   pricingType: PricingType;
+  schedule: Schedule;
   status: OfferingStatus;
 };
 
@@ -176,6 +177,7 @@ export type OfferingInput = {
   pricePerPerson?: InputMaybe<Scalars['Int']>;
   priceTotalAmount?: InputMaybe<Scalars['Int']>;
   pricingType: PricingType;
+  schedule: ScheduleInput;
   status: OfferingStatus;
 };
 
@@ -241,16 +243,32 @@ export type QueryOfferingArgs = {
   id: Scalars['ID'];
 };
 
+export type Schedule = {
+  __typename?: 'Schedule';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  timeSlots: Array<ScheduleTimeSlot>;
+};
+
+export type ScheduleInput = {
+  timeSlots: Array<ScheduleTimeSlotInput>;
+};
+
+export type ScheduleTimeSlot = {
+  __typename?: 'ScheduleTimeSlot';
+  day: Scalars['Int'];
+  startTime: Scalars['String'];
+};
+
+export type ScheduleTimeSlotInput = {
+  day: Scalars['Int'];
+  startTime: Scalars['String'];
+};
+
 export type StripePaymentIntent = {
   __typename?: 'StripePaymentIntent';
   clientSecret: Scalars['String'];
   id: Scalars['ID'];
-};
-
-export type TimeSlot = {
-  __typename?: 'TimeSlot';
-  endTime: Scalars['String'];
-  startTime: Scalars['String'];
 };
 
 export type UpdateOfferingPayload = {
@@ -286,7 +304,7 @@ export type GetOfferingQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat } };
+export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, schedule: { __typename?: 'Schedule', timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', startTime: string, day: number }> } } };
 
 export type GetOfferingsQueryVariables = Exact<{
   businessId: Scalars['ID'];
@@ -388,6 +406,12 @@ export const GetOfferingDocument = gql`
     maxAdvanceFormat
     minAdvance
     minAdvanceFormat
+    schedule {
+      timeSlots {
+        startTime
+        day
+      }
+    }
   }
 }
     `;

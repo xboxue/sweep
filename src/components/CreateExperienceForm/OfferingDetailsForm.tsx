@@ -1,6 +1,8 @@
 import { LoadingButton } from "@mui/lab";
 import { Alert, AppBar, Box, Button, Skeleton, Toolbar } from "@mui/material";
 import { Formik } from "formik";
+import { sortBy, groupBy } from "lodash";
+import { DateTime } from "luxon";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -14,7 +16,10 @@ import { validationSchema as generalValidationSchema } from "./GeneralForm";
 import OfferingForm from "./OfferingForm";
 import { validationSchema as paymentValidationSchema } from "./PaymentForm";
 import { validationSchema as pricingValidationSchema } from "./PricingForm";
-import { validationSchema as scheduleValidationSchema } from "./ScheduleForm";
+import {
+  validationSchema as scheduleValidationSchema,
+  initialValues as scheduleInitialValues,
+} from "./ScheduleForm";
 
 const OfferingDetailsForm = () => {
   const params = useParams();
@@ -37,6 +42,7 @@ const OfferingDetailsForm = () => {
     priceTotalAmount,
     depositFixedAmount,
     depositPerPerson,
+    schedule,
     ...rest
   } = data.offering;
 
@@ -49,6 +55,19 @@ const OfferingDetailsForm = () => {
     priceTotalAmount: priceTotalAmount && priceTotalAmount / 100,
     depositFixedAmount: depositFixedAmount && depositFixedAmount / 100,
     depositPerPerson: depositPerPerson && depositPerPerson / 100,
+    schedule: {
+      ...scheduleInitialValues.schedule,
+      ...Object.fromEntries(
+        Object.entries(groupBy(schedule.timeSlots, "day")).map(
+          ([day, timeSlots]) => [
+            day,
+            sortBy(timeSlots, "startTime").map((slot) =>
+              DateTime.fromFormat(slot.startTime, "HH:mm:ss").toFormat("h:mm a")
+            ),
+          ]
+        )
+      ),
+    },
     ...rest,
   };
 
@@ -72,9 +91,22 @@ const OfferingDetailsForm = () => {
         priceTotalAmount,
         depositFixedAmount,
         depositPerPerson,
+        schedule,
         ...rest
       }) => {
         try {
+          const scheduleInput = {
+            timeSlots: Object.entries(schedule)
+              .map(([day, times]) =>
+                times.map((time) => ({
+                  startTime: DateTime.fromFormat(time, "h:mm a").toFormat(
+                    "HH:mm:ss"
+                  ),
+                  day: parseInt(day, 10),
+                }))
+              )
+              .flat(),
+          };
           await updateOffering({
             variables: {
               input: {
@@ -88,6 +120,7 @@ const OfferingDetailsForm = () => {
                 depositFixedAmount:
                   depositFixedAmount && depositFixedAmount * 100,
                 depositPerPerson: depositPerPerson && depositPerPerson * 100,
+                schedule: scheduleInput,
                 ...rest,
               } as any,
             },

@@ -5,21 +5,23 @@ import ScheduleBuilderColumn from "./ScheduleBuilderColumn";
 
 const TIME_SLOT_INTERVAL = 15;
 
-const ScheduleBuilder = ({ duration }: { duration: number }) => {
-  const [schedule, setSchedule] = useState({
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    6: [],
-  });
+type Schedule = {
+  0: string[];
+  1: string[];
+  2: string[];
+  3: string[];
+  4: string[];
+  5: string[];
+  6: string[];
+};
+interface Props {
+  duration: number;
+  schedule: Schedule;
+  setSchedule: (schedule: Schedule) => void;
+}
 
-  const handleCopy = (
-    from: keyof typeof schedule,
-    to: (keyof typeof schedule)[]
-  ) => {
+const ScheduleBuilder = ({ duration, schedule, setSchedule }: Props) => {
+  const handleCopy = (from: keyof Schedule, to: (keyof Schedule)[]) => {
     setSchedule({
       ...schedule,
       ...to.reduce((acc, day) => {
@@ -29,18 +31,14 @@ const ScheduleBuilder = ({ duration }: { duration: number }) => {
     });
   };
 
-  const handleDelete = (day: keyof typeof schedule, index: number) => {
+  const handleDelete = (day: keyof Schedule, index: number) => {
     setSchedule({
       ...schedule,
       [day]: schedule[day].filter((_, i) => index !== i),
     });
   };
 
-  const handleChange = (
-    day: keyof typeof schedule,
-    index: number,
-    value: string
-  ) => {
+  const handleChange = (day: keyof Schedule, index: number, value: string) => {
     const newTimeSlots = [...schedule[day]];
     newTimeSlots[index] = value;
 
@@ -50,7 +48,7 @@ const ScheduleBuilder = ({ duration }: { duration: number }) => {
     });
   };
 
-  const handleAdd = (day: keyof typeof schedule) => {
+  const handleAdd = (day: keyof Schedule) => {
     const lastTimeSlot = schedule[day][schedule[day].length - 1];
     const remainder = duration % TIME_SLOT_INTERVAL;
     const newTimeSlot = lastTimeSlot
