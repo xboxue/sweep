@@ -14,7 +14,7 @@ import {
 interface Props {
   title: string;
   children: React.ReactNode;
-  actions: ButtonProps[];
+  actions?: ButtonProps[];
 }
 
 const Dialog = ({
@@ -40,11 +40,13 @@ const Dialog = ({
       </IconButton>
     </DialogTitle>
     <DialogContent dividers>{children}</DialogContent>
-    <DialogActions>
-      {actions.map((action, index) => (
-        <Button key={index} {...action} />
-      ))}
-    </DialogActions>
+    {actions && (
+      <DialogActions>
+        {actions.map((action, index) => (
+          <Button key={index} {...action} />
+        ))}
+      </DialogActions>
+    )}
   </MuiDialog>
 );
 

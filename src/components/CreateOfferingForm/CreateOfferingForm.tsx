@@ -9,7 +9,9 @@ import {
   OfferingStatus,
   useCreateOfferingMutation,
 } from "../../generated/graphql";
+import { usePrompt } from "../../hooks/usePrompt";
 import Dialog from "../common/Dialog/Dialog";
+import SaveBar from "../common/SaveBar/SaveBar";
 import {
   initialValues as capacityInitialValues,
   validationSchema as capacityValidationSchema,
@@ -93,13 +95,17 @@ const CreateOfferingForm = () => {
             } as any,
           },
         });
-        formik.resetForm();
         navigate(`/experiences/${data?.createOffering.offering?.id}`, {
           replace: true,
         });
       } catch (error) {}
     },
   });
+
+  usePrompt(
+    "If you leave this page, any unsaved changes will be lost.",
+    formik.dirty && !formik.isSubmitting
+  );
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>
@@ -137,24 +143,7 @@ const CreateOfferingForm = () => {
         }
         formik={formik}
       />
-      <AppBar
-        position="fixed"
-        sx={{
-          top: "auto",
-          bottom: 0,
-          bgcolor: (theme) => theme.palette.background.paper,
-        }}
-      >
-        <Toolbar>
-          <Button sx={{ ml: "auto" }} onClick={() => navigate("/experiences")}>
-            Discard
-          </Button>
-          <LoadingButton loading={loading} variant="contained" type="submit">
-            Save
-          </LoadingButton>
-        </Toolbar>
-      </AppBar>
-      <Toolbar />
+      <SaveBar onDiscard={() => navigate("/experiences")} loading={loading} />
     </Box>
   );
 };

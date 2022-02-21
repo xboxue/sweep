@@ -1,14 +1,14 @@
 import { SvgIconComponent } from "@mui/icons-material";
 import { Avatar, Box, Divider, Typography } from "@mui/material";
 
-interface Props {
+export interface Props {
   title: string;
   description: string;
   children: React.ReactNode;
   Icon: SvgIconComponent;
 }
 
-const SettingsSection = ({ title, description, children, Icon }: Props) => {
+const FormSection = ({ title, description, children, Icon }: Props) => {
   return (
     <>
       <Box sx={{ display: "flex", mb: 2 }}>
@@ -30,4 +30,4 @@ const SettingsSection = ({ title, description, children, Icon }: Props) => {
   );
 };
 
-export default SettingsSection;
+export default FormSection;

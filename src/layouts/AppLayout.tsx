@@ -20,8 +20,8 @@ const items = [
     to: "/calendar",
   },
   {
-    title: "Bookings",
-    to: "/bookings",
+    title: "Draft Orders",
+    to: "/draft-orders",
   },
   {
     title: "Customers",
@@ -33,11 +33,11 @@ const items = [
   },
 ];
 
-const Layout = () => (
+const AppLayout = () => (
   <Box sx={{ display: "flex" }}>
     <AppBar
       position="fixed"
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      // sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
       <Toolbar>
         <Typography variant="h6" noWrap component="div">
@@ -51,6 +51,7 @@ const Layout = () => (
         width: 240,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: { width: 240, boxSizing: "border-box" },
+        zIndex: (theme) => theme.zIndex.appBar - 1,
       }}
     >
       <Toolbar />
@@ -71,4 +72,4 @@ const Layout = () => (
   </Box>
 );
 
-export default Layout;
+export default AppLayout;

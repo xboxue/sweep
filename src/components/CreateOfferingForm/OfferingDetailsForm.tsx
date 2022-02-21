@@ -1,7 +1,6 @@
-import { LoadingButton } from "@mui/lab";
-import { Alert, AppBar, Box, Button, Skeleton, Toolbar } from "@mui/material";
+import { Alert, Box, Skeleton } from "@mui/material";
 import { Formik } from "formik";
-import { sortBy, groupBy } from "lodash";
+import { groupBy, sortBy } from "lodash";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -11,14 +10,17 @@ import {
   useUpdateOfferingMutation,
 } from "../../generated/graphql";
 import Dialog from "../common/Dialog/Dialog";
+import FormDiscardDialog from "../common/FormDiscardDialog/FormDiscardDialog";
+import NavigationBlocker from "../common/NavigationBlocker/NavigationBlocker";
+import SaveBar from "../common/SaveBar/SaveBar";
 import { validationSchema as capacityValidationSchema } from "./CapacityForm";
 import { validationSchema as generalValidationSchema } from "./GeneralForm";
 import OfferingForm from "./OfferingForm";
 import { validationSchema as paymentValidationSchema } from "./PaymentForm";
 import { validationSchema as pricingValidationSchema } from "./PricingForm";
 import {
-  validationSchema as scheduleValidationSchema,
   initialValues as scheduleInitialValues,
+  validationSchema as scheduleValidationSchema,
 } from "./ScheduleForm";
 
 const OfferingDetailsForm = () => {
@@ -83,17 +85,19 @@ const OfferingDetailsForm = () => {
       validationSchema={validationSchema}
       validateOnChange={false}
       enableReinitialize
-      onSubmit={async ({
-        durationMinutes,
-        durationHours,
-        durationFormat,
-        pricePerPerson,
-        priceTotalAmount,
-        depositFixedAmount,
-        depositPerPerson,
-        schedule,
-        ...rest
-      }) => {
+      onSubmit={async (values) => {
+        const {
+          durationMinutes,
+          durationHours,
+          durationFormat,
+          pricePerPerson,
+          priceTotalAmount,
+          depositFixedAmount,
+          depositPerPerson,
+          schedule,
+          ...rest
+        } = values;
+
         try {
           const scheduleInput = {
             timeSlots: Object.entries(schedule)
@@ -133,28 +137,18 @@ const OfferingDetailsForm = () => {
     >
       {(formik) => (
         <Box component="form" onSubmit={formik.handleSubmit}>
-          <Dialog
+          <NavigationBlocker
+            message="If you leave this page, any unsaved changes will be lost."
+            when={formik.dirty}
+          />
+          <FormDiscardDialog
             open={discardDialogOpen}
-            title="Discard all unsaved changes"
             onClose={() => setDiscardDialogOpen(false)}
-            actions={[
-              {
-                children: "Continue editing",
-                onClick: () => setDiscardDialogOpen(false),
-              },
-              {
-                children: "Discard changes",
-                variant: "contained",
-                onClick: () => {
-                  formik.resetForm();
-                  setDiscardDialogOpen(false);
-                },
-              },
-            ]}
-          >
-            If you discard changes, you’ll delete any edits you made since you
-            last saved.
-          </Dialog>
+            onDiscard={() => {
+              formik.resetForm();
+              setDiscardDialogOpen(false);
+            }}
+          />
 
           <OfferingForm
             title={data.offering.name}
@@ -168,33 +162,10 @@ const OfferingDetailsForm = () => {
             formik={formik}
           />
           {formik.dirty && (
-            <>
-              <AppBar
-                position="fixed"
-                sx={{
-                  top: "auto",
-                  bottom: 0,
-                  bgcolor: (theme) => theme.palette.background.paper,
-                }}
-              >
-                <Toolbar>
-                  <Button
-                    onClick={() => setDiscardDialogOpen(true)}
-                    sx={{ ml: "auto" }}
-                  >
-                    Discard
-                  </Button>
-                  <LoadingButton
-                    loading={updating}
-                    variant="contained"
-                    type="submit"
-                  >
-                    Save
-                  </LoadingButton>
-                </Toolbar>
-              </AppBar>
-              <Toolbar />
-            </>
+            <SaveBar
+              onDiscard={() => setDiscardDialogOpen(true)}
+              loading={updating}
+            />
           )}
         </Box>
       )}
