@@ -39,7 +39,7 @@ const Experiences = () => {
               renderCell: (params) => <Chip label={params.value} />,
             },
           ]}
-          sx={{ minHeight: 400 }}
+          autoHeight
           // pageSize={5}
           // rowsPerPageOptions={[5]}
           checkboxSelection

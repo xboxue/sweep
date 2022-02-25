@@ -40,7 +40,7 @@ const DraftOrders = () => {
             //   renderCell: (params) => <Chip label={params.value} />,
             // },
           ]}
-          sx={{ minHeight: 400 }}
+          autoHeight
           // pageSize={5}
           // rowsPerPageOptions={[5]}
           checkboxSelection
@@ -58,14 +58,14 @@ const DraftOrders = () => {
           }}
         >
           <Typography variant="subtitle1">
-            Add and manage your experiences
+            Manually create orders and invoices
           </Typography>
           <Button
             variant="contained"
             sx={{ mt: 1 }}
-            onClick={() => navigate("/experiences/new")}
+            // onClick={() => navigate("/draft-orders/new")}
           >
-            Add experience
+            Create draft order
           </Button>
         </Paper>
       )}
