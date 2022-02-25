@@ -11,7 +11,7 @@ import {
 import FormDiscardDialog from "../common/FormDiscardDialog/FormDiscardDialog";
 import NavigationBlocker from "../common/NavigationBlocker/NavigationBlocker";
 import SaveBar from "../common/SaveBar/SaveBar";
-import BookingForm from "./BookingForm";
+import OrderForm from "./OrderForm";
 
 const OrderDetailsForm = () => {
   const params = useParams();
@@ -38,9 +38,7 @@ const OrderDetailsForm = () => {
       time: DateTime.fromISO(booking.startDateTime).toFormat("HH:mm:ss"),
       numGuests: booking.numGuests,
     })),
-    customer: {
-      //
-    },
+    customerId: data?.draftOrder.customer?.id,
   };
   return (
     <Formik
@@ -53,6 +51,7 @@ const OrderDetailsForm = () => {
             variables: {
               input: {
                 id: params.id,
+                customerId: values.customerId,
                 bookings: values.bookings?.map((booking) => {
                   const startTime = DateTime.fromFormat(
                     booking.time,
@@ -92,9 +91,10 @@ const OrderDetailsForm = () => {
               setDiscardDialogOpen(false);
             }}
           />
-          <BookingForm
+          <OrderForm
             title={`Draft Order #D${params.id}`}
             offerings={offeringsData?.business.offerings}
+            customer={data?.draftOrder.customer}
           />
 
           {formik.dirty && (

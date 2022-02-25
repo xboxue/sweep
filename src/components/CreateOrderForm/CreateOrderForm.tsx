@@ -9,7 +9,7 @@ import {
 import { usePrompt } from "../../hooks/usePrompt";
 import NavigationBlocker from "../common/NavigationBlocker/NavigationBlocker";
 import SaveBar from "../common/SaveBar/SaveBar";
-import BookingForm from "./BookingForm";
+import OrderForm from "./OrderForm";
 
 const CreateOrderForm = () => {
   const { loading, error, data } = useGetOfferingSchedulesQuery({
@@ -40,9 +40,7 @@ const CreateOrderForm = () => {
             },
           ]
         : [],
-    customer: {
-      //
-    },
+    customerId: undefined,
   };
   return (
     <Formik
@@ -53,6 +51,7 @@ const CreateOrderForm = () => {
           const { data } = await createDraftOrder({
             variables: {
               input: {
+                customerId: values.customerId,
                 bookings: values.bookings.map((booking) => {
                   const startTime = DateTime.fromFormat(
                     booking.time,
@@ -86,10 +85,7 @@ const CreateOrderForm = () => {
             message="If you leave this page, any unsaved changes will be lost."
             when={formik.dirty && !formik.isSubmitting}
           />
-          <BookingForm
-            title="Add booking"
-            offerings={data?.business.offerings}
-          />
+          <OrderForm title="Add booking" offerings={data?.business.offerings} />
           <SaveBar onDiscard={() => navigate(-1)} loading={false} />
         </Box>
       )}

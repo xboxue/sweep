@@ -19,6 +19,7 @@ export type Scalars = {
 
 export type Booking = {
   __typename?: 'Booking';
+  customer: Customer;
   endDateTime: Scalars['DateTime'];
   id: Scalars['ID'];
   numGuests: Scalars['Int'];
@@ -27,7 +28,6 @@ export type Booking = {
   price: Price;
   startDateTime: Scalars['DateTime'];
   stripePaymentIntent?: Maybe<StripePaymentIntent>;
-  user: User;
 };
 
 export type BookingIntent = {
@@ -53,13 +53,16 @@ export type CreateBookingInput = {
   numGuests: Scalars['Int'];
   offeringId: Scalars['ID'];
   startDateTime: Scalars['DateTime'];
-  stripePaymentIntentId?: InputMaybe<Scalars['ID']>;
-  user: CreateUserInput;
 };
 
 export type CreateBookingPayload = {
   __typename?: 'CreateBookingPayload';
   booking?: Maybe<Booking>;
+};
+
+export type CreateCustomerPayload = {
+  __typename?: 'CreateCustomerPayload';
+  customer?: Maybe<Customer>;
 };
 
 export type CreateDraftBookingPayload = {
@@ -81,11 +84,22 @@ export type CreateScheduleInput = {
   exampleField?: InputMaybe<Scalars['Int']>;
 };
 
-export type CreateUserInput = {
+export type Customer = {
+  __typename?: 'Customer';
+  createdAt: Scalars['DateTime'];
   email: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  phoneNumber: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type CustomerInput = {
+  email: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
 };
 
 export enum DepositType {
@@ -115,12 +129,14 @@ export type DraftOrder = {
   __typename?: 'DraftOrder';
   bookings: Array<DraftBooking>;
   createdAt: Scalars['DateTime'];
+  customer?: Maybe<Customer>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
 
 export type DraftOrderInput = {
   bookings: Array<DraftBookingInput>;
+  customerId?: InputMaybe<Scalars['ID']>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
@@ -145,6 +161,7 @@ export enum MinAdvanceFormat {
 export type Mutation = {
   __typename?: 'Mutation';
   createBooking: CreateBookingPayload;
+  createCustomer: CreateCustomerPayload;
   createDraftBooking: CreateDraftBookingPayload;
   createDraftOrder: CreateDraftOrderPayload;
   createOffering: CreateOfferingPayload;
@@ -155,6 +172,11 @@ export type Mutation = {
 
 export type MutationCreateBookingArgs = {
   input: CreateBookingInput;
+};
+
+
+export type MutationCreateCustomerArgs = {
+  input: CustomerInput;
 };
 
 
@@ -282,6 +304,8 @@ export type Query = {
   booking: Booking;
   bookingIntent: BookingIntent;
   business: Business;
+  customer: Customer;
+  customers: Array<Customer>;
   draftOrder: DraftOrder;
   draftOrders?: Maybe<Array<DraftOrder>>;
   offering: Offering;
@@ -304,6 +328,16 @@ export type QueryBookingIntentArgs = {
 
 export type QueryBusinessArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryCustomerArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryCustomersArgs = {
+  searchTerm?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -359,14 +393,12 @@ export type UpdateOfferingPayload = {
   offering?: Maybe<Offering>;
 };
 
-export type User = {
-  __typename?: 'User';
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  id: Scalars['ID'];
-  lastName: Scalars['String'];
-  phoneNumber: Scalars['String'];
-};
+export type CreateCustomerMutationVariables = Exact<{
+  input: CustomerInput;
+}>;
+
+
+export type CreateCustomerMutation = { __typename?: 'Mutation', createCustomer: { __typename?: 'CreateCustomerPayload', customer?: { __typename?: 'Customer', id: string, createdAt: any, updatedAt: any, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
 
 export type CreateDraftOrderMutationVariables = Exact<{
   input: DraftOrderInput;
@@ -396,12 +428,19 @@ export type UpdateOfferingMutationVariables = Exact<{
 
 export type UpdateOfferingMutation = { __typename?: 'Mutation', updateOffering: { __typename?: 'UpdateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
 
+export type GetCustomersQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetCustomersQuery = { __typename?: 'Query', customers: Array<{ __typename?: 'Customer', id: string, createdAt: any, updatedAt: any, firstName?: string | null, phoneNumber?: string | null, lastName?: string | null, email: string }> };
+
 export type GetDraftOrderQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetDraftOrderQuery = { __typename?: 'Query', draftOrder: { __typename?: 'DraftOrder', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'DraftBooking', id: string, startDateTime: any, endDateTime: any, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }> } };
+export type GetDraftOrderQuery = { __typename?: 'Query', draftOrder: { __typename?: 'DraftOrder', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'DraftBooking', id: string, startDateTime: any, endDateTime: any, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
 
 export type GetDraftOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -430,6 +469,47 @@ export type GetOfferingsQueryVariables = Exact<{
 export type GetOfferingsQuery = { __typename?: 'Query', business: { __typename?: 'Business', id: string, name: string, description: string, email: string, phoneNumber: string, address: string, photoUrls?: Array<string | null> | null, offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat }> } };
 
 
+export const CreateCustomerDocument = gql`
+    mutation createCustomer($input: CustomerInput!) {
+  createCustomer(input: $input) {
+    customer {
+      id
+      createdAt
+      updatedAt
+      firstName
+      lastName
+      email
+      phoneNumber
+    }
+  }
+}
+    `;
+export type CreateCustomerMutationFn = Apollo.MutationFunction<CreateCustomerMutation, CreateCustomerMutationVariables>;
+
+/**
+ * __useCreateCustomerMutation__
+ *
+ * To run a mutation, you first call `useCreateCustomerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCustomerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCustomerMutation, { data, loading, error }] = useCreateCustomerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateCustomerMutation(baseOptions?: Apollo.MutationHookOptions<CreateCustomerMutation, CreateCustomerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCustomerMutation, CreateCustomerMutationVariables>(CreateCustomerDocument, options);
+      }
+export type CreateCustomerMutationHookResult = ReturnType<typeof useCreateCustomerMutation>;
+export type CreateCustomerMutationResult = Apollo.MutationResult<CreateCustomerMutation>;
+export type CreateCustomerMutationOptions = Apollo.BaseMutationOptions<CreateCustomerMutation, CreateCustomerMutationVariables>;
 export const CreateDraftOrderDocument = gql`
     mutation createDraftOrder($input: DraftOrderInput!) {
   createDraftOrder(input: $input) {
@@ -590,6 +670,47 @@ export function useUpdateOfferingMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateOfferingMutationHookResult = ReturnType<typeof useUpdateOfferingMutation>;
 export type UpdateOfferingMutationResult = Apollo.MutationResult<UpdateOfferingMutation>;
 export type UpdateOfferingMutationOptions = Apollo.BaseMutationOptions<UpdateOfferingMutation, UpdateOfferingMutationVariables>;
+export const GetCustomersDocument = gql`
+    query getCustomers($searchTerm: String) {
+  customers(searchTerm: $searchTerm) {
+    id
+    createdAt
+    updatedAt
+    firstName
+    phoneNumber
+    lastName
+    email
+  }
+}
+    `;
+
+/**
+ * __useGetCustomersQuery__
+ *
+ * To run a query within a React component, call `useGetCustomersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCustomersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCustomersQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *   },
+ * });
+ */
+export function useGetCustomersQuery(baseOptions?: Apollo.QueryHookOptions<GetCustomersQuery, GetCustomersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCustomersQuery, GetCustomersQueryVariables>(GetCustomersDocument, options);
+      }
+export function useGetCustomersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCustomersQuery, GetCustomersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCustomersQuery, GetCustomersQueryVariables>(GetCustomersDocument, options);
+        }
+export type GetCustomersQueryHookResult = ReturnType<typeof useGetCustomersQuery>;
+export type GetCustomersLazyQueryHookResult = ReturnType<typeof useGetCustomersLazyQuery>;
+export type GetCustomersQueryResult = Apollo.QueryResult<GetCustomersQuery, GetCustomersQueryVariables>;
 export const GetDraftOrderDocument = gql`
     query getDraftOrder($id: ID!) {
   draftOrder(id: $id) {
@@ -605,6 +726,13 @@ export const GetDraftOrderDocument = gql`
         id
         name
       }
+    }
+    customer {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
     }
   }
 }

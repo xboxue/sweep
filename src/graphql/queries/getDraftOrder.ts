@@ -16,6 +16,13 @@ const GET_DRAFT_ORDER = gql`
           name
         }
       }
+      customer {
+        id
+        firstName
+        lastName
+        email
+        phoneNumber
+      }
     }
   }
 `;

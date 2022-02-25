@@ -1,16 +1,17 @@
 import { PersonOutline, ShoppingCartOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { Offering } from "../../generated/graphql";
+import { Customer, Offering } from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
-import CustomerForm from "./CustomerForm";
+import OrderCustomerForm from "./OrderCustomerForm";
 import ExperiencesForm from "./ExperiencesForm";
 
 interface Props {
   title: string;
   offerings: Offering[];
+  customer?: Customer;
 }
 
-const BookingForm = ({ title, offerings }: Props) => {
+const OrderForm = ({ title, offerings, customer }: Props) => {
   const navigate = useNavigate();
 
   const sections = [
@@ -24,7 +25,7 @@ const BookingForm = ({ title, offerings }: Props) => {
       title: "Customer",
       description: "Add information about your customer.",
       Icon: PersonOutline,
-      children: <CustomerForm />,
+      children: <OrderCustomerForm customer={customer} />,
     },
   ];
 
@@ -38,4 +39,4 @@ const BookingForm = ({ title, offerings }: Props) => {
   );
 };
 
-export default BookingForm;
+export default OrderForm;

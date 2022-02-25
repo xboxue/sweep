@@ -23,8 +23,9 @@ const Dialog = ({
   onClose,
   actions,
   open,
+  ...props
 }: Props & DialogProps) => (
-  <MuiDialog maxWidth="lg" onClose={onClose} open={open}>
+  <MuiDialog onClose={onClose} open={open} {...props}>
     <DialogTitle>
       {title}
       <IconButton
