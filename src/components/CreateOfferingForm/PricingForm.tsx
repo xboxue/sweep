@@ -1,5 +1,5 @@
 import { ChairOutlined, SellOutlined } from "@mui/icons-material";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, InputAdornment, Stack, Typography } from "@mui/material";
 import React from "react";
 import * as yup from "yup";
 import { PricingType } from "../../generated/graphql";
@@ -64,6 +64,13 @@ const PricingForm = ({ formik }: Props) => {
             label="Price per person"
             field="pricePerPerson"
             formik={formik}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" disableTypography>
+                  $
+                </InputAdornment>
+              ),
+            }}
           />
         )}
         {formik.values.pricingType === PricingType.TotalAmount && (
@@ -72,6 +79,13 @@ const PricingForm = ({ formik }: Props) => {
             label="Total price"
             field="priceTotalAmount"
             formik={formik}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" disableTypography>
+                  $
+                </InputAdornment>
+              ),
+            }}
           />
         )}
       </Box>

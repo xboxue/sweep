@@ -16,20 +16,24 @@ const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
 }));
 
 const StyledInput = styled(InputBase)(({ theme }) => ({
+  borderRadius: 4,
+  backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
+  border: "1px solid #ced4da",
+  fontSize: theme.typography.body2.fontSize,
+  padding: "10px 12px",
+  transition: theme.transitions.create([
+    "border-color",
+    "background-color",
+    "box-shadow",
+  ]),
+  "& .MuiInputBase-input": {
+    padding: 0,
+    "&:focus": {
+      background: "none",
+    },
+  },
   "label + &": {
     marginTop: theme.spacing(3),
-  },
-  "& .MuiInputBase-input": {
-    borderRadius: 4,
-    backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
-    border: "1px solid #ced4da",
-    fontSize: theme.typography.body2.fontSize,
-    padding: "10px 12px",
-    transition: theme.transitions.create([
-      "border-color",
-      "background-color",
-      "box-shadow",
-    ]),
   },
   "&.Mui-focused": {
     borderRadius: 4,

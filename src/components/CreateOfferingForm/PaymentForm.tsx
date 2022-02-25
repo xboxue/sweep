@@ -4,7 +4,7 @@ import {
   Percent,
   SellOutlined,
 } from "@mui/icons-material";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, InputAdornment, Stack, Typography } from "@mui/material";
 import * as yup from "yup";
 import { DepositType, PaymentType } from "../../generated/graphql";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
@@ -117,6 +117,13 @@ const PaymentForm = ({ formik }: Props) => {
                 field="depositPercent"
                 formik={formik}
                 numberOptions={{ integer: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" disableTypography>
+                      %
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
             {formik.values.depositType === DepositType.FixedAmount && (
@@ -125,6 +132,13 @@ const PaymentForm = ({ formik }: Props) => {
                 label="Deposit amount"
                 field="depositFixedAmount"
                 formik={formik}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start" disableTypography>
+                      $
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
             {formik.values.depositType === DepositType.PerPerson && (
@@ -133,6 +147,13 @@ const PaymentForm = ({ formik }: Props) => {
                 label="Deposit per person"
                 field="depositPerPerson"
                 formik={formik}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start" disableTypography>
+                      $
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
           </Box>
