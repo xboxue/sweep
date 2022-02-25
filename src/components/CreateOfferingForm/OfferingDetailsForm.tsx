@@ -1,5 +1,5 @@
 import { Alert, Box, Skeleton } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, FormikConfig } from "formik";
 import { groupBy, sortBy } from "lodash";
 import { DateTime } from "luxon";
 import { useState } from "react";
@@ -73,6 +73,57 @@ const OfferingDetailsForm = () => {
     ...rest,
   };
 
+  const handleSubmit: FormikConfig<typeof initialValues>["onSubmit"] = async (
+    values
+  ) => {
+    const {
+      durationMinutes,
+      durationHours,
+      durationFormat,
+      pricePerPerson,
+      priceTotalAmount,
+      depositFixedAmount,
+      depositPerPerson,
+      schedule,
+      ...rest
+    } = values;
+
+    try {
+      const scheduleInput = {
+        timeSlots: Object.entries(schedule)
+          .map(([day, times]) =>
+            times.map((time) => ({
+              startTime: DateTime.fromFormat(time, "h:mm a").toFormat(
+                "HH:mm:ss"
+              ),
+              day: parseInt(day, 10),
+            }))
+          )
+          .flat(),
+      };
+      await updateOffering({
+        variables: {
+          input: {
+            id,
+            duration:
+              durationFormat === DurationFormat.Minute
+                ? durationMinutes
+                : durationHours * 60 + durationMinutes,
+            pricePerPerson: pricePerPerson && pricePerPerson * 100,
+            priceTotalAmount: priceTotalAmount && priceTotalAmount * 100,
+            depositFixedAmount: depositFixedAmount && depositFixedAmount * 100,
+            depositPerPerson: depositPerPerson && depositPerPerson * 100,
+            schedule: scheduleInput,
+            ...rest,
+          } as any,
+        },
+      });
+      await refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const validationSchema = capacityValidationSchema
     .concat(generalValidationSchema)
     .concat(paymentValidationSchema)
@@ -85,55 +136,7 @@ const OfferingDetailsForm = () => {
       validationSchema={validationSchema}
       validateOnChange={false}
       enableReinitialize
-      onSubmit={async (values) => {
-        const {
-          durationMinutes,
-          durationHours,
-          durationFormat,
-          pricePerPerson,
-          priceTotalAmount,
-          depositFixedAmount,
-          depositPerPerson,
-          schedule,
-          ...rest
-        } = values;
-
-        try {
-          const scheduleInput = {
-            timeSlots: Object.entries(schedule)
-              .map(([day, times]) =>
-                times.map((time) => ({
-                  startTime: DateTime.fromFormat(time, "h:mm a").toFormat(
-                    "HH:mm:ss"
-                  ),
-                  day: parseInt(day, 10),
-                }))
-              )
-              .flat(),
-          };
-          await updateOffering({
-            variables: {
-              input: {
-                id,
-                duration:
-                  durationFormat === DurationFormat.Minute
-                    ? durationMinutes
-                    : durationHours * 60 + durationMinutes,
-                pricePerPerson: pricePerPerson && pricePerPerson * 100,
-                priceTotalAmount: priceTotalAmount && priceTotalAmount * 100,
-                depositFixedAmount:
-                  depositFixedAmount && depositFixedAmount * 100,
-                depositPerPerson: depositPerPerson && depositPerPerson * 100,
-                schedule: scheduleInput,
-                ...rest,
-              } as any,
-            },
-          });
-          await refetch();
-        } catch (error) {
-          console.log(error);
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       {(formik) => (
         <Box component="form" onSubmit={formik.handleSubmit}>
@@ -159,7 +162,6 @@ const OfferingDetailsForm = () => {
                 </Alert>
               ) : undefined
             }
-            formik={formik}
           />
           {formik.dirty && (
             <SaveBar

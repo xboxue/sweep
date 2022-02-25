@@ -2,10 +2,6 @@ import { Box, Stack } from "@mui/material";
 import * as yup from "yup";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
 
-interface Props {
-  formik: any;
-}
-
 export const validationSchema = yup.object({
   minGuests: yup
     .number()
@@ -27,7 +23,7 @@ export const initialValues = {
   maxGuests: null,
 };
 
-const CapacityForm = ({ formik }: Props) => {
+const CapacityForm = () => {
   return (
     <Stack spacing={2}>
       <Box>
@@ -35,7 +31,6 @@ const CapacityForm = ({ formik }: Props) => {
           type="number"
           label="Max guests"
           field="maxGuests"
-          formik={formik}
           numberOptions={{ integer: true }}
         />
       </Box>
@@ -44,7 +39,6 @@ const CapacityForm = ({ formik }: Props) => {
           type="number"
           label="Min guests"
           field="minGuests"
-          formik={formik}
           numberOptions={{ integer: true }}
         />
       </Box>

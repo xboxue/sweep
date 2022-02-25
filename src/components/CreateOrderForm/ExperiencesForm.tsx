@@ -60,7 +60,6 @@ const ExperiencesForm = ({ offerings }: Props) => {
           <FormikTextField
             select
             field={`bookings.${index}.time`}
-            formik={formik}
             value={params.value}
           >
             {timeSlots.map((timeSlot) => (
@@ -83,7 +82,6 @@ const ExperiencesForm = ({ offerings }: Props) => {
           <FormikTextField
             select
             field={`bookings.${index}.numGuests`}
-            formik={formik}
             value={params.value}
             SelectProps={{
               MenuProps: { PaperProps: { sx: { maxHeight: 300 } } },

@@ -1,5 +1,5 @@
 import { Box, Skeleton } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, FormikConfig } from "formik";
 import { DateTime } from "luxon";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -42,42 +42,44 @@ const CreateOrderForm = () => {
         : [],
     customerId: undefined,
   };
+
+  const handleSubmit: FormikConfig<typeof initialValues>["onSubmit"] = async (
+    values
+  ) => {
+    try {
+      const { data } = await createDraftOrder({
+        variables: {
+          input: {
+            customerId: values.customerId,
+            bookings: values.bookings.map((booking) => {
+              const startTime = DateTime.fromFormat(booking.time, "HH:mm:ss");
+              const startDateTime = booking.date.set({
+                hour: startTime.hour,
+                minute: startTime.minute,
+              });
+
+              return {
+                offeringId: booking.offeringId,
+                numGuests: booking.numGuests,
+                startDateTime: startDateTime.toISO(),
+                // TODO: fix
+                endDateTime: startDateTime.plus({ hour: 1 }).toISO(),
+              };
+            }),
+          },
+        },
+      });
+      navigate(`/draft-orders/${data?.createDraftOrder.draftOrder.id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validateOnChange={false}
-      onSubmit={async (values) => {
-        try {
-          const { data } = await createDraftOrder({
-            variables: {
-              input: {
-                customerId: values.customerId,
-                bookings: values.bookings.map((booking) => {
-                  const startTime = DateTime.fromFormat(
-                    booking.time,
-                    "HH:mm:ss"
-                  );
-                  const startDateTime = booking.date.set({
-                    hour: startTime.hour,
-                    minute: startTime.minute,
-                  });
-
-                  return {
-                    offeringId: booking.offeringId,
-                    numGuests: booking.numGuests,
-                    startDateTime: startDateTime.toISO(),
-                    // TODO: fix
-                    endDateTime: startDateTime.plus({ hour: 1 }).toISO(),
-                  };
-                }),
-              },
-            },
-          });
-          navigate(`/draft-orders/${data?.createDraftOrder.draftOrder.id}`);
-        } catch (error) {
-          console.log(error);
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       {(formik) => (
         <Box component="form" onSubmit={formik.handleSubmit}>

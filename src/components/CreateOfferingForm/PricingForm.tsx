@@ -1,14 +1,10 @@
 import { ChairOutlined, SellOutlined } from "@mui/icons-material";
 import { Box, InputAdornment, Stack, Typography } from "@mui/material";
-import React from "react";
+import { useFormikContext } from "formik";
 import * as yup from "yup";
 import { PricingType } from "../../generated/graphql";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
 import CardSelect from "./CardSelect";
-
-interface Props {
-  formik: any;
-}
 
 export const validationSchema = yup.object({
   pricingType: yup.string(),
@@ -34,7 +30,9 @@ export const initialValues = {
   priceTotalAmount: null,
 };
 
-const PricingForm = ({ formik }: Props) => {
+const PricingForm = () => {
+  const formik = useFormikContext<typeof initialValues>();
+
   const pricingOptions = [
     { Icon: ChairOutlined, value: PricingType.PerPerson, title: "Per person" },
     {
@@ -63,7 +61,6 @@ const PricingForm = ({ formik }: Props) => {
             type="number"
             label="Price per person"
             field="pricePerPerson"
-            formik={formik}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start" disableTypography>
@@ -78,7 +75,6 @@ const PricingForm = ({ formik }: Props) => {
             type="number"
             label="Total price"
             field="priceTotalAmount"
-            formik={formik}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start" disableTypography>

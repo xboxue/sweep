@@ -1,5 +1,5 @@
 import { Box, Skeleton } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, FormikConfig } from "formik";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -40,42 +40,44 @@ const OrderDetailsForm = () => {
     })),
     customerId: data?.draftOrder.customer?.id,
   };
+
+  const handleSubmit: FormikConfig<typeof initialValues>["onSubmit"] = async (
+    values
+  ) => {
+    try {
+      await updateDraftOrder({
+        variables: {
+          input: {
+            id: params.id,
+            customerId: values.customerId,
+            bookings: values.bookings?.map((booking) => {
+              const startTime = DateTime.fromFormat(booking.time, "HH:mm:ss");
+              const startDateTime = booking.date.set({
+                hour: startTime.hour,
+                minute: startTime.minute,
+              });
+              return {
+                id: booking.id,
+                startDateTime: startDateTime.toISO(),
+                // TODO: Fix
+                endDateTime: startDateTime.plus({ hour: 1 }),
+                offeringId: booking.offeringId,
+                numGuests: booking.numGuests,
+              };
+            }),
+          },
+        },
+      });
+      await refetch();
+    } catch (error) {}
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validateOnChange={false}
       enableReinitialize
-      onSubmit={async (values) => {
-        try {
-          await updateDraftOrder({
-            variables: {
-              input: {
-                id: params.id,
-                customerId: values.customerId,
-                bookings: values.bookings?.map((booking) => {
-                  const startTime = DateTime.fromFormat(
-                    booking.time,
-                    "HH:mm:ss"
-                  );
-                  const startDateTime = booking.date.set({
-                    hour: startTime.hour,
-                    minute: startTime.minute,
-                  });
-                  return {
-                    id: booking.id,
-                    startDateTime: startDateTime.toISO(),
-                    // TODO: Fix
-                    endDateTime: startDateTime.plus({ hour: 1 }),
-                    offeringId: booking.offeringId,
-                    numGuests: booking.numGuests,
-                  };
-                }),
-              },
-            },
-          });
-          await refetch();
-        } catch (error) {}
-      }}
+      onSubmit={handleSubmit}
     >
       {(formik) => (
         <Box component="form" onSubmit={formik.handleSubmit}>

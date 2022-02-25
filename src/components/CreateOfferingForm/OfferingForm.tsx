@@ -21,11 +21,10 @@ import ScheduleForm from "./ScheduleForm";
 
 interface Props {
   title: string;
-  formik: any;
   error: React.ReactNode;
 }
 
-const OfferingForm = ({ title, formik, error }: Props) => {
+const OfferingForm = ({ title, error }: Props) => {
   const navigate = useNavigate();
 
   const sections = [
@@ -33,14 +32,14 @@ const OfferingForm = ({ title, formik, error }: Props) => {
       title: "General",
       description: "Basic information about your activity.",
       Icon: AssignmentOutlined,
-      children: <GeneralForm formik={formik} />,
+      children: <GeneralForm />,
     },
 
     {
       title: "Capacity",
       description: "Manage how people can participate in your activity.",
       Icon: PeopleOutline,
-      children: <CapacityForm formik={formik} />,
+      children: <CapacityForm />,
     },
     {
       title: "Media",
@@ -53,21 +52,21 @@ const OfferingForm = ({ title, formik, error }: Props) => {
       title: "Pricing",
       description: "Manage pricing of your activity.",
       Icon: LocalOfferOutlined,
-      children: <PricingForm formik={formik} />,
+      children: <PricingForm />,
     },
 
     {
       title: "Schedule",
       description: "Manage your activity schedule.",
       Icon: CalendarTodayOutlined,
-      children: <ScheduleForm formik={formik} />,
+      children: <ScheduleForm />,
     },
 
     {
       title: "Payment and Deposit",
       description: "Manage payments and deposits for your activity.",
       Icon: CreditCardOutlined,
-      children: <PaymentForm formik={formik} />,
+      children: <PaymentForm />,
     },
   ];
 
@@ -84,12 +83,7 @@ const OfferingForm = ({ title, formik, error }: Props) => {
       sections={sections}
       error={error}
       headerComponent={
-        <FormikTextField
-          select
-          field="status"
-          formik={formik}
-          sx={{ ml: "auto" }}
-        >
+        <FormikTextField select field="status" sx={{ ml: "auto" }}>
           {statusOptions.map(({ value, title }) => (
             <MenuItem key={value} value={value}>
               {title}

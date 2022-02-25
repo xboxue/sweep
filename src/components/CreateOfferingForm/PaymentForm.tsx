@@ -5,14 +5,11 @@ import {
   SellOutlined,
 } from "@mui/icons-material";
 import { Box, InputAdornment, Stack, Typography } from "@mui/material";
+import { useFormikContext } from "formik";
 import * as yup from "yup";
 import { DepositType, PaymentType } from "../../generated/graphql";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
 import CardSelect from "./CardSelect";
-
-interface Props {
-  formik: any;
-}
 
 export const validationSchema = yup.object({
   paymentType: yup.string(),
@@ -54,7 +51,9 @@ export const initialValues = {
   depositFixedAmount: null,
   depositPercent: null,
 };
-const PaymentForm = ({ formik }: Props) => {
+const PaymentForm = () => {
+  const formik = useFormikContext<typeof initialValues>();
+
   const paymentOptions = [
     {
       Icon: CreditCardOffOutlined,
@@ -115,7 +114,6 @@ const PaymentForm = ({ formik }: Props) => {
                 type="number"
                 label="Deposit percentage"
                 field="depositPercent"
-                formik={formik}
                 numberOptions={{ integer: true }}
                 InputProps={{
                   endAdornment: (
@@ -131,7 +129,6 @@ const PaymentForm = ({ formik }: Props) => {
                 type="number"
                 label="Deposit amount"
                 field="depositFixedAmount"
-                formik={formik}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" disableTypography>
@@ -146,7 +143,6 @@ const PaymentForm = ({ formik }: Props) => {
                 type="number"
                 label="Deposit per person"
                 field="depositPerPerson"
-                formik={formik}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" disableTypography>

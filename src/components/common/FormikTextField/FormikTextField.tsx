@@ -1,9 +1,9 @@
 import { TextFieldProps } from "@mui/material";
+import { useFormikContext } from "formik";
 import { round } from "lodash";
 import TextField from "../TextField/TextField";
 
 interface Props {
-  formik: any;
   field: string;
   numberOptions?: {
     min?: number;
@@ -13,12 +13,12 @@ interface Props {
 }
 
 const FormikTextField = ({
-  formik,
   field,
   type,
   numberOptions = {},
   ...props
 }: Props & TextFieldProps) => {
+  const formik = useFormikContext<any>();
   const { min = 0, max, integer = false } = numberOptions;
 
   const numberProps: TextFieldProps = {
