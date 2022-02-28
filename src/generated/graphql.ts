@@ -84,8 +84,26 @@ export type CreateScheduleInput = {
   exampleField?: InputMaybe<Scalars['Int']>;
 };
 
+export type CreateUserInput = {
+  displayName?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  emailVerified: Scalars['Boolean'];
+  isAnonymous: Scalars['Boolean'];
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  photoURL?: InputMaybe<Scalars['String']>;
+  providerData: Array<UserProviderDataInput>;
+  providerId: Scalars['String'];
+  uid: Scalars['ID'];
+};
+
+export type CreateUserPayload = {
+  __typename?: 'CreateUserPayload';
+  user?: Maybe<User>;
+};
+
 export type Customer = {
   __typename?: 'Customer';
+  business: Business;
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
@@ -165,6 +183,7 @@ export type Mutation = {
   createDraftBooking: CreateDraftBookingPayload;
   createDraftOrder: CreateDraftOrderPayload;
   createOffering: CreateOfferingPayload;
+  createUser: CreateUserPayload;
   updateDraftOrder: UpdateDraftOrderPayload;
   updateOffering: UpdateOfferingPayload;
 };
@@ -192,6 +211,11 @@ export type MutationCreateDraftOrderArgs = {
 
 export type MutationCreateOfferingArgs = {
   input: OfferingInput;
+};
+
+
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
 };
 
 
@@ -393,6 +417,38 @@ export type UpdateOfferingPayload = {
   offering?: Maybe<Offering>;
 };
 
+export type User = {
+  __typename?: 'User';
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  emailVerified: Scalars['Boolean'];
+  isAnonymous: Scalars['Boolean'];
+  phoneNumber?: Maybe<Scalars['String']>;
+  photoURL?: Maybe<Scalars['String']>;
+  providerData: Array<UserProviderData>;
+  providerId?: Maybe<Scalars['String']>;
+  uid: Scalars['ID'];
+};
+
+export type UserProviderData = {
+  __typename?: 'UserProviderData';
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  photoURL?: Maybe<Scalars['String']>;
+  providerId: Scalars['String'];
+  uid: Scalars['String'];
+};
+
+export type UserProviderDataInput = {
+  displayName?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  photoURL?: InputMaybe<Scalars['String']>;
+  providerId: Scalars['String'];
+  uid: Scalars['ID'];
+};
+
 export type CreateCustomerMutationVariables = Exact<{
   input: CustomerInput;
 }>;
@@ -413,6 +469,13 @@ export type CreateOfferingMutationVariables = Exact<{
 
 
 export type CreateOfferingMutation = { __typename?: 'Mutation', createOffering: { __typename?: 'CreateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
+
+export type CreateUserMutationVariables = Exact<{
+  input: CreateUserInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'CreateUserPayload', user?: { __typename?: 'User', uid: string } | null } };
 
 export type UpdateDraftOrderMutationVariables = Exact<{
   input: DraftOrderInput;
@@ -590,6 +653,41 @@ export function useCreateOfferingMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateOfferingMutationHookResult = ReturnType<typeof useCreateOfferingMutation>;
 export type CreateOfferingMutationResult = Apollo.MutationResult<CreateOfferingMutation>;
 export type CreateOfferingMutationOptions = Apollo.BaseMutationOptions<CreateOfferingMutation, CreateOfferingMutationVariables>;
+export const CreateUserDocument = gql`
+    mutation createUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    user {
+      uid
+    }
+  }
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
+
+/**
+ * __useCreateUserMutation__
+ *
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
+      }
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const UpdateDraftOrderDocument = gql`
     mutation updateDraftOrder($input: DraftOrderInput!) {
   updateDraftOrder(input: $input) {
