@@ -10,9 +10,15 @@ const useAuth = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const token = await user.getIdToken();
-        localStorage.setItem("token", token);
-        dispatch(setUser(user));
+        const result = await user.getIdTokenResult();
+        localStorage.setItem("token", result.token);
+
+        dispatch(
+          setUser({
+            ...user,
+            businessId: result.claims.businessId as number | undefined,
+          })
+        );
       } else {
         localStorage.removeItem("token");
         dispatch(setUser(null));

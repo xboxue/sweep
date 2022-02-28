@@ -1,6 +1,8 @@
-import { User } from "@firebase/auth";
+import { User as FirebaseUser } from "@firebase/auth";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
+
+type User = FirebaseUser & { businessId?: number };
 
 interface AuthState {
   user: User | null;

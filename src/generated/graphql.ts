@@ -27,26 +27,12 @@ export type Booking = {
   paymentStatus: PaymentStatus;
   price: Price;
   startDateTime: Scalars['DateTime'];
-  stripePaymentIntent?: Maybe<StripePaymentIntent>;
-};
-
-export type BookingIntent = {
-  __typename?: 'BookingIntent';
-  offering: Offering;
-  price: Price;
-  stripePaymentIntent?: Maybe<StripePaymentIntent>;
 };
 
 export type Business = {
   __typename?: 'Business';
-  address: Scalars['String'];
-  description: Scalars['String'];
-  email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
-  offerings: Array<Offering>;
-  phoneNumber: Scalars['String'];
-  photoUrls?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type CreateBookingInput = {
@@ -58,6 +44,15 @@ export type CreateBookingInput = {
 export type CreateBookingPayload = {
   __typename?: 'CreateBookingPayload';
   booking?: Maybe<Booking>;
+};
+
+export type CreateBusinessInput = {
+  name: Scalars['String'];
+};
+
+export type CreateBusinessPayload = {
+  __typename?: 'CreateBusinessPayload';
+  business?: Maybe<Business>;
 };
 
 export type CreateCustomerPayload = {
@@ -179,6 +174,7 @@ export enum MinAdvanceFormat {
 export type Mutation = {
   __typename?: 'Mutation';
   createBooking: CreateBookingPayload;
+  createBusiness: CreateBusinessPayload;
   createCustomer: CreateCustomerPayload;
   createDraftBooking: CreateDraftBookingPayload;
   createDraftOrder: CreateDraftOrderPayload;
@@ -191,6 +187,11 @@ export type Mutation = {
 
 export type MutationCreateBookingArgs = {
   input: CreateBookingInput;
+};
+
+
+export type MutationCreateBusinessArgs = {
+  input?: InputMaybe<CreateBusinessInput>;
 };
 
 
@@ -326,27 +327,19 @@ export enum PricingType {
 export type Query = {
   __typename?: 'Query';
   booking: Booking;
-  bookingIntent: BookingIntent;
   business: Business;
   customer: Customer;
   customers: Array<Customer>;
   draftOrder: DraftOrder;
-  draftOrders?: Maybe<Array<DraftOrder>>;
+  draftOrders: Array<DraftOrder>;
   offering: Offering;
+  offerings: Array<Offering>;
   order: Order;
 };
 
 
 export type QueryBookingArgs = {
   id: Scalars['ID'];
-};
-
-
-export type QueryBookingIntentArgs = {
-  numGuests: Scalars['Int'];
-  offeringId: Scalars['ID'];
-  startDateTime: Scalars['DateTime'];
-  stripePaymentIntentId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -401,12 +394,6 @@ export type ScheduleTimeSlotInput = {
   startTime: Scalars['String'];
 };
 
-export type StripePaymentIntent = {
-  __typename?: 'StripePaymentIntent';
-  clientSecret: Scalars['String'];
-  id: Scalars['ID'];
-};
-
 export type UpdateDraftOrderPayload = {
   __typename?: 'UpdateDraftOrderPayload';
   draftOrder?: Maybe<DraftOrder>;
@@ -448,6 +435,13 @@ export type UserProviderDataInput = {
   providerId: Scalars['String'];
   uid: Scalars['ID'];
 };
+
+export type CreateBusinessMutationVariables = Exact<{
+  input: CreateBusinessInput;
+}>;
+
+
+export type CreateBusinessMutation = { __typename?: 'Mutation', createBusiness: { __typename?: 'CreateBusinessPayload', business?: { __typename?: 'Business', id: string, name: string } | null } };
 
 export type CreateCustomerMutationVariables = Exact<{
   input: CustomerInput;
@@ -508,7 +502,7 @@ export type GetDraftOrderQuery = { __typename?: 'Query', draftOrder: { __typenam
 export type GetDraftOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDraftOrdersQuery = { __typename?: 'Query', draftOrders?: Array<{ __typename?: 'DraftOrder', id: string, createdAt: any }> | null };
+export type GetDraftOrdersQuery = { __typename?: 'Query', draftOrders: Array<{ __typename?: 'DraftOrder', id: string, createdAt: any }> };
 
 export type GetOfferingQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -517,21 +511,53 @@ export type GetOfferingQueryVariables = Exact<{
 
 export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, schedule: { __typename?: 'Schedule', timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', startTime: string, day: number }> } } };
 
-export type GetOfferingSchedulesQueryVariables = Exact<{
-  businessId: Scalars['ID'];
-}>;
+export type GetOfferingSchedulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOfferingSchedulesQuery = { __typename?: 'Query', business: { __typename?: 'Business', id: string, name: string, description: string, email: string, phoneNumber: string, address: string, photoUrls?: Array<string | null> | null, offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, schedule: { __typename?: 'Schedule', name: string, timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', day: number, startTime: string }> } }> } };
+export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, schedule: { __typename?: 'Schedule', name: string, timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', day: number, startTime: string }> } }> };
 
-export type GetOfferingsQueryVariables = Exact<{
-  businessId: Scalars['ID'];
-}>;
+export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOfferingsQuery = { __typename?: 'Query', business: { __typename?: 'Business', id: string, name: string, description: string, email: string, phoneNumber: string, address: string, photoUrls?: Array<string | null> | null, offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat }> } };
+export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat }> };
 
 
+export const CreateBusinessDocument = gql`
+    mutation createBusiness($input: CreateBusinessInput!) {
+  createBusiness(input: $input) {
+    business {
+      id
+      name
+    }
+  }
+}
+    `;
+export type CreateBusinessMutationFn = Apollo.MutationFunction<CreateBusinessMutation, CreateBusinessMutationVariables>;
+
+/**
+ * __useCreateBusinessMutation__
+ *
+ * To run a mutation, you first call `useCreateBusinessMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBusinessMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBusinessMutation, { data, loading, error }] = useCreateBusinessMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateBusinessMutation(baseOptions?: Apollo.MutationHookOptions<CreateBusinessMutation, CreateBusinessMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBusinessMutation, CreateBusinessMutationVariables>(CreateBusinessDocument, options);
+      }
+export type CreateBusinessMutationHookResult = ReturnType<typeof useCreateBusinessMutation>;
+export type CreateBusinessMutationResult = Apollo.MutationResult<CreateBusinessMutation>;
+export type CreateBusinessMutationOptions = Apollo.BaseMutationOptions<CreateBusinessMutation, CreateBusinessMutationVariables>;
 export const CreateCustomerDocument = gql`
     mutation createCustomer($input: CustomerInput!) {
   createCustomer(input: $input) {
@@ -958,41 +984,32 @@ export type GetOfferingQueryHookResult = ReturnType<typeof useGetOfferingQuery>;
 export type GetOfferingLazyQueryHookResult = ReturnType<typeof useGetOfferingLazyQuery>;
 export type GetOfferingQueryResult = Apollo.QueryResult<GetOfferingQuery, GetOfferingQueryVariables>;
 export const GetOfferingSchedulesDocument = gql`
-    query getOfferingSchedules($businessId: ID!) {
-  business(id: $businessId) {
+    query getOfferingSchedules {
+  offerings {
     id
     name
+    status
+    minGuests
+    maxGuests
     description
-    email
-    phoneNumber
-    address
-    photoUrls
-    offerings {
-      id
+    pricingType
+    pricePerPerson
+    priceTotalAmount
+    paymentType
+    depositType
+    depositPerPerson
+    depositFixedAmount
+    depositPercent
+    duration
+    maxAdvance
+    maxAdvanceFormat
+    minAdvance
+    minAdvanceFormat
+    schedule {
       name
-      status
-      minGuests
-      maxGuests
-      description
-      pricingType
-      pricePerPerson
-      priceTotalAmount
-      paymentType
-      depositType
-      depositPerPerson
-      depositFixedAmount
-      depositPercent
-      duration
-      maxAdvance
-      maxAdvanceFormat
-      minAdvance
-      minAdvanceFormat
-      schedule {
-        name
-        timeSlots {
-          day
-          startTime
-        }
+      timeSlots {
+        day
+        startTime
       }
     }
   }
@@ -1011,11 +1028,10 @@ export const GetOfferingSchedulesDocument = gql`
  * @example
  * const { data, loading, error } = useGetOfferingSchedulesQuery({
  *   variables: {
- *      businessId: // value for 'businessId'
  *   },
  * });
  */
-export function useGetOfferingSchedulesQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>) {
+export function useGetOfferingSchedulesQuery(baseOptions?: Apollo.QueryHookOptions<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>(GetOfferingSchedulesDocument, options);
       }
@@ -1027,36 +1043,27 @@ export type GetOfferingSchedulesQueryHookResult = ReturnType<typeof useGetOfferi
 export type GetOfferingSchedulesLazyQueryHookResult = ReturnType<typeof useGetOfferingSchedulesLazyQuery>;
 export type GetOfferingSchedulesQueryResult = Apollo.QueryResult<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>;
 export const GetOfferingsDocument = gql`
-    query getOfferings($businessId: ID!) {
-  business(id: $businessId) {
+    query getOfferings {
+  offerings {
     id
     name
+    status
+    minGuests
+    maxGuests
     description
-    email
-    phoneNumber
-    address
-    photoUrls
-    offerings {
-      id
-      name
-      status
-      minGuests
-      maxGuests
-      description
-      pricingType
-      pricePerPerson
-      priceTotalAmount
-      paymentType
-      depositType
-      depositPerPerson
-      depositFixedAmount
-      depositPercent
-      duration
-      maxAdvance
-      maxAdvanceFormat
-      minAdvance
-      minAdvanceFormat
-    }
+    pricingType
+    pricePerPerson
+    priceTotalAmount
+    paymentType
+    depositType
+    depositPerPerson
+    depositFixedAmount
+    depositPercent
+    duration
+    maxAdvance
+    maxAdvanceFormat
+    minAdvance
+    minAdvanceFormat
   }
 }
     `;
@@ -1073,11 +1080,10 @@ export const GetOfferingsDocument = gql`
  * @example
  * const { data, loading, error } = useGetOfferingsQuery({
  *   variables: {
- *      businessId: // value for 'businessId'
  *   },
  * });
  */
-export function useGetOfferingsQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingsQuery, GetOfferingsQueryVariables>) {
+export function useGetOfferingsQuery(baseOptions?: Apollo.QueryHookOptions<GetOfferingsQuery, GetOfferingsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetOfferingsQuery, GetOfferingsQueryVariables>(GetOfferingsDocument, options);
       }

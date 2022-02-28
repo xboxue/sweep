@@ -24,9 +24,7 @@ const OrderDetailsForm = () => {
     variables: { id: params.id },
   });
   const { loading: loadingOfferings, data: offeringsData } =
-    useGetOfferingSchedulesQuery({
-      variables: { businessId: "1" },
-    });
+    useGetOfferingSchedulesQuery();
 
   if (loading || loadingOfferings) return <Skeleton />;
 
@@ -95,7 +93,7 @@ const OrderDetailsForm = () => {
           />
           <OrderForm
             title={`Draft Order #D${params.id}`}
-            offerings={offeringsData?.business.offerings}
+            offerings={offeringsData?.offerings}
             customer={data?.draftOrder.customer}
           />
 

@@ -15,6 +15,10 @@ const ProtectedRoute = ({ children }: Props) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  if (user && !user.businessId && location.pathname !== "/register") {
+    return <Navigate to="/register" state={{ from: location }} replace />;
+  }
+
   return children || <Outlet />;
 };
 

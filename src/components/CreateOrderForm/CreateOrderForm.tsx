@@ -12,9 +12,7 @@ import SaveBar from "../common/SaveBar/SaveBar";
 import OrderForm from "./OrderForm";
 
 const CreateOrderForm = () => {
-  const { loading, error, data } = useGetOfferingSchedulesQuery({
-    variables: { businessId: "1" },
-  });
+  const { loading, error, data } = useGetOfferingSchedulesQuery();
 
   const [createDraftOrder] = useCreateDraftOrderMutation();
 
@@ -87,7 +85,7 @@ const CreateOrderForm = () => {
             message="If you leave this page, any unsaved changes will be lost."
             when={formik.dirty && !formik.isSubmitting}
           />
-          <OrderForm title="Add booking" offerings={data?.business.offerings} />
+          <OrderForm title="Add booking" offerings={data?.offerings} />
           <SaveBar onDiscard={() => navigate(-1)} loading={false} />
         </Box>
       )}

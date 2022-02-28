@@ -21,3 +21,8 @@ export const signInWithGoogle = () => {
 export const signOut = () => {
   return firebase.signOut(auth);
 };
+
+export const refreshToken = () => {
+  if (!auth.currentUser) throw new Error();
+  return auth.currentUser.getIdToken(true);
+};

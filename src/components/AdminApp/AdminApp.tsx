@@ -9,6 +9,7 @@ import Experiences from "../../pages/Experiences";
 import Home from "../../pages/Home";
 import Login from "../../pages/Login";
 import NotFound from "../../pages/NotFound";
+import Register from "../../pages/Register";
 import SignUp from "../../pages/SignUp";
 import CreateOfferingForm from "../CreateOfferingForm/CreateOfferingForm";
 import OfferingDetailsForm from "../CreateOfferingForm/OfferingDetailsForm";
@@ -24,6 +25,7 @@ const AdminApp = () => {
       <Route path="signup" element={<SignUp />} />
       <Route path="login" element={<Login />} />
       <Route element={<ProtectedRoute />}>
+        <Route path="/register" element={<Register />} />
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="calendar" element={<Calendar />} />

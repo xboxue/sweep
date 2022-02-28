@@ -60,13 +60,11 @@ const EventContent = ({ eventInfo }: Props) => {
 };
 
 const Calendar = () => {
-  const { loading, error, data } = useGetOfferingSchedulesQuery({
-    variables: { businessId: "1" },
-  });
+  const { loading, error, data } = useGetOfferingSchedulesQuery();
 
   if (loading) return <Skeleton />;
 
-  const events = data?.business.offerings
+  const events = data?.offerings
     .map((offering) =>
       offering.schedule.timeSlots.map((timeSlot) => ({
         resourceId: offering.id,
@@ -89,7 +87,7 @@ const Calendar = () => {
         initialView="resourceTimeGridDay"
         slotMinTime="07:00:00"
         dateClick={(info) => console.log(info)}
-        resources={data?.business.offerings.map((offering) => ({
+        resources={data?.offerings.map((offering) => ({
           id: offering.id,
           title: offering.name,
         }))}

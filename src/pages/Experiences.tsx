@@ -6,11 +6,7 @@ import { useGetOfferingsQuery } from "../generated/graphql";
 const Experiences = () => {
   const navigate = useNavigate();
 
-  const { loading, error, data } = useGetOfferingsQuery({
-    variables: {
-      businessId: "1",
-    },
-  });
+  const { loading, error, data } = useGetOfferingsQuery();
 
   if (loading) return <Skeleton />;
 
@@ -27,10 +23,10 @@ const Experiences = () => {
           Add experience
         </Button>
       </Box>
-      {data?.business.offerings.length > 0 ? (
+      {data?.offerings.length > 0 ? (
         <DataGrid
           onRowClick={(params) => navigate(`/experiences/${params.id}`)}
-          rows={data?.business.offerings}
+          rows={data?.offerings}
           columns={[
             { field: "name", headerName: "Name", flex: 1 },
             {

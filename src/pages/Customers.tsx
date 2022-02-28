@@ -1,10 +1,7 @@
 import { Box, Button, Chip, Paper, Skeleton, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import {
-  useGetCustomersQuery,
-  useGetOfferingsQuery,
-} from "../generated/graphql";
+import { useGetCustomersQuery } from "../generated/graphql";
 
 const Customers = () => {
   const navigate = useNavigate();
