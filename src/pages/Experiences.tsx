@@ -23,11 +23,30 @@ const Experiences = () => {
           Add experience
         </Button>
       </Box>
-      {data?.offerings.length > 0 ? (
+      {data?.offerings && data.offerings.length > 0 ? (
         <DataGrid
           onRowClick={(params) => navigate(`/experiences/${params.id}`)}
-          rows={data?.offerings}
+          rows={data.offerings}
           columns={[
+            {
+              field: "featuredImage",
+              headerName: "",
+              renderCell: (params) => (
+                <Box
+                  component="img"
+                  src={params.value.url}
+                  alt={params.value.altText}
+                  sx={{
+                    objectFit: "contain",
+                    width: 40,
+                    height: 40,
+                    borderRadius: 1,
+                    border: 1,
+                    borderColor: (theme) => theme.palette.divider,
+                  }}
+                />
+              ),
+            },
             { field: "name", headerName: "Name", flex: 1 },
             {
               field: "status",

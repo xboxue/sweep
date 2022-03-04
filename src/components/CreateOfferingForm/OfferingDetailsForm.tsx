@@ -15,6 +15,7 @@ import NavigationBlocker from "../common/NavigationBlocker/NavigationBlocker";
 import SaveBar from "../common/SaveBar/SaveBar";
 import { validationSchema as capacityValidationSchema } from "./CapacityForm";
 import { validationSchema as generalValidationSchema } from "./GeneralForm";
+import { initialValues as mediaInitialValues } from "./MediaForm";
 import OfferingForm from "./OfferingForm";
 import { validationSchema as paymentValidationSchema } from "./PaymentForm";
 import { validationSchema as pricingValidationSchema } from "./PricingForm";
@@ -44,6 +45,7 @@ const OfferingDetailsForm = () => {
       priceTotalAmount,
       depositFixedAmount,
       depositPerPerson,
+      featuredImage,
       schedule,
       ...rest
     } = omitDeep(data.offering, "__typename") as DeepOmit<
@@ -60,6 +62,7 @@ const OfferingDetailsForm = () => {
       priceTotalAmount: priceTotalAmount && priceTotalAmount / 100,
       depositFixedAmount: depositFixedAmount && depositFixedAmount / 100,
       depositPerPerson: depositPerPerson && depositPerPerson / 100,
+      featuredImage: featuredImage || mediaInitialValues.featuredImage,
       schedule: {
         ...scheduleInitialValues.schedule,
         ...Object.fromEntries(

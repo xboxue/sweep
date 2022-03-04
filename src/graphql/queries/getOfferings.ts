@@ -22,6 +22,11 @@ const GET_OFFERINGS = gql`
       maxAdvanceFormat
       minAdvance
       minAdvanceFormat
+      featuredImage {
+        id
+        url
+        altText
+      }
     }
   }
 `;

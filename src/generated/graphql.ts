@@ -566,7 +566,7 @@ export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat }> };
+export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null }> };
 
 
 export const CreateBusinessDocument = gql`
@@ -1153,6 +1153,11 @@ export const GetOfferingsDocument = gql`
     maxAdvanceFormat
     minAdvance
     minAdvanceFormat
+    featuredImage {
+      id
+      url
+      altText
+    }
   }
 }
     `;

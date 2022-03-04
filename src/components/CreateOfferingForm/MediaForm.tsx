@@ -118,6 +118,7 @@ const MediaForm = () => {
               objectFit: "contain",
               width: 250,
               height: 250,
+              borderRadius: 1,
               border: 1,
               borderColor: (theme) => theme.palette.divider,
             }}

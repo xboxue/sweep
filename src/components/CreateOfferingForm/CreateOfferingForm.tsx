@@ -59,6 +59,7 @@ const CreateOfferingForm = () => {
       priceTotalAmount,
       depositFixedAmount,
       depositPerPerson,
+      featuredImage,
       schedule,
       ...rest
     } = values;
@@ -85,6 +86,7 @@ const CreateOfferingForm = () => {
             priceTotalAmount: priceTotalAmount && priceTotalAmount * 100,
             depositFixedAmount: depositFixedAmount && depositFixedAmount * 100,
             depositPerPerson: depositPerPerson && depositPerPerson * 100,
+            featuredImage: featuredImage?.url ? featuredImage : null,
             schedule: scheduleInput,
             ...rest,
           } as any,
