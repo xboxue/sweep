@@ -22,6 +22,11 @@ const GET_OFFERING = gql`
       maxAdvanceFormat
       minAdvance
       minAdvanceFormat
+      featuredImage {
+        id
+        url
+        altText
+      }
       schedule {
         timeSlots {
           startTime

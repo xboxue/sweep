@@ -15,6 +15,7 @@ import Dropzone from "../common/Dropzone/Dropzone";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
 import CapacityForm from "./CapacityForm";
 import GeneralForm from "./GeneralForm";
+import MediaForm from "./MediaForm";
 import PaymentForm from "./PaymentForm";
 import PricingForm from "./PricingForm";
 import ScheduleForm from "./ScheduleForm";
@@ -45,7 +46,7 @@ const OfferingForm = ({ title, error }: Props) => {
       title: "Media",
       description: "Upload images to show off your activity.",
       Icon: ImageOutlined,
-      children: <Dropzone />,
+      children: <MediaForm />,
     },
 
     {

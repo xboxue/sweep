@@ -1,59 +1,37 @@
-import { Close } from "@mui/icons-material";
-import { Avatar, Badge, Box, IconButton, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { Box, BoxProps, Chip } from "@mui/material";
+import Dropzone, { DropzoneProps, DropzoneRef } from "react-dropzone";
 import "react-dropzone/examples/theme.css";
+import React from "react";
 
-const Dropzone = () => {
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+interface Props extends DropzoneProps {
+  label: string;
+  ContainerProps?: BoxProps;
+  DropzoneProps?: DropzoneProps;
+}
 
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
-    onDrop: (acceptedFiles) => {
-      setPreviewUrls([
-        ...previewUrls,
-        ...acceptedFiles.map((file) => URL.createObjectURL(file)),
-      ]);
-    },
-  });
-
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks
-    previewUrls.forEach((url) => URL.revokeObjectURL(url));
-  }, [previewUrls]);
+// eslint-disable-next-line react/display-name
+const MyDropzone = React.forwardRef<DropzoneRef, Props>((props, ref) => {
+  const { label, ContainerProps, DropzoneProps } = props;
 
   return (
-    <>
-      <div {...getRootProps({ className: "dropzone" })}>
-        <input {...getInputProps()} />
-        <Typography>Upload images</Typography>
-      </div>
-      <Box sx={{ display: "flex" }}>
-        {previewUrls.map((url) => (
-          <Box key={url}>
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              badgeContent={
-                <IconButton
-                  onClick={() =>
-                    setPreviewUrls(
-                      previewUrls.filter((previewUrl) => previewUrl !== url)
-                    )
-                  }
-                  size="small"
-                >
-                  <Close />
-                </IconButton>
-              }
-            >
-              <Avatar src={url} alt="preview" sx={{ width: 64, height: 64 }} />
-            </Badge>
-          </Box>
-        ))}
-      </Box>
-    </>
+    <Dropzone {...DropzoneProps} ref={ref}>
+      {({ getRootProps, getInputProps }) => (
+        <Box {...ContainerProps} {...getRootProps({ className: "dropzone" })}>
+          <input {...getInputProps()} />
+          <Chip
+            label={label}
+            size="small"
+            sx={{
+              bgcolor: "rgb(224, 242, 254)",
+              color: "rgb(2, 132, 199)",
+              borderRadius: 1,
+              typography: "subtitle2",
+            }}
+          />
+        </Box>
+      )}
+    </Dropzone>
   );
-};
+});
 
-export default Dropzone;
+export default MyDropzone;

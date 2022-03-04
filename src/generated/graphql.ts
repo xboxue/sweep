@@ -15,6 +15,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: any;
 };
 
 export type Booking = {
@@ -68,6 +70,17 @@ export type CreateDraftBookingPayload = {
 export type CreateDraftOrderPayload = {
   __typename?: 'CreateDraftOrderPayload';
   draftOrder?: Maybe<DraftOrder>;
+};
+
+export type CreateFileUploadUrlsInput = {
+  fileName?: InputMaybe<Scalars['String']>;
+  fileSize: Scalars['Int'];
+  mimeType: Scalars['String'];
+};
+
+export type CreateFileUploadUrlsPayload = {
+  __typename?: 'CreateFileUploadUrlsPayload';
+  urls?: Maybe<Array<FileUploadUrl>>;
 };
 
 export type CreateOfferingPayload = {
@@ -158,6 +171,26 @@ export enum DurationFormat {
   Minute = 'MINUTE'
 }
 
+export type FileUploadUrl = {
+  __typename?: 'FileUploadUrl';
+  fields: Scalars['JSON'];
+  resourceUrl: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type Image = {
+  __typename?: 'Image';
+  altText?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  url: Scalars['String'];
+};
+
+export type ImageInput = {
+  altText?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  url: Scalars['String'];
+};
+
 export enum MaxAdvanceFormat {
   Day = 'DAY',
   Hour = 'HOUR',
@@ -178,6 +211,7 @@ export type Mutation = {
   createCustomer: CreateCustomerPayload;
   createDraftBooking: CreateDraftBookingPayload;
   createDraftOrder: CreateDraftOrderPayload;
+  createFileUploadUrls: CreateFileUploadUrlsPayload;
   createOffering: CreateOfferingPayload;
   createUser: CreateUserPayload;
   updateDraftOrder: UpdateDraftOrderPayload;
@@ -191,7 +225,7 @@ export type MutationCreateBookingArgs = {
 
 
 export type MutationCreateBusinessArgs = {
-  input?: InputMaybe<CreateBusinessInput>;
+  input: CreateBusinessInput;
 };
 
 
@@ -207,6 +241,11 @@ export type MutationCreateDraftBookingArgs = {
 
 export type MutationCreateDraftOrderArgs = {
   input: DraftOrderInput;
+};
+
+
+export type MutationCreateFileUploadUrlsArgs = {
+  input: Array<CreateFileUploadUrlsInput>;
 };
 
 
@@ -239,6 +278,7 @@ export type Offering = {
   depositType?: Maybe<DepositType>;
   description?: Maybe<Scalars['String']>;
   duration: Scalars['Int'];
+  featuredImage?: Maybe<Image>;
   id: Scalars['ID'];
   maxAdvance: Scalars['Int'];
   maxAdvanceFormat: MaxAdvanceFormat;
@@ -248,7 +288,6 @@ export type Offering = {
   minGuests: Scalars['Int'];
   name: Scalars['String'];
   paymentType: PaymentType;
-  photoUrls: Array<Scalars['String']>;
   pricePerPerson?: Maybe<Scalars['Int']>;
   priceTotalAmount?: Maybe<Scalars['Int']>;
   pricingType: PricingType;
@@ -269,6 +308,7 @@ export type OfferingInput = {
   depositType?: InputMaybe<DepositType>;
   description?: InputMaybe<Scalars['String']>;
   duration: Scalars['Int'];
+  featuredImage?: InputMaybe<ImageInput>;
   id?: InputMaybe<Scalars['ID']>;
   maxAdvance: Scalars['Int'];
   maxAdvanceFormat: MaxAdvanceFormat;
@@ -457,6 +497,13 @@ export type CreateDraftOrderMutationVariables = Exact<{
 
 export type CreateDraftOrderMutation = { __typename?: 'Mutation', createDraftOrder: { __typename?: 'CreateDraftOrderPayload', draftOrder?: { __typename?: 'DraftOrder', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'DraftBooking', id: string, startDateTime: any, numGuests: number, offering: { __typename?: 'Offering', id: string } }> } | null } };
 
+export type CreateFileUploadUrlsMutationVariables = Exact<{
+  input: Array<CreateFileUploadUrlsInput> | CreateFileUploadUrlsInput;
+}>;
+
+
+export type CreateFileUploadUrlsMutation = { __typename?: 'Mutation', createFileUploadUrls: { __typename?: 'CreateFileUploadUrlsPayload', urls?: Array<{ __typename?: 'FileUploadUrl', url: string, fields: any, resourceUrl: string }> | null } };
+
 export type CreateOfferingMutationVariables = Exact<{
   input: OfferingInput;
 }>;
@@ -509,7 +556,7 @@ export type GetOfferingQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, schedule: { __typename?: 'Schedule', timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', startTime: string, day: number }> } } };
+export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null, schedule: { __typename?: 'Schedule', timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', startTime: string, day: number }> } } };
 
 export type GetOfferingSchedulesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -644,6 +691,43 @@ export function useCreateDraftOrderMutation(baseOptions?: Apollo.MutationHookOpt
 export type CreateDraftOrderMutationHookResult = ReturnType<typeof useCreateDraftOrderMutation>;
 export type CreateDraftOrderMutationResult = Apollo.MutationResult<CreateDraftOrderMutation>;
 export type CreateDraftOrderMutationOptions = Apollo.BaseMutationOptions<CreateDraftOrderMutation, CreateDraftOrderMutationVariables>;
+export const CreateFileUploadUrlsDocument = gql`
+    mutation createFileUploadUrls($input: [CreateFileUploadUrlsInput!]!) {
+  createFileUploadUrls(input: $input) {
+    urls {
+      url
+      fields
+      resourceUrl
+    }
+  }
+}
+    `;
+export type CreateFileUploadUrlsMutationFn = Apollo.MutationFunction<CreateFileUploadUrlsMutation, CreateFileUploadUrlsMutationVariables>;
+
+/**
+ * __useCreateFileUploadUrlsMutation__
+ *
+ * To run a mutation, you first call `useCreateFileUploadUrlsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFileUploadUrlsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFileUploadUrlsMutation, { data, loading, error }] = useCreateFileUploadUrlsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateFileUploadUrlsMutation(baseOptions?: Apollo.MutationHookOptions<CreateFileUploadUrlsMutation, CreateFileUploadUrlsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFileUploadUrlsMutation, CreateFileUploadUrlsMutationVariables>(CreateFileUploadUrlsDocument, options);
+      }
+export type CreateFileUploadUrlsMutationHookResult = ReturnType<typeof useCreateFileUploadUrlsMutation>;
+export type CreateFileUploadUrlsMutationResult = Apollo.MutationResult<CreateFileUploadUrlsMutation>;
+export type CreateFileUploadUrlsMutationOptions = Apollo.BaseMutationOptions<CreateFileUploadUrlsMutation, CreateFileUploadUrlsMutationVariables>;
 export const CreateOfferingDocument = gql`
     mutation createOffering($input: OfferingInput!) {
   createOffering(input: $input) {
@@ -946,6 +1030,11 @@ export const GetOfferingDocument = gql`
     maxAdvanceFormat
     minAdvance
     minAdvanceFormat
+    featuredImage {
+      id
+      url
+      altText
+    }
     schedule {
       timeSlots {
         startTime

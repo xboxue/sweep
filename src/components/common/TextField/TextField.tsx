@@ -16,7 +16,7 @@ const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
 }));
 
 const StyledInput = styled(InputBase)(({ theme }) => ({
-  borderRadius: 4,
+  borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
   border: "1px solid #ced4da",
   fontSize: theme.typography.body2.fontSize,
@@ -36,7 +36,7 @@ const StyledInput = styled(InputBase)(({ theme }) => ({
     marginTop: theme.spacing(3),
   },
   "&.Mui-focused": {
-    borderRadius: 4,
+    borderRadius: theme.shape.borderRadius,
     boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
     borderColor: theme.palette.primary.main,
   },

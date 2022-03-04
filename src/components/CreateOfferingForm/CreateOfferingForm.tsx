@@ -31,6 +31,7 @@ import {
   initialValues as scheduleInitialValues,
   validationSchema as scheduleValidationSchema,
 } from "./ScheduleForm";
+import { initialValues as mediaInitialValues } from "./MediaForm";
 
 const CreateOfferingForm = () => {
   const [createOffering, { loading, error }] = useCreateOfferingMutation();
@@ -44,6 +45,7 @@ const CreateOfferingForm = () => {
     ...paymentInitialValues,
     ...pricingInitialValues,
     ...scheduleInitialValues,
+    ...mediaInitialValues,
   };
 
   const handleSubmit: FormikConfig<typeof initialValues>["onSubmit"] = async (

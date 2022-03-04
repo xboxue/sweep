@@ -10,7 +10,7 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: [
-              "@babel/preset-env",
+              ["@babel/preset-env", { targets: { esmodules: true } }],
               ["@babel/preset-react", { runtime: "automatic" }],
               "@babel/preset-typescript",
             ],

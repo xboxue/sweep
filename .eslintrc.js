@@ -39,6 +39,7 @@ module.exports = {
     "react/no-array-index-key": "off",
     "react/require-default-props": "off",
     "no-shadow": "off",
+    "react/prop-types": "off",
   },
   overrides: [
     {
