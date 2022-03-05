@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useGetDraftOrdersQuery } from "../generated/graphql";
 
-const DraftOrders = () => {
+const DraftOrdersPage = () => {
   const navigate = useNavigate();
 
   const { loading, error, data } = useGetDraftOrdersQuery();
@@ -73,4 +73,4 @@ const DraftOrders = () => {
   );
 };
 
-export default DraftOrders;
+export default DraftOrdersPage;

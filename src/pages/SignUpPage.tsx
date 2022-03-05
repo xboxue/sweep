@@ -15,7 +15,7 @@ const initialValues = {
   password: "",
 };
 
-const SignUp = () => {
+const SignUpPage = () => {
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
@@ -105,4 +105,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignUpPage;

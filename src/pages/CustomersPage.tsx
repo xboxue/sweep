@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useGetCustomersQuery } from "../generated/graphql";
 
-const Customers = () => {
+const CustomersPage = () => {
   const navigate = useNavigate();
 
   const { loading, error, data } = useGetCustomersQuery();
@@ -72,4 +72,4 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default CustomersPage;

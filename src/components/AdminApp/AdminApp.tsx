@@ -2,15 +2,15 @@ import { Box } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import AppLayout from "../../layouts/AppLayout";
-import Calendar from "../../pages/Calendar";
-import Customers from "../../pages/Customers";
-import DraftOrders from "../../pages/DraftOrders";
-import Experiences from "../../pages/Experiences";
-import Home from "../../pages/Home";
-import Login from "../../pages/Login";
-import NotFound from "../../pages/NotFound";
-import Register from "../../pages/Register";
-import SignUp from "../../pages/SignUp";
+import CalendarPage from "../../pages/CalendarPage";
+import CustomersPage from "../../pages/CustomersPage";
+import DraftOrdersPage from "../../pages/DraftOrdersPage";
+import ExperiencesPage from "../../pages/ExperiencesPage";
+import HomePage from "../../pages/HomePage";
+import LoginPage from "../../pages/LoginPage";
+import NotFoundPage from "../../pages/NotFoundPage";
+import RegisterPage from "../../pages/RegisterPage";
+import SignUpPage from "../../pages/SignUpPage";
 import CreateOfferingForm from "../CreateOfferingForm/CreateOfferingForm";
 import OfferingDetailsForm from "../CreateOfferingForm/OfferingDetailsForm";
 import CreateOrderForm from "../CreateOrderForm/CreateOrderForm";
@@ -22,14 +22,14 @@ const AdminApp = () => {
 
   return (
     <Routes>
-      <Route path="signup" element={<SignUp />} />
-      <Route path="login" element={<Login />} />
+      <Route path="signup" element={<SignUpPage />} />
+      <Route path="login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<AppLayout />}>
-          <Route index element={<Home />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="draft-orders" element={<DraftOrders />} />
+          <Route index element={<HomePage />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="draft-orders" element={<DraftOrdersPage />} />
           <Route
             path="draft-orders/new"
             element={
@@ -46,8 +46,8 @@ const AdminApp = () => {
               </Box>
             }
           />
-          <Route path="customers" element={<Customers />} />
-          <Route path="experiences" element={<Experiences />} />
+          <Route path="customers" element={<CustomersPage />} />
+          <Route path="experiences" element={<ExperiencesPage />} />
           <Route
             path="experiences/new"
             element={
@@ -66,7 +66,7 @@ const AdminApp = () => {
           />
         </Route>
       </Route>
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

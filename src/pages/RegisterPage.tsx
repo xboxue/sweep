@@ -10,7 +10,7 @@ const initialValues = {
   // url: "",
 };
 
-const Register = () => {
+const RegisterPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -56,4 +56,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterPage;

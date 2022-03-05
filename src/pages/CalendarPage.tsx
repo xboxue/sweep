@@ -59,7 +59,7 @@ const EventContent = ({ eventInfo }: Props) => {
   );
 };
 
-const Calendar = () => {
+const CalendarPage = () => {
   const { loading, error, data } = useGetOfferingSchedulesQuery();
 
   if (loading) return <Skeleton />;
@@ -98,4 +98,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default CalendarPage;

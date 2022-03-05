@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useGetOfferingsQuery } from "../generated/graphql";
 
-const Experiences = () => {
+const ExperiencesPage = () => {
   const navigate = useNavigate();
 
   const { loading, error, data } = useGetOfferingsQuery();
@@ -87,4 +87,4 @@ const Experiences = () => {
   );
 };
 
-export default Experiences;
+export default ExperiencesPage;
