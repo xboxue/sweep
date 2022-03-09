@@ -31,21 +31,22 @@ const ExperiencesPage = () => {
             {
               field: "featuredImage",
               headerName: "",
-              renderCell: (params) => (
-                <Box
-                  component="img"
-                  src={params.value.url}
-                  alt={params.value.altText}
-                  sx={{
-                    objectFit: "contain",
-                    width: 40,
-                    height: 40,
-                    borderRadius: 1,
-                    border: 1,
-                    borderColor: (theme) => theme.palette.divider,
-                  }}
-                />
-              ),
+              renderCell: (params) =>
+                params.value ? (
+                  <Box
+                    component="img"
+                    src={params.value.url}
+                    alt={params.value.altText}
+                    sx={{
+                      objectFit: "contain",
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      border: 1,
+                      borderColor: (theme) => theme.palette.divider,
+                    }}
+                  />
+                ) : null,
             },
             { field: "name", headerName: "Name", flex: 1 },
             {

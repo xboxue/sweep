@@ -25,7 +25,6 @@ const MediaForm = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dropzoneRef = useRef<DropzoneRef>();
 
-  console.log(formik.values);
   const handleDrop: DropzoneOptions["onDrop"] = async (acceptedFiles) => {
     try {
       const { data } = await createFileUploadUrls({

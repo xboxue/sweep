@@ -60,20 +60,9 @@ const CreateOfferingForm = () => {
       depositFixedAmount,
       depositPerPerson,
       featuredImage,
-      schedule,
       ...rest
     } = values;
 
-    const scheduleInput = {
-      timeSlots: Object.entries(schedule)
-        .map(([day, times]) =>
-          times.map((time) => ({
-            startTime: DateTime.fromFormat(time, "h:mm a").toFormat("HH:mm:ss"),
-            day: parseInt(day, 10),
-          }))
-        )
-        .flat(),
-    };
     try {
       const { data } = await createOffering({
         variables: {
@@ -87,7 +76,6 @@ const CreateOfferingForm = () => {
             depositFixedAmount: depositFixedAmount && depositFixedAmount * 100,
             depositPerPerson: depositPerPerson && depositPerPerson * 100,
             featuredImage: featuredImage?.url ? featuredImage : null,
-            schedule: scheduleInput,
             ...rest,
           } as any,
         },

@@ -1,7 +1,5 @@
 import { Alert, Box, Skeleton } from "@mui/material";
 import { Formik, FormikConfig } from "formik";
-import { groupBy, sortBy } from "lodash";
-import { DateTime } from "luxon";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -19,10 +17,7 @@ import { initialValues as mediaInitialValues } from "./MediaForm";
 import OfferingForm from "./OfferingForm";
 import { validationSchema as paymentValidationSchema } from "./PaymentForm";
 import { validationSchema as pricingValidationSchema } from "./PricingForm";
-import {
-  initialValues as scheduleInitialValues,
-  validationSchema as scheduleValidationSchema,
-} from "./ScheduleForm";
+import { validationSchema as scheduleValidationSchema } from "./ScheduleForm";
 
 const OfferingDetailsForm = () => {
   const params = useParams();
@@ -39,14 +34,12 @@ const OfferingDetailsForm = () => {
     if (!data?.offering) return null;
 
     const {
-      id,
       duration,
       pricePerPerson,
       priceTotalAmount,
       depositFixedAmount,
       depositPerPerson,
       featuredImage,
-      schedule,
       ...rest
     } = omitDeep(data.offering, "__typename") as DeepOmit<
       typeof data.offering,
@@ -63,21 +56,6 @@ const OfferingDetailsForm = () => {
       depositFixedAmount: depositFixedAmount && depositFixedAmount / 100,
       depositPerPerson: depositPerPerson && depositPerPerson / 100,
       featuredImage: featuredImage || mediaInitialValues.featuredImage,
-      schedule: {
-        ...scheduleInitialValues.schedule,
-        ...Object.fromEntries(
-          Object.entries(groupBy(schedule.timeSlots, "day")).map(
-            ([day, timeSlots]) => [
-              day,
-              sortBy(timeSlots, "startTime").map((slot) =>
-                DateTime.fromFormat(slot.startTime, "HH:mm:ss").toFormat(
-                  "h:mm a"
-                )
-              ),
-            ]
-          )
-        ),
-      },
       ...rest,
     };
   }, [data]);
@@ -96,27 +74,13 @@ const OfferingDetailsForm = () => {
       depositFixedAmount,
       depositPerPerson,
       featuredImage,
-      schedule,
       ...rest
     } = values!;
 
     try {
-      const scheduleInput = {
-        timeSlots: Object.entries(schedule)
-          .map(([day, times]) =>
-            times.map((time) => ({
-              startTime: DateTime.fromFormat(time, "h:mm a").toFormat(
-                "HH:mm:ss"
-              ),
-              day: parseInt(day, 10),
-            }))
-          )
-          .flat(),
-      };
       await updateOffering({
         variables: {
           input: {
-            id: data?.offering.id,
             duration:
               durationFormat === DurationFormat.Minute
                 ? durationMinutes
@@ -126,7 +90,6 @@ const OfferingDetailsForm = () => {
             depositFixedAmount: depositFixedAmount && depositFixedAmount * 100,
             depositPerPerson: depositPerPerson && depositPerPerson * 100,
             featuredImage: featuredImage?.url ? featuredImage : null,
-            schedule: scheduleInput,
             ...rest,
           } as any,
         },

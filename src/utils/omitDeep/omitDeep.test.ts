@@ -64,4 +64,28 @@ describe("omitDeep", () => {
 
     expect(omitDeep(input, "a")).toEqual(result);
   });
+
+  it("should omit keys in arrays of objects", () => {
+    const input = {
+      a: null,
+      b: {
+        a: "",
+        b: [
+          { a: "", b: "" },
+          { a: "", b: "" },
+        ],
+        c: "",
+      },
+      c: { a: null, b: undefined, c: { a: [null], b: null } },
+      d: [{ a: null, b: [{ a: "" }] }],
+    };
+
+    const result = {
+      b: { b: [{ b: "" }, { b: "" }], c: "" },
+      c: { b: undefined, c: { b: null } },
+      d: [{ b: [{}] }],
+    };
+
+    expect(omitDeep(input, "a")).toEqual(result);
+  });
 });

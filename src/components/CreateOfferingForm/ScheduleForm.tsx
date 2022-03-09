@@ -7,7 +7,7 @@ import {
   MinAdvanceFormat,
 } from "../../generated/graphql";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
-import ScheduleBuilder from "../common/ScheduleBuilder/ScheduleBuilder";
+import ScheduleBuilder from "../ScheduleBuilder/ScheduleBuilder";
 
 export const initialValues = {
   durationMinutes: 60,
@@ -18,13 +18,7 @@ export const initialValues = {
   maxAdvance: 6,
   maxAdvanceFormat: MaxAdvanceFormat.Month,
   schedule: {
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    6: [],
+    timeSlots: [],
   },
 };
 
@@ -186,8 +180,10 @@ const ScheduleForm = () => {
               ? formik.values.durationMinutes
               : formik.values.durationHours * 60 + formik.values.durationMinutes
           }
-          schedule={formik.values.schedule}
-          setSchedule={(schedule) => formik.setFieldValue("schedule", schedule)}
+          timeSlots={formik.values.schedule.timeSlots}
+          onChange={(timeSlots) =>
+            formik.setFieldValue("schedule.timeSlots", timeSlots)
+          }
         />
       </Box>
     </Stack>

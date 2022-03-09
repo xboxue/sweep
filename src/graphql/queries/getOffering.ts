@@ -28,7 +28,10 @@ const GET_OFFERING = gql`
         altText
       }
       schedule {
+        id
+        name
         timeSlots {
+          id
           startTime
           day
         }
