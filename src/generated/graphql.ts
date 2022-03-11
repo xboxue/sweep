@@ -88,10 +88,6 @@ export type CreateOfferingPayload = {
   offering?: Maybe<Offering>;
 };
 
-export type CreateScheduleInput = {
-  exampleField?: InputMaybe<Scalars['Int']>;
-};
-
 export type CreateUserInput = {
   displayName?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
@@ -270,7 +266,7 @@ export type MutationUpdateOfferingArgs = {
 
 export type Offering = {
   __typename?: 'Offering';
-  availableTimes: Array<Maybe<Scalars['String']>>;
+  availableTimeSlots: Array<TimeSlot>;
   business: Business;
   depositFixedAmount?: Maybe<Scalars['Int']>;
   depositPerPerson?: Maybe<Scalars['Int']>;
@@ -293,12 +289,19 @@ export type Offering = {
   pricingType: PricingType;
   schedule: Schedule;
   status: OfferingStatus;
+  timeSlots: Array<TimeSlot>;
 };
 
 
-export type OfferingAvailableTimesArgs = {
-  dateTime: Scalars['DateTime'];
+export type OfferingAvailableTimeSlotsArgs = {
+  date: Scalars['DateTime'];
   numGuests?: InputMaybe<Scalars['Int']>;
+  time?: InputMaybe<Scalars['String']>;
+};
+
+
+export type OfferingTimeSlotsArgs = {
+  date: Scalars['DateTime'];
 };
 
 export type OfferingInput = {
@@ -420,18 +423,29 @@ export type Schedule = {
 };
 
 export type ScheduleInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
   timeSlots: Array<ScheduleTimeSlotInput>;
 };
 
 export type ScheduleTimeSlot = {
   __typename?: 'ScheduleTimeSlot';
   day: Scalars['Int'];
+  id: Scalars['ID'];
   startTime: Scalars['String'];
 };
 
 export type ScheduleTimeSlotInput = {
   day: Scalars['Int'];
+  id?: InputMaybe<Scalars['ID']>;
   startTime: Scalars['String'];
+};
+
+export type TimeSlot = {
+  __typename?: 'TimeSlot';
+  endDateTime: Scalars['DateTime'];
+  id: Scalars['ID'];
+  startDateTime: Scalars['DateTime'];
 };
 
 export type UpdateDraftOrderPayload = {
@@ -556,12 +570,14 @@ export type GetOfferingQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null, schedule: { __typename?: 'Schedule', timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', startTime: string, day: number }> } } };
+export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null, schedule: { __typename?: 'Schedule', id: string, name: string, timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', id: string, startTime: string, day: number }> } } };
 
-export type GetOfferingSchedulesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetOfferingSchedulesQueryVariables = Exact<{
+  date: Scalars['DateTime'];
+}>;
 
 
-export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, schedule: { __typename?: 'Schedule', name: string, timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', day: number, startTime: string }> } }> };
+export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }> }> };
 
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1036,7 +1052,10 @@ export const GetOfferingDocument = gql`
       altText
     }
     schedule {
+      id
+      name
       timeSlots {
+        id
         startTime
         day
       }
@@ -1073,33 +1092,14 @@ export type GetOfferingQueryHookResult = ReturnType<typeof useGetOfferingQuery>;
 export type GetOfferingLazyQueryHookResult = ReturnType<typeof useGetOfferingLazyQuery>;
 export type GetOfferingQueryResult = Apollo.QueryResult<GetOfferingQuery, GetOfferingQueryVariables>;
 export const GetOfferingSchedulesDocument = gql`
-    query getOfferingSchedules {
+    query getOfferingSchedules($date: DateTime!) {
   offerings {
     id
     name
-    status
-    minGuests
-    maxGuests
-    description
-    pricingType
-    pricePerPerson
-    priceTotalAmount
-    paymentType
-    depositType
-    depositPerPerson
-    depositFixedAmount
-    depositPercent
-    duration
-    maxAdvance
-    maxAdvanceFormat
-    minAdvance
-    minAdvanceFormat
-    schedule {
-      name
-      timeSlots {
-        day
-        startTime
-      }
+    timeSlots(date: $date) {
+      id
+      startDateTime
+      endDateTime
     }
   }
 }
@@ -1117,10 +1117,11 @@ export const GetOfferingSchedulesDocument = gql`
  * @example
  * const { data, loading, error } = useGetOfferingSchedulesQuery({
  *   variables: {
+ *      date: // value for 'date'
  *   },
  * });
  */
-export function useGetOfferingSchedulesQuery(baseOptions?: Apollo.QueryHookOptions<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>) {
+export function useGetOfferingSchedulesQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetOfferingSchedulesQuery, GetOfferingSchedulesQueryVariables>(GetOfferingSchedulesDocument, options);
       }

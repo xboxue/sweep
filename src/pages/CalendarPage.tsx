@@ -1,33 +1,74 @@
-import FullCalendar, { EventContentArg } from "@fullcalendar/react";
-import interactionPlugin from "@fullcalendar/interaction";
-import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
-import { Box, Button, Popover, Skeleton, Typography } from "@mui/material";
-import { DateTime } from "luxon";
+import { Box, Popover, Skeleton } from "@mui/material";
+import { styled } from "@mui/system";
+import { DateTime, Settings } from "luxon";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  useCreateDraftOrderMutation,
-  useGetOfferingSchedulesQuery,
-} from "../generated/graphql";
+import { Calendar, Event, luxonLocalizer } from "react-big-calendar";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import EventPreviewCard from "../components/EventPreviewCard/EventPreviewCard";
+import { useGetOfferingSchedulesQuery } from "../generated/graphql";
 
-interface Props {
-  eventInfo: EventContentArg;
-}
+const StyledCalendar = styled(withDragAndDrop(Calendar))({
+  // Prevent hover events on time column
+  ".rbc-time-gutter": {
+    pointerEvents: "none",
+    fontSize: 14,
+  },
+  // Don't change today column color
+  ".rbc-today": {
+    background: "inherit",
+  },
+  // Hide header
+  ".rbc-allday-cell": {
+    display: "none",
+  },
+  ".rbc-time-view .rbc-header ": {
+    borderBottom: "none",
+  },
+  // Hide default event label
+  // ".rbc-event-label": {
+  //   display: "none",
+  // },
+  // Dim event when dragged into different day
+  ".rbc-addons-dnd-drag-preview": {
+    opacity: "50%",
+  },
+  ".rbc-addons-dnd-dragged-event ~ .rbc-addons-dnd-drag-preview": {
+    opacity: "100%",
+  },
+  // Cell height
+  ".rbc-timeslot-group": {
+    minHeight: 100,
+  },
+});
 
-const EventContent = ({ eventInfo }: Props) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [createDraftOrder] = useCreateDraftOrderMutation();
+const CalendarPage = () => {
+  const [date, setDate] = useState(DateTime.now().startOf("day").toJSDate());
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [previewEvent, setPreviewEvent] = useState<Event | null>(null);
+  const { loading, error, data } = useGetOfferingSchedulesQuery({
+    variables: { date },
+  });
 
-  const navigate = useNavigate();
+  Settings.defaultLocale = "en";
+
+  if (loading) return <Skeleton />;
+
+  const events = data?.offerings
+    .map((offering) =>
+      offering.timeSlots.map((timeSlot) => ({
+        id: timeSlot.id,
+        resourceId: offering.id,
+        resourceTitle: offering.name,
+        start: DateTime.fromISO(timeSlot.startDateTime).toJSDate(),
+        end: DateTime.fromISO(timeSlot.endDateTime).toJSDate(),
+      }))
+    )
+    .flat();
 
   return (
-    <>
-      <Box
-        sx={{ flex: 1, cursor: "pointer" }}
-        onClick={(event) => setAnchorEl(event.currentTarget)}
-      >
-        <Typography variant="body2">{eventInfo.timeText}</Typography>
-      </Box>
+    <Box sx={{ height: 800 }}>
       <Popover
         open={!!anchorEl}
         anchorEl={anchorEl}
@@ -35,66 +76,35 @@ const EventContent = ({ eventInfo }: Props) => {
         transformOrigin={{ vertical: "center", horizontal: "right" }}
         onClose={() => setAnchorEl(null)}
       >
-        <Box sx={{ p: 2 }}>
-          <Button variant="contained">Block off</Button>
-          <Button
-            variant="contained"
-            onClick={async () => {
-              try {
-                navigate(
-                  `/draft-orders/new?offeringId=${
-                    eventInfo.event.extendedProps.offeringId
-                  }&startDateTime=${DateTime.fromJSDate(
-                    eventInfo.event.start
-                  ).toISO()}`
-                );
-              } catch (error) {}
-            }}
-          >
-            Add booking
-          </Button>
-        </Box>
+        <EventPreviewCard event={previewEvent} />
       </Popover>
-    </>
-  );
-};
-
-const CalendarPage = () => {
-  const { loading, error, data } = useGetOfferingSchedulesQuery();
-
-  if (loading) return <Skeleton />;
-
-  const events = data?.offerings
-    .map((offering) =>
-      offering.schedule.timeSlots.map((timeSlot) => ({
-        resourceId: offering.id,
-        startTime: timeSlot.startTime,
-        endTime: DateTime.fromFormat(timeSlot.startTime, "HH:mm:ss")
-          .plus({ minutes: offering.duration })
-          .toFormat("HH:mm:ss"),
-        daysOfWeek: [(timeSlot.day + 1) % 7],
-        extendedProps: {
-          offeringId: offering.id,
-        },
-      }))
-    )
-    .flat();
-
-  return (
-    <>
-      <FullCalendar
-        plugins={[resourceTimeGridPlugin, interactionPlugin]}
-        initialView="resourceTimeGridDay"
-        slotMinTime="07:00:00"
-        dateClick={(info) => console.log(info)}
+      <StyledCalendar
+        date={date}
+        onNavigate={(date) => setDate(date)}
+        defaultView="day"
+        // views={["day"]}
         resources={data?.offerings.map((offering) => ({
           id: offering.id,
           title: offering.name,
         }))}
         events={events}
-        eventContent={(eventInfo) => <EventContent eventInfo={eventInfo} />}
+        localizer={luxonLocalizer(DateTime)}
+        step={15}
+        timeslots={4}
+        // eventPropGetter={() => ({ style: { zIndex: 11 } })}
+        selectable
+        onSelecting={() => false}
+        // onSelectSlot={onSelectSlot}
+        // onEventDrop={onEventDrop}
+        onSelectEvent={(event, e) => {
+          setPreviewEvent(event);
+          setAnchorEl(e.currentTarget);
+        }}
+        showMultiDayTimes
+        scrollToTime={DateTime.fromISO("09:00").toJSDate()}
+        resizable={false}
       />
-    </>
+    </Box>
   );
 };
 

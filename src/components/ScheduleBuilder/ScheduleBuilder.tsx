@@ -155,6 +155,7 @@ const ScheduleBuilder = ({ duration, timeSlots, onChange }: Props) => {
           onSelectSlot={onSelectSlot}
           onEventDrop={onEventDrop}
           showMultiDayTimes
+          scrollToTime={DateTime.fromISO("09:00").toJSDate()}
           resizable={false}
         />
       </ScheduleContext.Provider>
