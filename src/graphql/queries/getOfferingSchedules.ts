@@ -9,6 +9,9 @@ const GET_OFFERING_SCHEDULES = gql`
         id
         startDateTime
         endDateTime
+        block {
+          id
+        }
       }
     }
   }

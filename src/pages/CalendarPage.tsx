@@ -1,7 +1,7 @@
 import { Box, Popover, Skeleton } from "@mui/material";
 import { styled } from "@mui/system";
 import { DateTime, Settings } from "luxon";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Calendar, Event, luxonLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
@@ -46,26 +46,36 @@ const StyledCalendar = styled(withDragAndDrop(Calendar))({
 const CalendarPage = () => {
   const [date, setDate] = useState(DateTime.now().startOf("day").toJSDate());
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [previewEvent, setPreviewEvent] = useState<Event | null>(null);
-  const { loading, error, data } = useGetOfferingSchedulesQuery({
+  const [previewEventId, setPreviewEventId] = useState<Event | null>(null);
+  const { loading, error, data, refetch } = useGetOfferingSchedulesQuery({
     variables: { date },
   });
+
+  const events = useMemo(
+    () =>
+      data?.offerings
+        .map((offering) =>
+          offering.timeSlots.map((timeSlot) => ({
+            id: timeSlot.id,
+            resourceId: offering.id,
+            resourceTitle: offering.name,
+            block: timeSlot.block,
+            start: DateTime.fromISO(timeSlot.startDateTime).toJSDate(),
+            end: DateTime.fromISO(timeSlot.endDateTime).toJSDate(),
+          }))
+        )
+        .flat(),
+    [data]
+  );
+
+  const previewEvent = useMemo(
+    () => events?.find((event) => event.id === previewEventId),
+    [events, previewEventId]
+  );
 
   Settings.defaultLocale = "en";
 
   if (loading) return <Skeleton />;
-
-  const events = data?.offerings
-    .map((offering) =>
-      offering.timeSlots.map((timeSlot) => ({
-        id: timeSlot.id,
-        resourceId: offering.id,
-        resourceTitle: offering.name,
-        start: DateTime.fromISO(timeSlot.startDateTime).toJSDate(),
-        end: DateTime.fromISO(timeSlot.endDateTime).toJSDate(),
-      }))
-    )
-    .flat();
 
   return (
     <Box sx={{ height: 800 }}>
@@ -76,7 +86,7 @@ const CalendarPage = () => {
         transformOrigin={{ vertical: "center", horizontal: "right" }}
         onClose={() => setAnchorEl(null)}
       >
-        <EventPreviewCard event={previewEvent} />
+        <EventPreviewCard event={previewEvent} onBlock={refetch} />
       </Popover>
       <StyledCalendar
         date={date}
@@ -91,13 +101,18 @@ const CalendarPage = () => {
         localizer={luxonLocalizer(DateTime)}
         step={15}
         timeslots={4}
-        // eventPropGetter={() => ({ style: { zIndex: 11 } })}
+        eventPropGetter={(event) => {
+          if (event.block) {
+            return { style: { backgroundColor: "grey" } };
+          }
+          return {};
+        }}
         selectable
         onSelecting={() => false}
         // onSelectSlot={onSelectSlot}
         // onEventDrop={onEventDrop}
         onSelectEvent={(event, e) => {
-          setPreviewEvent(event);
+          setPreviewEventId(event.id);
           setAnchorEl(e.currentTarget);
         }}
         showMultiDayTimes

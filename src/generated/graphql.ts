@@ -88,6 +88,15 @@ export type CreateOfferingPayload = {
   offering?: Maybe<Offering>;
 };
 
+export type CreateTimeSlotBlockInput = {
+  timeSlotId: Scalars['ID'];
+};
+
+export type CreateTimeSlotBlockPayload = {
+  __typename?: 'CreateTimeSlotBlockPayload';
+  timeSlotBlock?: Maybe<TimeSlotBlock>;
+};
+
 export type CreateUserInput = {
   displayName?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
@@ -122,6 +131,15 @@ export type CustomerInput = {
   firstName?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
+};
+
+export type DeleteTimeSlotBlockInput = {
+  id: Scalars['ID'];
+};
+
+export type DeleteTimeSlotBlockPayload = {
+  __typename?: 'DeleteTimeSlotBlockPayload';
+  id: Scalars['ID'];
 };
 
 export enum DepositType {
@@ -209,7 +227,9 @@ export type Mutation = {
   createDraftOrder: CreateDraftOrderPayload;
   createFileUploadUrls: CreateFileUploadUrlsPayload;
   createOffering: CreateOfferingPayload;
+  createTimeSlotBlock: CreateTimeSlotBlockPayload;
   createUser: CreateUserPayload;
+  deleteTimeSlotBlock: DeleteTimeSlotBlockPayload;
   updateDraftOrder: UpdateDraftOrderPayload;
   updateOffering: UpdateOfferingPayload;
 };
@@ -250,8 +270,18 @@ export type MutationCreateOfferingArgs = {
 };
 
 
+export type MutationCreateTimeSlotBlockArgs = {
+  input: CreateTimeSlotBlockInput;
+};
+
+
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteTimeSlotBlockArgs = {
+  input: DeleteTimeSlotBlockInput;
 };
 
 
@@ -443,9 +473,16 @@ export type ScheduleTimeSlotInput = {
 
 export type TimeSlot = {
   __typename?: 'TimeSlot';
+  block?: Maybe<TimeSlotBlock>;
   endDateTime: Scalars['DateTime'];
   id: Scalars['ID'];
   startDateTime: Scalars['DateTime'];
+};
+
+export type TimeSlotBlock = {
+  __typename?: 'TimeSlotBlock';
+  id: Scalars['ID'];
+  timeSlot: TimeSlot;
 };
 
 export type UpdateDraftOrderPayload = {
@@ -525,12 +562,26 @@ export type CreateOfferingMutationVariables = Exact<{
 
 export type CreateOfferingMutation = { __typename?: 'Mutation', createOffering: { __typename?: 'CreateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
 
+export type CreateTimeSlotBlockMutationVariables = Exact<{
+  input: CreateTimeSlotBlockInput;
+}>;
+
+
+export type CreateTimeSlotBlockMutation = { __typename?: 'Mutation', createTimeSlotBlock: { __typename?: 'CreateTimeSlotBlockPayload', timeSlotBlock?: { __typename?: 'TimeSlotBlock', id: string } | null } };
+
 export type CreateUserMutationVariables = Exact<{
   input: CreateUserInput;
 }>;
 
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'CreateUserPayload', user?: { __typename?: 'User', uid: string } | null } };
+
+export type DeleteTimeSlotBlockMutationVariables = Exact<{
+  input: DeleteTimeSlotBlockInput;
+}>;
+
+
+export type DeleteTimeSlotBlockMutation = { __typename?: 'Mutation', deleteTimeSlotBlock: { __typename?: 'DeleteTimeSlotBlockPayload', id: string } };
 
 export type UpdateDraftOrderMutationVariables = Exact<{
   input: DraftOrderInput;
@@ -577,7 +628,7 @@ export type GetOfferingSchedulesQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }> }> };
+export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
 
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -779,6 +830,41 @@ export function useCreateOfferingMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateOfferingMutationHookResult = ReturnType<typeof useCreateOfferingMutation>;
 export type CreateOfferingMutationResult = Apollo.MutationResult<CreateOfferingMutation>;
 export type CreateOfferingMutationOptions = Apollo.BaseMutationOptions<CreateOfferingMutation, CreateOfferingMutationVariables>;
+export const CreateTimeSlotBlockDocument = gql`
+    mutation createTimeSlotBlock($input: CreateTimeSlotBlockInput!) {
+  createTimeSlotBlock(input: $input) {
+    timeSlotBlock {
+      id
+    }
+  }
+}
+    `;
+export type CreateTimeSlotBlockMutationFn = Apollo.MutationFunction<CreateTimeSlotBlockMutation, CreateTimeSlotBlockMutationVariables>;
+
+/**
+ * __useCreateTimeSlotBlockMutation__
+ *
+ * To run a mutation, you first call `useCreateTimeSlotBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTimeSlotBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTimeSlotBlockMutation, { data, loading, error }] = useCreateTimeSlotBlockMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTimeSlotBlockMutation(baseOptions?: Apollo.MutationHookOptions<CreateTimeSlotBlockMutation, CreateTimeSlotBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTimeSlotBlockMutation, CreateTimeSlotBlockMutationVariables>(CreateTimeSlotBlockDocument, options);
+      }
+export type CreateTimeSlotBlockMutationHookResult = ReturnType<typeof useCreateTimeSlotBlockMutation>;
+export type CreateTimeSlotBlockMutationResult = Apollo.MutationResult<CreateTimeSlotBlockMutation>;
+export type CreateTimeSlotBlockMutationOptions = Apollo.BaseMutationOptions<CreateTimeSlotBlockMutation, CreateTimeSlotBlockMutationVariables>;
 export const CreateUserDocument = gql`
     mutation createUser($input: CreateUserInput!) {
   createUser(input: $input) {
@@ -814,6 +900,39 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const DeleteTimeSlotBlockDocument = gql`
+    mutation deleteTimeSlotBlock($input: DeleteTimeSlotBlockInput!) {
+  deleteTimeSlotBlock(input: $input) {
+    id
+  }
+}
+    `;
+export type DeleteTimeSlotBlockMutationFn = Apollo.MutationFunction<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>;
+
+/**
+ * __useDeleteTimeSlotBlockMutation__
+ *
+ * To run a mutation, you first call `useDeleteTimeSlotBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTimeSlotBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTimeSlotBlockMutation, { data, loading, error }] = useDeleteTimeSlotBlockMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteTimeSlotBlockMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>(DeleteTimeSlotBlockDocument, options);
+      }
+export type DeleteTimeSlotBlockMutationHookResult = ReturnType<typeof useDeleteTimeSlotBlockMutation>;
+export type DeleteTimeSlotBlockMutationResult = Apollo.MutationResult<DeleteTimeSlotBlockMutation>;
+export type DeleteTimeSlotBlockMutationOptions = Apollo.BaseMutationOptions<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>;
 export const UpdateDraftOrderDocument = gql`
     mutation updateDraftOrder($input: DraftOrderInput!) {
   updateDraftOrder(input: $input) {
@@ -1100,6 +1219,9 @@ export const GetOfferingSchedulesDocument = gql`
       id
       startDateTime
       endDateTime
+      block {
+        id
+      }
     }
   }
 }
