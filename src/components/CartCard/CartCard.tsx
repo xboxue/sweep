@@ -1,12 +1,16 @@
-import { Avatar, Box, Link, Typography } from "@mui/material";
+import { Avatar, Box, Link, Skeleton, Typography } from "@mui/material";
 import { DateTime } from "luxon";
-import { useGetMyCartQuery } from "../../generated/graphql";
+import {
+  useGetMyCartQuery,
+  useRemoveCartBookingsMutation,
+} from "../../generated/graphql";
 import TextField from "../common/TextField/TextField";
 
 const CartCard = () => {
-  const { loading, error, data } = useGetMyCartQuery({
-    fetchPolicy: "cache-only",
-  });
+  const { loading, error, data, refetch } = useGetMyCartQuery();
+  const [removeCartBookings] = useRemoveCartBookingsMutation();
+
+  if (loading) return <Skeleton />;
 
   if (!data?.myCart?.cartBookings) {
     return <Typography>No items in cart</Typography>;
@@ -35,7 +39,22 @@ const CartCard = () => {
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <TextField select value={cartBooking.numGuests} />
-              <Link component="button" sx={{ ml: 1 }} onClick={() => {}}>
+              <Link
+                component="button"
+                sx={{ ml: 1 }}
+                onClick={async () => {
+                  try {
+                    await removeCartBookings({
+                      variables: {
+                        input: { cartBookingIds: [cartBooking.id] },
+                      },
+                    });
+                    await refetch();
+                  } catch (error) {
+                    console.log(error);
+                  }
+                }}
+              >
                 Remove
               </Link>
             </Box>

@@ -40,6 +40,7 @@ module.exports = {
     "react/require-default-props": "off",
     "no-shadow": "off",
     "react/prop-types": "off",
+    "jsx-a11y/anchor-is-valid": "off",
   },
   overrides: [
     {

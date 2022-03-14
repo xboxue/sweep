@@ -260,6 +260,7 @@ export type Mutation = {
   createOffering: CreateOfferingPayload;
   createTimeSlotBlock: CreateTimeSlotBlockPayload;
   createUser: CreateUserPayload;
+  removeCartBookings: RemoveCartBookingsPayload;
   removeTimeSlotBlock: RemoveTimeSlotBlockPayload;
   updateDraftOrder: UpdateDraftOrderPayload;
   updateOffering: UpdateOfferingPayload;
@@ -318,6 +319,11 @@ export type MutationCreateTimeSlotBlockArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationRemoveCartBookingsArgs = {
+  input: RemoveCartBookingsInput;
 };
 
 
@@ -488,12 +494,12 @@ export type QueryOrderArgs = {
 };
 
 export type RemoveCartBookingsInput = {
-  id: Scalars['ID'];
+  cartBookingIds: Array<Scalars['ID']>;
 };
 
 export type RemoveCartBookingsPayload = {
   __typename?: 'RemoveCartBookingsPayload';
-  id: Scalars['ID'];
+  cart?: Maybe<Cart>;
 };
 
 export type RemoveTimeSlotBlockInput = {
@@ -642,6 +648,13 @@ export type CreateUserMutationVariables = Exact<{
 
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'CreateUserPayload', user?: { __typename?: 'User', uid: string } | null } };
+
+export type RemoveCartBookingsMutationVariables = Exact<{
+  input: RemoveCartBookingsInput;
+}>;
+
+
+export type RemoveCartBookingsMutation = { __typename?: 'Mutation', removeCartBookings: { __typename?: 'RemoveCartBookingsPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
 export type RemoveTimeSlotBlockMutationVariables = Exact<{
   input: RemoveTimeSlotBlockInput;
@@ -1007,6 +1020,41 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const RemoveCartBookingsDocument = gql`
+    mutation removeCartBookings($input: RemoveCartBookingsInput!) {
+  removeCartBookings(input: $input) {
+    cart {
+      id
+    }
+  }
+}
+    `;
+export type RemoveCartBookingsMutationFn = Apollo.MutationFunction<RemoveCartBookingsMutation, RemoveCartBookingsMutationVariables>;
+
+/**
+ * __useRemoveCartBookingsMutation__
+ *
+ * To run a mutation, you first call `useRemoveCartBookingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveCartBookingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeCartBookingsMutation, { data, loading, error }] = useRemoveCartBookingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveCartBookingsMutation(baseOptions?: Apollo.MutationHookOptions<RemoveCartBookingsMutation, RemoveCartBookingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveCartBookingsMutation, RemoveCartBookingsMutationVariables>(RemoveCartBookingsDocument, options);
+      }
+export type RemoveCartBookingsMutationHookResult = ReturnType<typeof useRemoveCartBookingsMutation>;
+export type RemoveCartBookingsMutationResult = Apollo.MutationResult<RemoveCartBookingsMutation>;
+export type RemoveCartBookingsMutationOptions = Apollo.BaseMutationOptions<RemoveCartBookingsMutation, RemoveCartBookingsMutationVariables>;
 export const RemoveTimeSlotBlockDocument = gql`
     mutation removeTimeSlotBlock($input: RemoveTimeSlotBlockInput!) {
   removeTimeSlotBlock(input: $input) {
