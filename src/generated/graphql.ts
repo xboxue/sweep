@@ -61,6 +61,7 @@ export type CartBooking = {
 };
 
 export type CartBookingInput = {
+  id?: InputMaybe<Scalars['ID']>;
   numGuests: Scalars['Int'];
   offeringId: Scalars['ID'];
   timeSlotId: Scalars['ID'];
@@ -252,7 +253,6 @@ export type Mutation = {
   addCartBookings: AddCartBookingsPayload;
   createBooking: CreateBookingPayload;
   createBusiness: CreateBusinessPayload;
-  createCart: CreateCartPayload;
   createCustomer: CreateCustomerPayload;
   createDraftBooking: CreateDraftBookingPayload;
   createDraftOrder: CreateDraftOrderPayload;
@@ -262,6 +262,7 @@ export type Mutation = {
   createUser: CreateUserPayload;
   removeCartBookings: RemoveCartBookingsPayload;
   removeTimeSlotBlock: RemoveTimeSlotBlockPayload;
+  updateCartBookings: UpdateCartBookingsPayload;
   updateDraftOrder: UpdateDraftOrderPayload;
   updateOffering: UpdateOfferingPayload;
 };
@@ -279,11 +280,6 @@ export type MutationCreateBookingArgs = {
 
 export type MutationCreateBusinessArgs = {
   input: CreateBusinessInput;
-};
-
-
-export type MutationCreateCartArgs = {
-  input: CreateCartInput;
 };
 
 
@@ -329,6 +325,11 @@ export type MutationRemoveCartBookingsArgs = {
 
 export type MutationRemoveTimeSlotBlockArgs = {
   input: RemoveTimeSlotBlockInput;
+};
+
+
+export type MutationUpdateCartBookingsArgs = {
+  input: UpdateCartBookingsInput;
 };
 
 
@@ -551,6 +552,20 @@ export type TimeSlotBlock = {
   timeSlot: TimeSlot;
 };
 
+export type UpdateCartBookingInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  numGuests: Scalars['Int'];
+};
+
+export type UpdateCartBookingsInput = {
+  cartBookings: Array<UpdateCartBookingInput>;
+};
+
+export type UpdateCartBookingsPayload = {
+  __typename?: 'UpdateCartBookingsPayload';
+  cart?: Maybe<Cart>;
+};
+
 export type UpdateDraftOrderPayload = {
   __typename?: 'UpdateDraftOrderPayload';
   draftOrder?: Maybe<DraftOrder>;
@@ -662,6 +677,13 @@ export type RemoveTimeSlotBlockMutationVariables = Exact<{
 
 
 export type RemoveTimeSlotBlockMutation = { __typename?: 'Mutation', removeTimeSlotBlock: { __typename?: 'RemoveTimeSlotBlockPayload', id: string } };
+
+export type UpdateCartBookingsMutationVariables = Exact<{
+  input: UpdateCartBookingsInput;
+}>;
+
+
+export type UpdateCartBookingsMutation = { __typename?: 'Mutation', updateCartBookings: { __typename?: 'UpdateCartBookingsPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
 export type UpdateDraftOrderMutationVariables = Exact<{
   input: DraftOrderInput;
@@ -1088,6 +1110,41 @@ export function useRemoveTimeSlotBlockMutation(baseOptions?: Apollo.MutationHook
 export type RemoveTimeSlotBlockMutationHookResult = ReturnType<typeof useRemoveTimeSlotBlockMutation>;
 export type RemoveTimeSlotBlockMutationResult = Apollo.MutationResult<RemoveTimeSlotBlockMutation>;
 export type RemoveTimeSlotBlockMutationOptions = Apollo.BaseMutationOptions<RemoveTimeSlotBlockMutation, RemoveTimeSlotBlockMutationVariables>;
+export const UpdateCartBookingsDocument = gql`
+    mutation updateCartBookings($input: UpdateCartBookingsInput!) {
+  updateCartBookings(input: $input) {
+    cart {
+      id
+    }
+  }
+}
+    `;
+export type UpdateCartBookingsMutationFn = Apollo.MutationFunction<UpdateCartBookingsMutation, UpdateCartBookingsMutationVariables>;
+
+/**
+ * __useUpdateCartBookingsMutation__
+ *
+ * To run a mutation, you first call `useUpdateCartBookingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCartBookingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCartBookingsMutation, { data, loading, error }] = useUpdateCartBookingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateCartBookingsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCartBookingsMutation, UpdateCartBookingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCartBookingsMutation, UpdateCartBookingsMutationVariables>(UpdateCartBookingsDocument, options);
+      }
+export type UpdateCartBookingsMutationHookResult = ReturnType<typeof useUpdateCartBookingsMutation>;
+export type UpdateCartBookingsMutationResult = Apollo.MutationResult<UpdateCartBookingsMutation>;
+export type UpdateCartBookingsMutationOptions = Apollo.BaseMutationOptions<UpdateCartBookingsMutation, UpdateCartBookingsMutationVariables>;
 export const UpdateDraftOrderDocument = gql`
     mutation updateDraftOrder($input: DraftOrderInput!) {
   updateDraftOrder(input: $input) {
