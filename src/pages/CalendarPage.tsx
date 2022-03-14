@@ -6,6 +6,7 @@ import { Calendar, Event, luxonLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import CalendarToolbar from "../components/CalendarToolbar/CalendarToolbar";
 import EventPreviewCard from "../components/EventPreviewCard/EventPreviewCard";
 import { useGetOfferingSchedulesQuery } from "../generated/graphql";
 
@@ -109,6 +110,7 @@ const CalendarPage = () => {
         }}
         selectable
         onSelecting={() => false}
+        components={{ toolbar: CalendarToolbar }}
         // onSelectSlot={onSelectSlot}
         // onEventDrop={onEventDrop}
         onSelectEvent={(event, e) => {

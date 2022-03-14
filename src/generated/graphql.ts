@@ -19,6 +19,15 @@ export type Scalars = {
   JSON: any;
 };
 
+export type AddCartBookingsInput = {
+  cartBookings: Array<CartBookingInput>;
+};
+
+export type AddCartBookingsPayload = {
+  __typename?: 'AddCartBookingsPayload';
+  cart?: Maybe<Cart>;
+};
+
 export type Booking = {
   __typename?: 'Booking';
   customer: Customer;
@@ -35,6 +44,26 @@ export type Business = {
   __typename?: 'Business';
   id: Scalars['ID'];
   name: Scalars['String'];
+};
+
+export type Cart = {
+  __typename?: 'Cart';
+  cartBookings?: Maybe<Array<CartBooking>>;
+  id: Scalars['ID'];
+};
+
+export type CartBooking = {
+  __typename?: 'CartBooking';
+  id: Scalars['ID'];
+  numGuests: Scalars['Int'];
+  offering: Offering;
+  timeSlot: TimeSlot;
+};
+
+export type CartBookingInput = {
+  numGuests: Scalars['Int'];
+  offeringId: Scalars['ID'];
+  timeSlotId: Scalars['ID'];
 };
 
 export type CreateBookingInput = {
@@ -55,6 +84,15 @@ export type CreateBusinessInput = {
 export type CreateBusinessPayload = {
   __typename?: 'CreateBusinessPayload';
   business?: Maybe<Business>;
+};
+
+export type CreateCartInput = {
+  cartBookings?: InputMaybe<Array<CartBookingInput>>;
+};
+
+export type CreateCartPayload = {
+  __typename?: 'CreateCartPayload';
+  cart?: Maybe<Cart>;
 };
 
 export type CreateCustomerPayload = {
@@ -131,15 +169,6 @@ export type CustomerInput = {
   firstName?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
-};
-
-export type DeleteTimeSlotBlockInput = {
-  id: Scalars['ID'];
-};
-
-export type DeleteTimeSlotBlockPayload = {
-  __typename?: 'DeleteTimeSlotBlockPayload';
-  id: Scalars['ID'];
 };
 
 export enum DepositType {
@@ -220,8 +249,10 @@ export enum MinAdvanceFormat {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addCartBookings: AddCartBookingsPayload;
   createBooking: CreateBookingPayload;
   createBusiness: CreateBusinessPayload;
+  createCart: CreateCartPayload;
   createCustomer: CreateCustomerPayload;
   createDraftBooking: CreateDraftBookingPayload;
   createDraftOrder: CreateDraftOrderPayload;
@@ -229,9 +260,14 @@ export type Mutation = {
   createOffering: CreateOfferingPayload;
   createTimeSlotBlock: CreateTimeSlotBlockPayload;
   createUser: CreateUserPayload;
-  deleteTimeSlotBlock: DeleteTimeSlotBlockPayload;
+  removeTimeSlotBlock: RemoveTimeSlotBlockPayload;
   updateDraftOrder: UpdateDraftOrderPayload;
   updateOffering: UpdateOfferingPayload;
+};
+
+
+export type MutationAddCartBookingsArgs = {
+  input: AddCartBookingsInput;
 };
 
 
@@ -242,6 +278,11 @@ export type MutationCreateBookingArgs = {
 
 export type MutationCreateBusinessArgs = {
   input: CreateBusinessInput;
+};
+
+
+export type MutationCreateCartArgs = {
+  input: CreateCartInput;
 };
 
 
@@ -280,8 +321,8 @@ export type MutationCreateUserArgs = {
 };
 
 
-export type MutationDeleteTimeSlotBlockArgs = {
-  input: DeleteTimeSlotBlockInput;
+export type MutationRemoveTimeSlotBlockArgs = {
+  input: RemoveTimeSlotBlockInput;
 };
 
 
@@ -405,6 +446,7 @@ export type Query = {
   customers: Array<Customer>;
   draftOrder: DraftOrder;
   draftOrders: Array<DraftOrder>;
+  myCart?: Maybe<Cart>;
   offering: Offering;
   offerings: Array<Offering>;
   order: Order;
@@ -442,6 +484,24 @@ export type QueryOfferingArgs = {
 
 
 export type QueryOrderArgs = {
+  id: Scalars['ID'];
+};
+
+export type RemoveCartBookingsInput = {
+  id: Scalars['ID'];
+};
+
+export type RemoveCartBookingsPayload = {
+  __typename?: 'RemoveCartBookingsPayload';
+  id: Scalars['ID'];
+};
+
+export type RemoveTimeSlotBlockInput = {
+  id: Scalars['ID'];
+};
+
+export type RemoveTimeSlotBlockPayload = {
+  __typename?: 'RemoveTimeSlotBlockPayload';
   id: Scalars['ID'];
 };
 
@@ -527,6 +587,13 @@ export type UserProviderDataInput = {
   uid: Scalars['ID'];
 };
 
+export type AddCartBookingsMutationVariables = Exact<{
+  input: AddCartBookingsInput;
+}>;
+
+
+export type AddCartBookingsMutation = { __typename?: 'Mutation', addCartBookings: { __typename?: 'AddCartBookingsPayload', cart?: { __typename?: 'Cart', id: string } | null } };
+
 export type CreateBusinessMutationVariables = Exact<{
   input: CreateBusinessInput;
 }>;
@@ -576,12 +643,12 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'CreateUserPayload', user?: { __typename?: 'User', uid: string } | null } };
 
-export type DeleteTimeSlotBlockMutationVariables = Exact<{
-  input: DeleteTimeSlotBlockInput;
+export type RemoveTimeSlotBlockMutationVariables = Exact<{
+  input: RemoveTimeSlotBlockInput;
 }>;
 
 
-export type DeleteTimeSlotBlockMutation = { __typename?: 'Mutation', deleteTimeSlotBlock: { __typename?: 'DeleteTimeSlotBlockPayload', id: string } };
+export type RemoveTimeSlotBlockMutation = { __typename?: 'Mutation', removeTimeSlotBlock: { __typename?: 'RemoveTimeSlotBlockPayload', id: string } };
 
 export type UpdateDraftOrderMutationVariables = Exact<{
   input: DraftOrderInput;
@@ -616,6 +683,11 @@ export type GetDraftOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDraftOrdersQuery = { __typename?: 'Query', draftOrders: Array<{ __typename?: 'DraftOrder', id: string, createdAt: any }> };
 
+export type GetMyCartQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, cartBookings?: Array<{ __typename?: 'CartBooking', id: string, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, featuredImage?: { __typename?: 'Image', url: string, altText?: string | null } | null } }> | null } | null };
+
 export type GetOfferingQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -636,6 +708,41 @@ export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null }> };
 
 
+export const AddCartBookingsDocument = gql`
+    mutation addCartBookings($input: AddCartBookingsInput!) {
+  addCartBookings(input: $input) {
+    cart {
+      id
+    }
+  }
+}
+    `;
+export type AddCartBookingsMutationFn = Apollo.MutationFunction<AddCartBookingsMutation, AddCartBookingsMutationVariables>;
+
+/**
+ * __useAddCartBookingsMutation__
+ *
+ * To run a mutation, you first call `useAddCartBookingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCartBookingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCartBookingsMutation, { data, loading, error }] = useAddCartBookingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddCartBookingsMutation(baseOptions?: Apollo.MutationHookOptions<AddCartBookingsMutation, AddCartBookingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCartBookingsMutation, AddCartBookingsMutationVariables>(AddCartBookingsDocument, options);
+      }
+export type AddCartBookingsMutationHookResult = ReturnType<typeof useAddCartBookingsMutation>;
+export type AddCartBookingsMutationResult = Apollo.MutationResult<AddCartBookingsMutation>;
+export type AddCartBookingsMutationOptions = Apollo.BaseMutationOptions<AddCartBookingsMutation, AddCartBookingsMutationVariables>;
 export const CreateBusinessDocument = gql`
     mutation createBusiness($input: CreateBusinessInput!) {
   createBusiness(input: $input) {
@@ -900,39 +1007,39 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
-export const DeleteTimeSlotBlockDocument = gql`
-    mutation deleteTimeSlotBlock($input: DeleteTimeSlotBlockInput!) {
-  deleteTimeSlotBlock(input: $input) {
+export const RemoveTimeSlotBlockDocument = gql`
+    mutation removeTimeSlotBlock($input: RemoveTimeSlotBlockInput!) {
+  removeTimeSlotBlock(input: $input) {
     id
   }
 }
     `;
-export type DeleteTimeSlotBlockMutationFn = Apollo.MutationFunction<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>;
+export type RemoveTimeSlotBlockMutationFn = Apollo.MutationFunction<RemoveTimeSlotBlockMutation, RemoveTimeSlotBlockMutationVariables>;
 
 /**
- * __useDeleteTimeSlotBlockMutation__
+ * __useRemoveTimeSlotBlockMutation__
  *
- * To run a mutation, you first call `useDeleteTimeSlotBlockMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteTimeSlotBlockMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRemoveTimeSlotBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTimeSlotBlockMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteTimeSlotBlockMutation, { data, loading, error }] = useDeleteTimeSlotBlockMutation({
+ * const [removeTimeSlotBlockMutation, { data, loading, error }] = useRemoveTimeSlotBlockMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useDeleteTimeSlotBlockMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>) {
+export function useRemoveTimeSlotBlockMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTimeSlotBlockMutation, RemoveTimeSlotBlockMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>(DeleteTimeSlotBlockDocument, options);
+        return Apollo.useMutation<RemoveTimeSlotBlockMutation, RemoveTimeSlotBlockMutationVariables>(RemoveTimeSlotBlockDocument, options);
       }
-export type DeleteTimeSlotBlockMutationHookResult = ReturnType<typeof useDeleteTimeSlotBlockMutation>;
-export type DeleteTimeSlotBlockMutationResult = Apollo.MutationResult<DeleteTimeSlotBlockMutation>;
-export type DeleteTimeSlotBlockMutationOptions = Apollo.BaseMutationOptions<DeleteTimeSlotBlockMutation, DeleteTimeSlotBlockMutationVariables>;
+export type RemoveTimeSlotBlockMutationHookResult = ReturnType<typeof useRemoveTimeSlotBlockMutation>;
+export type RemoveTimeSlotBlockMutationResult = Apollo.MutationResult<RemoveTimeSlotBlockMutation>;
+export type RemoveTimeSlotBlockMutationOptions = Apollo.BaseMutationOptions<RemoveTimeSlotBlockMutation, RemoveTimeSlotBlockMutationVariables>;
 export const UpdateDraftOrderDocument = gql`
     mutation updateDraftOrder($input: DraftOrderInput!) {
   updateDraftOrder(input: $input) {
@@ -1143,6 +1250,57 @@ export function useGetDraftOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetDraftOrdersQueryHookResult = ReturnType<typeof useGetDraftOrdersQuery>;
 export type GetDraftOrdersLazyQueryHookResult = ReturnType<typeof useGetDraftOrdersLazyQuery>;
 export type GetDraftOrdersQueryResult = Apollo.QueryResult<GetDraftOrdersQuery, GetDraftOrdersQueryVariables>;
+export const GetMyCartDocument = gql`
+    query getMyCart {
+  myCart {
+    id
+    cartBookings {
+      id
+      timeSlot {
+        id
+        startDateTime
+        endDateTime
+      }
+      offering {
+        id
+        name
+        featuredImage {
+          url
+          altText
+        }
+      }
+      numGuests
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMyCartQuery__
+ *
+ * To run a query within a React component, call `useGetMyCartQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyCartQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyCartQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyCartQuery(baseOptions?: Apollo.QueryHookOptions<GetMyCartQuery, GetMyCartQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyCartQuery, GetMyCartQueryVariables>(GetMyCartDocument, options);
+      }
+export function useGetMyCartLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyCartQuery, GetMyCartQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyCartQuery, GetMyCartQueryVariables>(GetMyCartDocument, options);
+        }
+export type GetMyCartQueryHookResult = ReturnType<typeof useGetMyCartQuery>;
+export type GetMyCartLazyQueryHookResult = ReturnType<typeof useGetMyCartLazyQuery>;
+export type GetMyCartQueryResult = Apollo.QueryResult<GetMyCartQuery, GetMyCartQueryVariables>;
 export const GetOfferingDocument = gql`
     query getOffering($id: ID!) {
   offering(id: $id) {

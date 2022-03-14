@@ -4,8 +4,10 @@ import { DateTime } from "luxon";
 import { Event } from "react-big-calendar";
 import { useNavigate } from "react-router-dom";
 import {
+  useAddCartBookingsMutation,
   useCreateTimeSlotBlockMutation,
-  useDeleteTimeSlotBlockMutation,
+  useGetMyCartQuery,
+  useRemoveTimeSlotBlockMutation,
 } from "../../generated/graphql";
 import TextField from "../common/TextField/TextField";
 
@@ -17,7 +19,9 @@ interface Props {
 const EventPreviewCard = ({ event, onBlock }: Props) => {
   const navigate = useNavigate();
   const [createTimeSlotBlock] = useCreateTimeSlotBlockMutation();
-  const [deleteTimeSlotBlock] = useDeleteTimeSlotBlockMutation();
+  const [removeTimeSlotBlock] = useRemoveTimeSlotBlockMutation();
+  const [addCartBookings] = useAddCartBookingsMutation();
+  const { refetch } = useGetMyCartQuery({ skip: true });
 
   return (
     <Box sx={{ p: 2 }}>
@@ -48,7 +52,7 @@ const EventPreviewCard = ({ event, onBlock }: Props) => {
             variant="contained"
             onClick={async () => {
               try {
-                await deleteTimeSlotBlock({
+                await removeTimeSlotBlock({
                   variables: { input: { id: event.block.id } },
                 });
                 onBlock();
@@ -75,6 +79,32 @@ const EventPreviewCard = ({ event, onBlock }: Props) => {
               }}
             >
               Block off
+            </Button>
+            <Button
+              variant="contained"
+              onClick={async () => {
+                try {
+                  await addCartBookings({
+                    variables: {
+                      input: {
+                        // TODO: Fix
+                        cartBookings: [
+                          {
+                            timeSlotId: event.id,
+                            numGuests: 2,
+                            offeringId: event.resourceId,
+                          },
+                        ],
+                      },
+                    },
+                  });
+                  await refetch();
+                } catch (error) {
+                  console.log(error);
+                }
+              }}
+            >
+              Add to cart
             </Button>
             <Button
               variant="contained"
