@@ -8,7 +8,10 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarToolbar from "../components/CalendarToolbar/CalendarToolbar";
 import EventPreviewCard from "../components/EventPreviewCard/EventPreviewCard";
-import { useGetOfferingSchedulesQuery } from "../generated/graphql";
+import {
+  useGetMyCartQuery,
+  useGetOfferingSchedulesQuery,
+} from "../generated/graphql";
 
 const StyledCalendar = styled(withDragAndDrop(Calendar))({
   // Prevent hover events on time column
@@ -51,6 +54,12 @@ const CalendarPage = () => {
   const { loading, error, data, refetch } = useGetOfferingSchedulesQuery({
     variables: { date },
   });
+  const {
+    loading: cartLoading,
+    error: cartError,
+    data: cartData,
+    refetch: refetchCart,
+  } = useGetMyCartQuery();
 
   const events = useMemo(
     () =>
@@ -61,12 +70,15 @@ const CalendarPage = () => {
             resourceId: offering.id,
             resourceTitle: offering.name,
             block: timeSlot.block,
+            cartBooking: cartData?.myCart?.cartBookings?.find(
+              (cartBooking) => cartBooking.timeSlot.id === timeSlot.id
+            ),
             start: DateTime.fromISO(timeSlot.startDateTime).toJSDate(),
             end: DateTime.fromISO(timeSlot.endDateTime).toJSDate(),
           }))
         )
         .flat(),
-    [data]
+    [data, cartData]
   );
 
   const previewEvent = useMemo(
@@ -87,7 +99,11 @@ const CalendarPage = () => {
         transformOrigin={{ vertical: "center", horizontal: "right" }}
         onClose={() => setAnchorEl(null)}
       >
-        <EventPreviewCard event={previewEvent} onBlock={refetch} />
+        <EventPreviewCard
+          event={previewEvent}
+          onBlockChange={refetch}
+          onCartChange={refetchCart}
+        />
       </Popover>
       <StyledCalendar
         date={date}
@@ -105,6 +121,9 @@ const CalendarPage = () => {
         eventPropGetter={(event) => {
           if (event.block) {
             return { style: { backgroundColor: "grey" } };
+          }
+          if (event.cartBooking) {
+            return { style: { backgroundColor: "green" } };
           }
           return {};
         }}

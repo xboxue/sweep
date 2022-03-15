@@ -6,7 +6,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import { range } from "lodash";
+import { range, sortBy } from "lodash";
 import { DateTime } from "luxon";
 import {
   useGetMyCartQuery,
@@ -31,7 +31,7 @@ const CartCard = () => {
       <Typography variant="subtitle1" sx={{ px: 2 }}>
         Cart
       </Typography>
-      {data.myCart.cartBookings.map((cartBooking) => (
+      {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
         <Box sx={{ display: "flex", p: 2 }} key={cartBooking.id}>
           <Avatar
             variant="rounded"
