@@ -31,7 +31,7 @@ const OrdersPage = () => {
             {
               field: "id",
               headerName: "Order",
-              valueGetter: (params) => `#D${params.value}`,
+              valueGetter: (params) => `#${params.value}`,
               flex: 1,
             },
             // {

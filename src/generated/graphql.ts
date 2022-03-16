@@ -359,9 +359,7 @@ export type Order = {
 };
 
 export type OrderInput = {
-  cartId: Scalars['ID'];
   customerId: Scalars['ID'];
-  id?: InputMaybe<Scalars['ID']>;
 };
 
 export enum PaymentType {
@@ -647,7 +645,7 @@ export type GetOrderQueryVariables = Exact<{
 }>;
 
 
-export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
+export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
 
 export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1351,9 +1349,19 @@ export const GetOrderDocument = gql`
     bookings {
       id
       numGuests
+      timeSlot {
+        id
+        startDateTime
+        endDateTime
+      }
       offering {
         id
         name
+        featuredImage {
+          id
+          url
+          altText
+        }
       }
     }
     customer {

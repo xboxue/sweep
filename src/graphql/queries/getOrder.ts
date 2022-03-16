@@ -9,9 +9,19 @@ const GET_ORDER = gql`
       bookings {
         id
         numGuests
+        timeSlot {
+          id
+          startDateTime
+          endDateTime
+        }
         offering {
           id
           name
+          featuredImage {
+            id
+            url
+            altText
+          }
         }
       }
       customer {

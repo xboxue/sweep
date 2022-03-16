@@ -59,7 +59,7 @@ const CalendarPage = () => {
     error: cartError,
     data: cartData,
     refetch: refetchCart,
-  } = useGetMyCartQuery();
+  } = useGetMyCartQuery({ fetchPolicy: "network-only" });
 
   const events = useMemo(
     () =>
