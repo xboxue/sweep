@@ -4,7 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import AppLayout from "../../layouts/AppLayout";
 import CalendarPage from "../../pages/CalendarPage";
 import CustomersPage from "../../pages/CustomersPage";
-import DraftOrdersPage from "../../pages/DraftOrdersPage";
+import OrdersPage from "../../pages/OrdersPage";
 import ExperiencesPage from "../../pages/ExperiencesPage";
 import HomePage from "../../pages/HomePage";
 import LoginPage from "../../pages/LoginPage";
@@ -29,9 +29,9 @@ const AdminApp = () => {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="calendar" element={<CalendarPage />} />
-          <Route path="draft-orders" element={<DraftOrdersPage />} />
+          <Route path="orders" element={<OrdersPage />} />
           <Route
-            path="draft-orders/new"
+            path="orders/new"
             element={
               <Box mx="auto" maxWidth="960px">
                 <CreateOrderForm />
@@ -39,7 +39,7 @@ const AdminApp = () => {
             }
           />
           <Route
-            path="draft-orders/:id"
+            path="orders/:id"
             element={
               <Box mx="auto" maxWidth="960px">
                 <OrderDetailsForm />

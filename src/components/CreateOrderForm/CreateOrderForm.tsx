@@ -1,43 +1,23 @@
 import { Box, Skeleton } from "@mui/material";
 import { Formik, FormikConfig } from "formik";
-import { DateTime } from "luxon";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  useCreateDraftOrderMutation,
-  useGetOfferingSchedulesQuery,
+  useCreateOrderMutation,
+  useGetMyCartQuery,
 } from "../../generated/graphql";
-import { usePrompt } from "../../hooks/usePrompt";
 import NavigationBlocker from "../common/NavigationBlocker/NavigationBlocker";
 import SaveBar from "../common/SaveBar/SaveBar";
 import OrderForm from "./OrderForm";
 
 const CreateOrderForm = () => {
-  const { loading, error, data } = useGetOfferingSchedulesQuery();
-
-  const [createDraftOrder] = useCreateDraftOrderMutation();
+  const [createOrder] = useCreateOrderMutation();
+  const { loading, error, data } = useGetMyCartQuery();
 
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { startDateTime, offeringId } = Object.fromEntries(
-    new URLSearchParams(searchParams)
-  );
 
   if (loading) return <Skeleton />;
 
   const initialValues = {
-    bookings:
-      startDateTime && offeringId
-        ? [
-            {
-              // TODO: fix
-              id: offeringId,
-              date: DateTime.fromISO(startDateTime).startOf("day"),
-              time: DateTime.fromISO(startDateTime).toFormat("HH:mm:ss"),
-              offeringId,
-              numGuests: 2,
-            },
-          ]
-        : [],
     customerId: undefined,
   };
 
@@ -45,29 +25,10 @@ const CreateOrderForm = () => {
     values
   ) => {
     try {
-      const { data } = await createDraftOrder({
-        variables: {
-          input: {
-            customerId: values.customerId,
-            bookings: values.bookings.map((booking) => {
-              const startTime = DateTime.fromFormat(booking.time, "HH:mm:ss");
-              const startDateTime = booking.date.set({
-                hour: startTime.hour,
-                minute: startTime.minute,
-              });
-
-              return {
-                offeringId: booking.offeringId,
-                numGuests: booking.numGuests,
-                startDateTime: startDateTime.toISO(),
-                // TODO: fix
-                endDateTime: startDateTime.plus({ hour: 1 }).toISO(),
-              };
-            }),
-          },
-        },
+      const { data } = await createOrder({
+        variables: { input: { customerId: values.customerId } },
       });
-      navigate(`/draft-orders/${data?.createDraftOrder.draftOrder.id}`);
+      navigate(`/orders/${data?.createOrder?.order?.id}`);
     } catch (error) {
       console.log(error);
     }
@@ -85,7 +46,7 @@ const CreateOrderForm = () => {
             message="If you leave this page, any unsaved changes will be lost."
             when={formik.dirty && !formik.isSubmitting}
           />
-          <OrderForm title="Add booking" offerings={data?.offerings} />
+          <OrderForm title="Add order" bookings={data?.myCart?.cartBookings} />
           <SaveBar onDiscard={() => navigate(-1)} loading={false} />
         </Box>
       )}

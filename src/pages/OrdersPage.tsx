@@ -1,19 +1,19 @@
 import { Box, Button, Chip, Paper, Skeleton, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { useGetDraftOrdersQuery } from "../generated/graphql";
+import { useGetOrdersQuery } from "../generated/graphql";
 
-const DraftOrdersPage = () => {
+const OrdersPage = () => {
   const navigate = useNavigate();
 
-  const { loading, error, data } = useGetDraftOrdersQuery();
+  const { loading, error, data } = useGetOrdersQuery();
 
   if (loading) return <Skeleton />;
 
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-        <Typography variant="h6">Draft Orders</Typography>
+        <Typography variant="h6">Orders</Typography>
 
         {/* <Button
           variant="contained"
@@ -23,14 +23,14 @@ const DraftOrdersPage = () => {
           Add experience
         </Button> */}
       </Box>
-      {data?.draftOrders.length > 0 ? (
+      {data?.orders.length > 0 ? (
         <DataGrid
-          onRowClick={(params) => navigate(`/draft-orders/${params.id}`)}
-          rows={data?.draftOrders}
+          onRowClick={(params) => navigate(`/orders/${params.id}`)}
+          rows={data?.orders}
           columns={[
             {
               field: "id",
-              headerName: "Draft Order",
+              headerName: "Order",
               valueGetter: (params) => `#D${params.value}`,
               flex: 1,
             },
@@ -63,9 +63,9 @@ const DraftOrdersPage = () => {
           <Button
             variant="contained"
             sx={{ mt: 1 }}
-            // onClick={() => navigate("/draft-orders/new")}
+            // onClick={() => navigate("/orders/new")}
           >
-            Create draft order
+            Create order
           </Button>
         </Paper>
       )}
@@ -73,4 +73,4 @@ const DraftOrdersPage = () => {
   );
 };
 
-export default DraftOrdersPage;
+export default OrdersPage;

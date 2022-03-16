@@ -1,131 +1,73 @@
-import { DatePicker } from "@mui/lab";
-import { Button, MenuItem } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { DataGrid, GridColumns } from "@mui/x-data-grid";
-import { useFormikContext } from "formik";
-import { range } from "lodash";
 import { DateTime } from "luxon";
-import { Offering, PricingType } from "../../generated/graphql";
-import FormikTextField from "../common/FormikTextField/FormikTextField";
-import TextField from "../common/TextField/TextField";
+import { Booking, useGetMyCartQuery } from "../../generated/graphql";
 
 interface Props {
-  offerings: Offering[];
+  bookings: Booking[];
 }
 
-const ExperiencesForm = ({ offerings }: Props) => {
-  const formik = useFormikContext();
+const ExperiencesForm = ({ bookings }: Props) => {
   const columns: GridColumns = [
     {
-      field: "offeringId",
+      field: "offering",
       headerName: "Experience",
       flex: 1,
-      valueGetter: (params) => {
-        const offering = offerings.find(
-          (offering) => offering.id === params.value
-        );
-        return offering.name;
-      },
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      width: 200,
-      renderCell: (params) => {
-        const index = params.api.getRowIndex(params.row.id);
-
-        return (
-          <DatePicker
-            value={params.value}
-            onChange={(value) => {
-              formik.setFieldValue(`bookings.${index}.date`, value);
+      valueGetter: (params) => params.value.name,
+      renderCell: (params) => (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box
+            component="img"
+            src={params.row.offering.featuredImage.url}
+            sx={{
+              width: 40,
+              height: 40,
+              objectFit: "contain",
+              borderRadius: 1,
+              border: 1,
+              borderColor: (theme) => theme.palette.divider,
+              mr: 1,
             }}
-            renderInput={(params) => <TextField {...params} />}
           />
-        );
-      },
+          <Typography variant="inherit">{params.value}</Typography>
+        </Box>
+      ),
     },
     {
-      field: "time",
-      headerName: "Time",
-      width: 200,
-      renderCell: (params) => {
-        const index = params.api.getRowIndex(params.row.id);
-        const offering = offerings.find(
-          (offering) => offering.id === params.row.offeringId
-        );
-        const timeSlots = offering.schedule.timeSlots.filter(
-          (timeSlot) => params.row.date?.weekday - 1 === timeSlot.day
-        );
-        return (
-          <FormikTextField
-            select
-            field={`bookings.${index}.time`}
-            value={params.value}
-          >
-            {timeSlots.map((timeSlot) => (
-              <MenuItem key={timeSlot.startTime} value={timeSlot.startTime}>
-                {DateTime.fromFormat(timeSlot.startTime, "HH:mm:ss").toFormat(
-                  "h:mm a"
-                )}
-              </MenuItem>
-            ))}
-          </FormikTextField>
-        );
-      },
+      field: "timeSlot",
+      headerName: "Date",
+      width: 250,
+      valueGetter: (params) =>
+        DateTime.fromISO(params.value.startDateTime).toFormat("DDDD t"),
     },
+
     {
       field: "numGuests",
       headerName: "Guests",
-      renderCell: (params) => {
-        const index = params.api.getRowIndex(params.row.id);
-        return (
-          <FormikTextField
-            select
-            field={`bookings.${index}.numGuests`}
-            value={params.value}
-            SelectProps={{
-              MenuProps: { PaperProps: { sx: { maxHeight: 300 } } },
-            }}
-          >
-            {range(1, 50).map((value) => (
-              <MenuItem key={value} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </FormikTextField>
-        );
-      },
     },
-    {
-      field: "total",
-      headerName: "Total",
-      valueGetter: (params) => {
-        const offering = offerings.find(
-          (offering) => offering.id === params.row.offeringId
-        );
-        return offering?.pricingType === PricingType.PerPerson
-          ? (offering?.pricePerPerson / 100) * params.row.numGuests
-          : offering?.priceTotalAmount / 100;
-      },
-      valueFormatter: (params) => `$${params.value}`,
-    },
+    // {
+    // field: "total",
+    // headerName: "Total",
+    // valueGetter: (params) => {
+    //   return offering?.pricingType === PricingType.PerPerson
+    //     ? (offering?.pricePerPerson / 100) * params.row.numGuests
+    //     : offering?.priceTotalAmount / 100;
+    // },
+    // valueFormatter: (params) => `$${params.value}`,
+    // },
   ];
 
   return (
-    <>
-      <Button>Add booking</Button>
-      <DataGrid
-        rows={formik.values.bookings}
-        getRowId={(row) => row.id}
-        columns={columns}
-        hideFooter
-        disableColumnFilter
-        disableColumnMenu
-        disableSelectionOnClick
-        autoHeight
-        sx={{ border: 0 }}
-      />
-    </>
+    <DataGrid
+      rows={bookings}
+      columns={columns}
+      hideFooter
+      disableColumnFilter
+      disableColumnMenu
+      disableSelectionOnClick
+      autoHeight
+      sx={{ border: 0 }}
+    />
   );
 };
 

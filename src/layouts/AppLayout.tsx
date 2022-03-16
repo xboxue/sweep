@@ -29,8 +29,8 @@ const items = [
     to: "/calendar",
   },
   {
-    title: "Draft Orders",
-    to: "/draft-orders",
+    title: "Orders",
+    to: "/orders",
   },
   {
     title: "Customers",

@@ -1,15 +1,13 @@
 import { gql } from "@apollo/client";
 
-const GET_DRAFT_ORDER = gql`
-  query getDraftOrder($id: ID!) {
-    draftOrder(id: $id) {
+const GET_ORDER = gql`
+  query getOrder($id: ID!) {
+    order(id: $id) {
       id
       createdAt
       updatedAt
       bookings {
         id
-        startDateTime
-        endDateTime
         numGuests
         offering {
           id
@@ -27,4 +25,4 @@ const GET_DRAFT_ORDER = gql`
   }
 `;
 
-export default GET_DRAFT_ORDER;
+export default GET_ORDER;

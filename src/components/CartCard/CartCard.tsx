@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Link,
   MenuItem,
   Skeleton,
@@ -8,6 +9,7 @@ import {
 } from "@mui/material";
 import { range, sortBy } from "lodash";
 import { DateTime } from "luxon";
+import { useNavigate } from "react-router-dom";
 import {
   useGetMyCartQuery,
   useRemoveCartBookingsMutation,
@@ -19,6 +21,7 @@ const CartCard = () => {
   const { loading, error, data, refetch } = useGetMyCartQuery();
   const [removeCartBookings] = useRemoveCartBookingsMutation();
   const [updateCartBookings] = useUpdateCartBookingsMutation();
+  const navigate = useNavigate();
 
   if (loading) return <Skeleton />;
 
@@ -27,12 +30,12 @@ const CartCard = () => {
   }
 
   return (
-    <Box sx={{ py: 2 }}>
-      <Typography variant="subtitle1" sx={{ px: 2 }}>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="subtitle1" sx={{ mb: 2 }}>
         Cart
       </Typography>
       {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
-        <Box sx={{ display: "flex", p: 2 }} key={cartBooking.id}>
+        <Box sx={{ display: "flex", mt: 2 }} key={cartBooking.id}>
           <Avatar
             variant="rounded"
             src={cartBooking.offering.featuredImage?.url}
@@ -100,6 +103,14 @@ const CartCard = () => {
           </Box>
         </Box>
       ))}
+
+      <Button
+        sx={{ mt: 2 }}
+        variant="contained"
+        onClick={() => navigate("/orders/new")}
+      >
+        Check out
+      </Button>
     </Box>
   );
 };

@@ -30,14 +30,17 @@ export type AddCartBookingsPayload = {
 
 export type Booking = {
   __typename?: 'Booking';
-  customer: Customer;
-  endDateTime: Scalars['DateTime'];
   id: Scalars['ID'];
   numGuests: Scalars['Int'];
   offering: Offering;
-  paymentStatus: PaymentStatus;
-  price: Price;
-  startDateTime: Scalars['DateTime'];
+  timeSlot: TimeSlot;
+};
+
+export type BookingInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  numGuests: Scalars['Int'];
+  offeringId: Scalars['ID'];
+  timeSlotId: Scalars['ID'];
 };
 
 export type Business = {
@@ -67,17 +70,6 @@ export type CartBookingInput = {
   timeSlotId: Scalars['ID'];
 };
 
-export type CreateBookingInput = {
-  numGuests: Scalars['Int'];
-  offeringId: Scalars['ID'];
-  startDateTime: Scalars['DateTime'];
-};
-
-export type CreateBookingPayload = {
-  __typename?: 'CreateBookingPayload';
-  booking?: Maybe<Booking>;
-};
-
 export type CreateBusinessInput = {
   name: Scalars['String'];
 };
@@ -101,16 +93,6 @@ export type CreateCustomerPayload = {
   customer?: Maybe<Customer>;
 };
 
-export type CreateDraftBookingPayload = {
-  __typename?: 'CreateDraftBookingPayload';
-  booking?: Maybe<DraftBooking>;
-};
-
-export type CreateDraftOrderPayload = {
-  __typename?: 'CreateDraftOrderPayload';
-  draftOrder?: Maybe<DraftOrder>;
-};
-
 export type CreateFileUploadUrlsInput = {
   fileName?: InputMaybe<Scalars['String']>;
   fileSize: Scalars['Int'];
@@ -125,6 +107,11 @@ export type CreateFileUploadUrlsPayload = {
 export type CreateOfferingPayload = {
   __typename?: 'CreateOfferingPayload';
   offering?: Maybe<Offering>;
+};
+
+export type CreateOrderPayload = {
+  __typename?: 'CreateOrderPayload';
+  order?: Maybe<Order>;
 };
 
 export type CreateTimeSlotBlockInput = {
@@ -178,38 +165,6 @@ export enum DepositType {
   PerPerson = 'PER_PERSON'
 }
 
-export type DraftBooking = {
-  __typename?: 'DraftBooking';
-  endDateTime: Scalars['DateTime'];
-  id: Scalars['ID'];
-  numGuests: Scalars['Int'];
-  offering: Offering;
-  startDateTime: Scalars['DateTime'];
-};
-
-export type DraftBookingInput = {
-  endDateTime: Scalars['DateTime'];
-  id?: InputMaybe<Scalars['ID']>;
-  numGuests: Scalars['Int'];
-  offeringId: Scalars['ID'];
-  startDateTime: Scalars['DateTime'];
-};
-
-export type DraftOrder = {
-  __typename?: 'DraftOrder';
-  bookings: Array<DraftBooking>;
-  createdAt: Scalars['DateTime'];
-  customer?: Maybe<Customer>;
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type DraftOrderInput = {
-  bookings: Array<DraftBookingInput>;
-  customerId?: InputMaybe<Scalars['ID']>;
-  id?: InputMaybe<Scalars['ID']>;
-};
-
 export enum DurationFormat {
   Hour = 'HOUR',
   Minute = 'MINUTE'
@@ -251,30 +206,22 @@ export enum MinAdvanceFormat {
 export type Mutation = {
   __typename?: 'Mutation';
   addCartBookings: AddCartBookingsPayload;
-  createBooking: CreateBookingPayload;
   createBusiness: CreateBusinessPayload;
   createCustomer: CreateCustomerPayload;
-  createDraftBooking: CreateDraftBookingPayload;
-  createDraftOrder: CreateDraftOrderPayload;
   createFileUploadUrls: CreateFileUploadUrlsPayload;
   createOffering: CreateOfferingPayload;
+  createOrder: CreateOrderPayload;
   createTimeSlotBlock: CreateTimeSlotBlockPayload;
   createUser: CreateUserPayload;
   removeCartBookings: RemoveCartBookingsPayload;
   removeTimeSlotBlock: RemoveTimeSlotBlockPayload;
   updateCartBookings: UpdateCartBookingsPayload;
-  updateDraftOrder: UpdateDraftOrderPayload;
   updateOffering: UpdateOfferingPayload;
 };
 
 
 export type MutationAddCartBookingsArgs = {
   input: AddCartBookingsInput;
-};
-
-
-export type MutationCreateBookingArgs = {
-  input: CreateBookingInput;
 };
 
 
@@ -288,16 +235,6 @@ export type MutationCreateCustomerArgs = {
 };
 
 
-export type MutationCreateDraftBookingArgs = {
-  input: DraftBookingInput;
-};
-
-
-export type MutationCreateDraftOrderArgs = {
-  input: DraftOrderInput;
-};
-
-
 export type MutationCreateFileUploadUrlsArgs = {
   input: Array<CreateFileUploadUrlsInput>;
 };
@@ -305,6 +242,11 @@ export type MutationCreateFileUploadUrlsArgs = {
 
 export type MutationCreateOfferingArgs = {
   input: OfferingInput;
+};
+
+
+export type MutationCreateOrderArgs = {
+  input: OrderInput;
 };
 
 
@@ -330,11 +272,6 @@ export type MutationRemoveTimeSlotBlockArgs = {
 
 export type MutationUpdateCartBookingsArgs = {
   input: UpdateCartBookingsInput;
-};
-
-
-export type MutationUpdateDraftOrderArgs = {
-  input: DraftOrderInput;
 };
 
 
@@ -416,29 +353,22 @@ export type Order = {
   __typename?: 'Order';
   bookings: Array<Booking>;
   createdAt: Scalars['DateTime'];
+  customer?: Maybe<Customer>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
 
-export enum PaymentStatus {
-  Failed = 'FAILED',
-  Incomplete = 'INCOMPLETE',
-  Processing = 'PROCESSING',
-  Success = 'SUCCESS'
-}
+export type OrderInput = {
+  cartId: Scalars['ID'];
+  customerId: Scalars['ID'];
+  id?: InputMaybe<Scalars['ID']>;
+};
 
 export enum PaymentType {
   Deposit = 'DEPOSIT',
   FullAmount = 'FULL_AMOUNT',
   None = 'NONE'
 }
-
-export type Price = {
-  __typename?: 'Price';
-  subtotal: Scalars['Int'];
-  tax: Scalars['Int'];
-  total: Scalars['Int'];
-};
 
 export enum PricingType {
   PerPerson = 'PER_PERSON',
@@ -451,12 +381,11 @@ export type Query = {
   business: Business;
   customer: Customer;
   customers: Array<Customer>;
-  draftOrder: DraftOrder;
-  draftOrders: Array<DraftOrder>;
   myCart?: Maybe<Cart>;
   offering: Offering;
   offerings: Array<Offering>;
   order: Order;
+  orders: Array<Order>;
 };
 
 
@@ -477,11 +406,6 @@ export type QueryCustomerArgs = {
 
 export type QueryCustomersArgs = {
   searchTerm?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryDraftOrderArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -566,11 +490,6 @@ export type UpdateCartBookingsPayload = {
   cart?: Maybe<Cart>;
 };
 
-export type UpdateDraftOrderPayload = {
-  __typename?: 'UpdateDraftOrderPayload';
-  draftOrder?: Maybe<DraftOrder>;
-};
-
 export type UpdateOfferingPayload = {
   __typename?: 'UpdateOfferingPayload';
   offering?: Maybe<Offering>;
@@ -629,13 +548,6 @@ export type CreateCustomerMutationVariables = Exact<{
 
 export type CreateCustomerMutation = { __typename?: 'Mutation', createCustomer: { __typename?: 'CreateCustomerPayload', customer?: { __typename?: 'Customer', id: string, createdAt: any, updatedAt: any, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
 
-export type CreateDraftOrderMutationVariables = Exact<{
-  input: DraftOrderInput;
-}>;
-
-
-export type CreateDraftOrderMutation = { __typename?: 'Mutation', createDraftOrder: { __typename?: 'CreateDraftOrderPayload', draftOrder?: { __typename?: 'DraftOrder', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'DraftBooking', id: string, startDateTime: any, numGuests: number, offering: { __typename?: 'Offering', id: string } }> } | null } };
-
 export type CreateFileUploadUrlsMutationVariables = Exact<{
   input: Array<CreateFileUploadUrlsInput> | CreateFileUploadUrlsInput;
 }>;
@@ -649,6 +561,13 @@ export type CreateOfferingMutationVariables = Exact<{
 
 
 export type CreateOfferingMutation = { __typename?: 'Mutation', createOffering: { __typename?: 'CreateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
+
+export type CreateOrderMutationVariables = Exact<{
+  input: OrderInput;
+}>;
+
+
+export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'CreateOrderPayload', order?: { __typename?: 'Order', id: string } | null } };
 
 export type CreateTimeSlotBlockMutationVariables = Exact<{
   input: CreateTimeSlotBlockInput;
@@ -685,13 +604,6 @@ export type UpdateCartBookingsMutationVariables = Exact<{
 
 export type UpdateCartBookingsMutation = { __typename?: 'Mutation', updateCartBookings: { __typename?: 'UpdateCartBookingsPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
-export type UpdateDraftOrderMutationVariables = Exact<{
-  input: DraftOrderInput;
-}>;
-
-
-export type UpdateDraftOrderMutation = { __typename?: 'Mutation', updateDraftOrder: { __typename?: 'UpdateDraftOrderPayload', draftOrder?: { __typename?: 'DraftOrder', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'DraftBooking', id: string, startDateTime: any, numGuests: number, offering: { __typename?: 'Offering', id: string } }> } | null } };
-
 export type UpdateOfferingMutationVariables = Exact<{
   input: OfferingInput;
 }>;
@@ -705,18 +617,6 @@ export type GetCustomersQueryVariables = Exact<{
 
 
 export type GetCustomersQuery = { __typename?: 'Query', customers: Array<{ __typename?: 'Customer', id: string, createdAt: any, updatedAt: any, firstName?: string | null, phoneNumber?: string | null, lastName?: string | null, email: string }> };
-
-export type GetDraftOrderQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type GetDraftOrderQuery = { __typename?: 'Query', draftOrder: { __typename?: 'DraftOrder', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'DraftBooking', id: string, startDateTime: any, endDateTime: any, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
-
-export type GetDraftOrdersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetDraftOrdersQuery = { __typename?: 'Query', draftOrders: Array<{ __typename?: 'DraftOrder', id: string, createdAt: any }> };
 
 export type GetMyCartQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -741,6 +641,18 @@ export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null }> };
+
+export type GetOrderQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
+
+export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null }> };
 
 
 export const AddCartBookingsDocument = gql`
@@ -855,51 +767,6 @@ export function useCreateCustomerMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateCustomerMutationHookResult = ReturnType<typeof useCreateCustomerMutation>;
 export type CreateCustomerMutationResult = Apollo.MutationResult<CreateCustomerMutation>;
 export type CreateCustomerMutationOptions = Apollo.BaseMutationOptions<CreateCustomerMutation, CreateCustomerMutationVariables>;
-export const CreateDraftOrderDocument = gql`
-    mutation createDraftOrder($input: DraftOrderInput!) {
-  createDraftOrder(input: $input) {
-    draftOrder {
-      id
-      createdAt
-      updatedAt
-      bookings {
-        id
-        startDateTime
-        numGuests
-        offering {
-          id
-        }
-      }
-    }
-  }
-}
-    `;
-export type CreateDraftOrderMutationFn = Apollo.MutationFunction<CreateDraftOrderMutation, CreateDraftOrderMutationVariables>;
-
-/**
- * __useCreateDraftOrderMutation__
- *
- * To run a mutation, you first call `useCreateDraftOrderMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDraftOrderMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDraftOrderMutation, { data, loading, error }] = useCreateDraftOrderMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateDraftOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateDraftOrderMutation, CreateDraftOrderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateDraftOrderMutation, CreateDraftOrderMutationVariables>(CreateDraftOrderDocument, options);
-      }
-export type CreateDraftOrderMutationHookResult = ReturnType<typeof useCreateDraftOrderMutation>;
-export type CreateDraftOrderMutationResult = Apollo.MutationResult<CreateDraftOrderMutation>;
-export type CreateDraftOrderMutationOptions = Apollo.BaseMutationOptions<CreateDraftOrderMutation, CreateDraftOrderMutationVariables>;
 export const CreateFileUploadUrlsDocument = gql`
     mutation createFileUploadUrls($input: [CreateFileUploadUrlsInput!]!) {
   createFileUploadUrls(input: $input) {
@@ -972,6 +839,41 @@ export function useCreateOfferingMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateOfferingMutationHookResult = ReturnType<typeof useCreateOfferingMutation>;
 export type CreateOfferingMutationResult = Apollo.MutationResult<CreateOfferingMutation>;
 export type CreateOfferingMutationOptions = Apollo.BaseMutationOptions<CreateOfferingMutation, CreateOfferingMutationVariables>;
+export const CreateOrderDocument = gql`
+    mutation createOrder($input: OrderInput!) {
+  createOrder(input: $input) {
+    order {
+      id
+    }
+  }
+}
+    `;
+export type CreateOrderMutationFn = Apollo.MutationFunction<CreateOrderMutation, CreateOrderMutationVariables>;
+
+/**
+ * __useCreateOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrderMutation, CreateOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrderMutation, CreateOrderMutationVariables>(CreateOrderDocument, options);
+      }
+export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
+export type CreateOrderMutationResult = Apollo.MutationResult<CreateOrderMutation>;
+export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<CreateOrderMutation, CreateOrderMutationVariables>;
 export const CreateTimeSlotBlockDocument = gql`
     mutation createTimeSlotBlock($input: CreateTimeSlotBlockInput!) {
   createTimeSlotBlock(input: $input) {
@@ -1145,51 +1047,6 @@ export function useUpdateCartBookingsMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateCartBookingsMutationHookResult = ReturnType<typeof useUpdateCartBookingsMutation>;
 export type UpdateCartBookingsMutationResult = Apollo.MutationResult<UpdateCartBookingsMutation>;
 export type UpdateCartBookingsMutationOptions = Apollo.BaseMutationOptions<UpdateCartBookingsMutation, UpdateCartBookingsMutationVariables>;
-export const UpdateDraftOrderDocument = gql`
-    mutation updateDraftOrder($input: DraftOrderInput!) {
-  updateDraftOrder(input: $input) {
-    draftOrder {
-      id
-      createdAt
-      updatedAt
-      bookings {
-        id
-        startDateTime
-        numGuests
-        offering {
-          id
-        }
-      }
-    }
-  }
-}
-    `;
-export type UpdateDraftOrderMutationFn = Apollo.MutationFunction<UpdateDraftOrderMutation, UpdateDraftOrderMutationVariables>;
-
-/**
- * __useUpdateDraftOrderMutation__
- *
- * To run a mutation, you first call `useUpdateDraftOrderMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateDraftOrderMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateDraftOrderMutation, { data, loading, error }] = useUpdateDraftOrderMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateDraftOrderMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDraftOrderMutation, UpdateDraftOrderMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateDraftOrderMutation, UpdateDraftOrderMutationVariables>(UpdateDraftOrderDocument, options);
-      }
-export type UpdateDraftOrderMutationHookResult = ReturnType<typeof useUpdateDraftOrderMutation>;
-export type UpdateDraftOrderMutationResult = Apollo.MutationResult<UpdateDraftOrderMutation>;
-export type UpdateDraftOrderMutationOptions = Apollo.BaseMutationOptions<UpdateDraftOrderMutation, UpdateDraftOrderMutationVariables>;
 export const UpdateOfferingDocument = gql`
     mutation updateOffering($input: OfferingInput!) {
   updateOffering(input: $input) {
@@ -1266,95 +1123,6 @@ export function useGetCustomersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetCustomersQueryHookResult = ReturnType<typeof useGetCustomersQuery>;
 export type GetCustomersLazyQueryHookResult = ReturnType<typeof useGetCustomersLazyQuery>;
 export type GetCustomersQueryResult = Apollo.QueryResult<GetCustomersQuery, GetCustomersQueryVariables>;
-export const GetDraftOrderDocument = gql`
-    query getDraftOrder($id: ID!) {
-  draftOrder(id: $id) {
-    id
-    createdAt
-    updatedAt
-    bookings {
-      id
-      startDateTime
-      endDateTime
-      numGuests
-      offering {
-        id
-        name
-      }
-    }
-    customer {
-      id
-      firstName
-      lastName
-      email
-      phoneNumber
-    }
-  }
-}
-    `;
-
-/**
- * __useGetDraftOrderQuery__
- *
- * To run a query within a React component, call `useGetDraftOrderQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDraftOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetDraftOrderQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetDraftOrderQuery(baseOptions: Apollo.QueryHookOptions<GetDraftOrderQuery, GetDraftOrderQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetDraftOrderQuery, GetDraftOrderQueryVariables>(GetDraftOrderDocument, options);
-      }
-export function useGetDraftOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDraftOrderQuery, GetDraftOrderQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetDraftOrderQuery, GetDraftOrderQueryVariables>(GetDraftOrderDocument, options);
-        }
-export type GetDraftOrderQueryHookResult = ReturnType<typeof useGetDraftOrderQuery>;
-export type GetDraftOrderLazyQueryHookResult = ReturnType<typeof useGetDraftOrderLazyQuery>;
-export type GetDraftOrderQueryResult = Apollo.QueryResult<GetDraftOrderQuery, GetDraftOrderQueryVariables>;
-export const GetDraftOrdersDocument = gql`
-    query getDraftOrders {
-  draftOrders {
-    id
-    createdAt
-  }
-}
-    `;
-
-/**
- * __useGetDraftOrdersQuery__
- *
- * To run a query within a React component, call `useGetDraftOrdersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDraftOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetDraftOrdersQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetDraftOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetDraftOrdersQuery, GetDraftOrdersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetDraftOrdersQuery, GetDraftOrdersQueryVariables>(GetDraftOrdersDocument, options);
-      }
-export function useGetDraftOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDraftOrdersQuery, GetDraftOrdersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetDraftOrdersQuery, GetDraftOrdersQueryVariables>(GetDraftOrdersDocument, options);
-        }
-export type GetDraftOrdersQueryHookResult = ReturnType<typeof useGetDraftOrdersQuery>;
-export type GetDraftOrdersLazyQueryHookResult = ReturnType<typeof useGetDraftOrdersLazyQuery>;
-export type GetDraftOrdersQueryResult = Apollo.QueryResult<GetDraftOrdersQuery, GetDraftOrdersQueryVariables>;
 export const GetMyCartDocument = gql`
     query getMyCart {
   myCart {
@@ -1574,3 +1342,106 @@ export function useGetOfferingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetOfferingsQueryHookResult = ReturnType<typeof useGetOfferingsQuery>;
 export type GetOfferingsLazyQueryHookResult = ReturnType<typeof useGetOfferingsLazyQuery>;
 export type GetOfferingsQueryResult = Apollo.QueryResult<GetOfferingsQuery, GetOfferingsQueryVariables>;
+export const GetOrderDocument = gql`
+    query getOrder($id: ID!) {
+  order(id: $id) {
+    id
+    createdAt
+    updatedAt
+    bookings {
+      id
+      numGuests
+      offering {
+        id
+        name
+      }
+    }
+    customer {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrderQuery__
+ *
+ * To run a query within a React component, call `useGetOrderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetOrderQuery(baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
+      }
+export function useGetOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
+        }
+export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
+export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
+export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
+export const GetOrdersDocument = gql`
+    query getOrders {
+  orders {
+    id
+    createdAt
+    updatedAt
+    bookings {
+      id
+      numGuests
+      offering {
+        id
+        name
+      }
+    }
+    customer {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+      }
+export function useGetOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+        }
+export type GetOrdersQueryHookResult = ReturnType<typeof useGetOrdersQuery>;
+export type GetOrdersLazyQueryHookResult = ReturnType<typeof useGetOrdersLazyQuery>;
+export type GetOrdersQueryResult = Apollo.QueryResult<GetOrdersQuery, GetOrdersQueryVariables>;
