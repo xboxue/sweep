@@ -5,10 +5,24 @@ const GET_OFFERING_SCHEDULES = gql`
     offerings {
       id
       name
+      maxGuests
       timeSlots(date: $date) {
         id
         startDateTime
         endDateTime
+        booking {
+          id
+          numGuests
+          order {
+            id
+            customer {
+              firstName
+              lastName
+              phoneNumber
+              email
+            }
+          }
+        }
         block {
           id
         }

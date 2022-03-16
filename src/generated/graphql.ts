@@ -33,6 +33,7 @@ export type Booking = {
   id: Scalars['ID'];
   numGuests: Scalars['Int'];
   offering: Offering;
+  order: Order;
   timeSlot: TimeSlot;
 };
 
@@ -463,6 +464,7 @@ export type ScheduleTimeSlotInput = {
 export type TimeSlot = {
   __typename?: 'TimeSlot';
   block?: Maybe<TimeSlotBlock>;
+  booking?: Maybe<Booking>;
   endDateTime: Scalars['DateTime'];
   id: Scalars['ID'];
   startDateTime: Scalars['DateTime'];
@@ -633,7 +635,7 @@ export type GetOfferingSchedulesQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
+export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, maxGuests: number, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, booking?: { __typename?: 'Booking', id: string, numGuests: number, order: { __typename?: 'Order', id: string, customer?: { __typename?: 'Customer', firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, email: string } | null } } | null, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
 
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1244,10 +1246,24 @@ export const GetOfferingSchedulesDocument = gql`
   offerings {
     id
     name
+    maxGuests
     timeSlots(date: $date) {
       id
       startDateTime
       endDateTime
+      booking {
+        id
+        numGuests
+        order {
+          id
+          customer {
+            firstName
+            lastName
+            phoneNumber
+            email
+          }
+        }
+      }
       block {
         id
       }

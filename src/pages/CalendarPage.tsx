@@ -1,4 +1,4 @@
-import { Box, Popover, Skeleton } from "@mui/material";
+import { Box, Popover, Skeleton, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 import { DateTime, Settings } from "luxon";
 import { useMemo, useState } from "react";
@@ -6,6 +6,7 @@ import { Calendar, Event, luxonLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import CalendarEventContent from "../components/CalendarEventCard/CalendarEventContent";
 import CalendarToolbar from "../components/CalendarToolbar/CalendarToolbar";
 import EventPreviewCard from "../components/EventPreviewCard/EventPreviewCard";
 import {
@@ -53,6 +54,7 @@ const CalendarPage = () => {
   const [previewEventId, setPreviewEventId] = useState<Event | null>(null);
   const { loading, error, data, refetch } = useGetOfferingSchedulesQuery({
     variables: { date },
+    fetchPolicy: "network-only",
   });
   const {
     loading: cartLoading,
@@ -60,6 +62,7 @@ const CalendarPage = () => {
     data: cartData,
     refetch: refetchCart,
   } = useGetMyCartQuery({ fetchPolicy: "network-only" });
+  const theme = useTheme();
 
   const events = useMemo(
     () =>
@@ -69,10 +72,12 @@ const CalendarPage = () => {
             id: timeSlot.id,
             resourceId: offering.id,
             resourceTitle: offering.name,
+            offering,
             block: timeSlot.block,
             cartBooking: cartData?.myCart?.cartBookings?.find(
               (cartBooking) => cartBooking.timeSlot.id === timeSlot.id
             ),
+            booking: timeSlot.booking,
             start: DateTime.fromISO(timeSlot.startDateTime).toJSDate(),
             end: DateTime.fromISO(timeSlot.endDateTime).toJSDate(),
           }))
@@ -119,17 +124,41 @@ const CalendarPage = () => {
         step={15}
         timeslots={4}
         eventPropGetter={(event) => {
-          if (event.block) {
-            return { style: { backgroundColor: "grey" } };
+          let style = { border: 0, ...theme.typography.subtitle1 };
+          if (event.booking) {
+            style = {
+              ...style,
+              backgroundColor: "#DEFEE3",
+              color: "#037B27",
+              borderLeft: "4px solid #49CA7F",
+            };
+          } else if (event.block) {
+            style = {
+              ...style,
+              backgroundColor: "#FFE2C8",
+              color: "#A32F01",
+              borderLeft: "4px solid #FE6F32",
+            };
+          } else if (event.cartBooking) {
+            style = {
+              ...style,
+              backgroundColor: "#FFDDEF",
+              color: "#A91555",
+              borderLeft: "4px solid #AE0054",
+            };
+          } else {
+            style = {
+              ...style,
+              backgroundColor: "#E2F9FF",
+              color: "#066CBF",
+              borderLeft: "4px solid #33A5E4",
+            };
           }
-          if (event.cartBooking) {
-            return { style: { backgroundColor: "green" } };
-          }
-          return {};
+          return { style };
         }}
         selectable
         onSelecting={() => false}
-        components={{ toolbar: CalendarToolbar }}
+        components={{ toolbar: CalendarToolbar, event: CalendarEventContent }}
         // onSelectSlot={onSelectSlot}
         // onEventDrop={onEventDrop}
         onSelectEvent={(event, e) => {
