@@ -1,11 +1,20 @@
 import {
+  Equalizer,
+  Home,
+  Inbox,
+  Person,
+  Sell,
+  Settings,
+  Today,
+} from "@mui/icons-material";
+import {
   AppBar,
-  Avatar,
   Box,
   Drawer,
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
@@ -14,7 +23,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import UserAvatar from "../components/common/UserAvatar/UserAvatar";
 import { selectUser } from "../features/auth/authSlice";
 import { signOut } from "../services/firebase";
@@ -23,27 +32,43 @@ const items = [
   {
     title: "Home",
     to: "/",
+    Icon: Home,
   },
   {
     title: "Calendar",
     to: "/calendar",
+    Icon: Today,
   },
   {
     title: "Orders",
     to: "/orders",
+    Icon: Inbox,
   },
   {
     title: "Customers",
     to: "/customers",
+    Icon: Person,
   },
   {
     title: "Experiences",
     to: "/experiences",
+    Icon: Sell,
+  },
+  {
+    title: "Analytics",
+    to: "/analytics",
+    Icon: Equalizer,
+  },
+  {
+    title: "Settings",
+    to: "/settings",
+    Icon: Settings,
   },
 ];
 
 const AppLayout = () => {
   const user = useSelector(selectUser);
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
 
   return (
@@ -76,7 +101,12 @@ const AppLayout = () => {
         }}
       >
         <Toolbar>
-          <Typography variant="h6" noWrap component="div" sx={{ mr: "auto" }}>
+          <Typography
+            variant="subtitle1"
+            noWrap
+            component="div"
+            sx={{ mr: "auto" }}
+          >
             Sweep
           </Typography>
           <ListItemButton
@@ -101,9 +131,19 @@ const AppLayout = () => {
       >
         <Toolbar />
         <Box sx={{ overflow: "auto" }}>
-          <List>
-            {items.map(({ title, to }) => (
-              <ListItem button key={title} component={Link} to={to}>
+          <List dense sx={{ px: 1 }}>
+            {items.map(({ title, to, Icon }) => (
+              <ListItem
+                button
+                key={title}
+                component={Link}
+                to={to}
+                selected={location.pathname === to}
+                sx={{ borderRadius: 1, my: "2px" }}
+              >
+                <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
+                  <Icon fontSize="small" />
+                </ListItemIcon>
                 <ListItemText primary={title} />
               </ListItem>
             ))}

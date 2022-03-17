@@ -1,5 +1,16 @@
-import { Box, Popover, Skeleton, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Drawer,
+  Popover,
+  Skeleton,
+  Toolbar,
+  Typography,
+  Stack,
+  useTheme,
+} from "@mui/material";
 import { styled } from "@mui/system";
+import { sortBy } from "lodash";
 import { DateTime, Settings } from "luxon";
 import { useMemo, useState } from "react";
 import { Calendar, Event, luxonLocalizer } from "react-big-calendar";
@@ -95,80 +106,135 @@ const CalendarPage = () => {
 
   if (loading) return <Skeleton />;
 
+  const upcomingEvents = sortBy(
+    events?.filter(
+      (event) =>
+        event.booking &&
+        event.start > new Date() &&
+        event.start < DateTime.now().plus({ minutes: 30 }).toJSDate()
+    ),
+    "start"
+  );
+
   return (
-    <Box sx={{ height: 800 }}>
-      <Popover
-        open={!!anchorEl}
-        anchorEl={anchorEl}
-        anchorOrigin={{ vertical: "center", horizontal: "left" }}
-        transformOrigin={{ vertical: "center", horizontal: "right" }}
-        onClose={() => setAnchorEl(null)}
-      >
-        <EventPreviewCard
-          event={previewEvent}
-          onBlockChange={refetch}
-          onCartChange={refetchCart}
+    <Box sx={{ display: "flex" }}>
+      <Box sx={{ flex: 1, height: 800 }}>
+        <Popover
+          open={!!anchorEl}
+          anchorEl={anchorEl}
+          anchorOrigin={{ vertical: "center", horizontal: "left" }}
+          transformOrigin={{ vertical: "center", horizontal: "right" }}
+          onClose={() => setAnchorEl(null)}
+        >
+          <EventPreviewCard
+            event={previewEvent}
+            onBlockChange={refetch}
+            onCartChange={refetchCart}
+          />
+        </Popover>
+        <StyledCalendar
+          date={date}
+          onNavigate={(date) => setDate(date)}
+          defaultView="day"
+          // views={["day"]}
+          resources={data?.offerings.map((offering) => ({
+            id: offering.id,
+            title: offering.name,
+          }))}
+          events={events}
+          localizer={luxonLocalizer(DateTime)}
+          step={15}
+          timeslots={4}
+          eventPropGetter={(event) => {
+            let style = { border: 0, ...theme.typography.subtitle1 };
+            if (event.booking) {
+              style = {
+                ...style,
+                backgroundColor: "#DEFEE3",
+                color: "#037B27",
+                borderLeft: "4px solid #49CA7F",
+              };
+            } else if (event.block) {
+              style = {
+                ...style,
+                backgroundColor: "#FFE2C8",
+                color: "#A32F01",
+                borderLeft: "4px solid #FE6F32",
+              };
+            } else if (event.cartBooking) {
+              style = {
+                ...style,
+                backgroundColor: "#FFDDEF",
+                color: "#A91555",
+                borderLeft: "4px solid #AE0054",
+              };
+            } else {
+              style = {
+                ...style,
+                backgroundColor: "#E2F9FF",
+                color: "#066CBF",
+                borderLeft: "4px solid #33A5E4",
+              };
+            }
+            return { style };
+          }}
+          selectable
+          onSelecting={() => false}
+          components={{ toolbar: CalendarToolbar, event: CalendarEventContent }}
+          // onSelectSlot={onSelectSlot}
+          // onEventDrop={onEventDrop}
+          onSelectEvent={(event, e) => {
+            setPreviewEventId(event.id);
+            setAnchorEl(e.currentTarget);
+          }}
+          showMultiDayTimes
+          scrollToTime={DateTime.fromISO("09:00").toJSDate()}
+          resizable={false}
         />
-      </Popover>
-      <StyledCalendar
-        date={date}
-        onNavigate={(date) => setDate(date)}
-        defaultView="day"
-        // views={["day"]}
-        resources={data?.offerings.map((offering) => ({
-          id: offering.id,
-          title: offering.name,
-        }))}
-        events={events}
-        localizer={luxonLocalizer(DateTime)}
-        step={15}
-        timeslots={4}
-        eventPropGetter={(event) => {
-          let style = { border: 0, ...theme.typography.subtitle1 };
-          if (event.booking) {
-            style = {
-              ...style,
-              backgroundColor: "#DEFEE3",
-              color: "#037B27",
-              borderLeft: "4px solid #49CA7F",
-            };
-          } else if (event.block) {
-            style = {
-              ...style,
-              backgroundColor: "#FFE2C8",
-              color: "#A32F01",
-              borderLeft: "4px solid #FE6F32",
-            };
-          } else if (event.cartBooking) {
-            style = {
-              ...style,
-              backgroundColor: "#FFDDEF",
-              color: "#A91555",
-              borderLeft: "4px solid #AE0054",
-            };
-          } else {
-            style = {
-              ...style,
-              backgroundColor: "#E2F9FF",
-              color: "#066CBF",
-              borderLeft: "4px solid #33A5E4",
-            };
-          }
-          return { style };
+      </Box>
+      <Drawer
+        variant="permanent"
+        anchor="right"
+        sx={{
+          width: 300,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: 300, boxSizing: "border-box" },
+          zIndex: (theme) => theme.zIndex.appBar - 1,
         }}
-        selectable
-        onSelecting={() => false}
-        components={{ toolbar: CalendarToolbar, event: CalendarEventContent }}
-        // onSelectSlot={onSelectSlot}
-        // onEventDrop={onEventDrop}
-        onSelectEvent={(event, e) => {
-          setPreviewEventId(event.id);
-          setAnchorEl(e.currentTarget);
-        }}
-        showMultiDayTimes
-        scrollToTime={DateTime.fromISO("09:00").toJSDate()}
-        resizable={false}
-      />
+      >
+        <Toolbar />
+        <Box sx={{ p: 2 }}>
+          <Typography variant="subtitle1" sx={{ mb: 1 }}>
+            Upcoming bookings
+          </Typography>
+          <Stack spacing={2}>
+            {upcomingEvents.map((event) => (
+              <Box
+                key={event.id}
+                sx={{
+                  p: 2,
+                  borderRadius: 1,
+                  bgcolor: (theme) => theme.palette.grey[200],
+                }}
+              >
+                <Typography variant="caption">
+                  {DateTime.fromJSDate(event.start).toFormat("t")}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {event.booking.order.customer.firstName}{" "}
+                  {event.booking.order.customer.lastName}
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  {event.offering.name} | {event.booking.numGuests} players
+                </Typography>
+                <Button variant="contained" fullWidth size="small">
+                  Check in
+                </Button>
+              </Box>
+            ))}
+          </Stack>
+        </Box>
+      </Drawer>
     </Box>
   );
 };
