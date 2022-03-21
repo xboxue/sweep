@@ -8,7 +8,7 @@ const CalendarEventContent = ({ event }: EventProps) => {
         <>
           <Typography variant="subtitle2">
             {event.booking.order.customer.firstName}{" "}
-            {event.booking.order.customer.lastName} {event.booking.numGuests}/
+            {event.booking.order.customer.lastName} {event.booking.numGuests} /{" "}
             {event.offering.maxGuests}
           </Typography>
         </>

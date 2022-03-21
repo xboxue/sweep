@@ -3,6 +3,7 @@ import {
   Home,
   Inbox,
   Person,
+  Search,
   Sell,
   Settings,
   Today,
@@ -11,8 +12,8 @@ import {
   AppBar,
   Box,
   Drawer,
+  InputAdornment,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -24,6 +25,7 @@ import {
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import TextField from "../components/common/TextField/TextField";
 import UserAvatar from "../components/common/UserAvatar/UserAvatar";
 import { selectUser } from "../features/auth/authSlice";
 import { signOut } from "../services/firebase";
@@ -109,6 +111,18 @@ const AppLayout = () => {
           >
             Sweep
           </Typography>
+          <TextField
+            placeholder="Search"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ mr: 2 }}
+          />
           <ListItemButton
             sx={{ flex: 0 }}
             onClick={(event) => setAnchorEl(event.currentTarget)}
@@ -133,8 +147,7 @@ const AppLayout = () => {
         <Box sx={{ overflow: "auto" }}>
           <List dense sx={{ px: 1 }}>
             {items.map(({ title, to, Icon }) => (
-              <ListItem
-                button
+              <ListItemButton
                 key={title}
                 component={Link}
                 to={to}
@@ -145,14 +158,16 @@ const AppLayout = () => {
                   <Icon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary={title} />
-              </ListItem>
+              </ListItemButton>
             ))}
           </List>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1 }}>
         <Toolbar />
-        <Outlet />
+        <Box sx={{ p: 3 }}>
+          <Outlet />
+        </Box>
       </Box>
     </Box>
   );

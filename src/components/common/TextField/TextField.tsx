@@ -15,12 +15,12 @@ const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-const StyledInput = styled(InputBase)(({ theme }) => ({
+const StyledInput = styled(InputBase)(({ size, theme }) => ({
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
   border: "1px solid #ced4da",
   fontSize: theme.typography.body2.fontSize,
-  padding: "10px 12px",
+  padding: size === "small" ? "6px 10px" : "10px 12px",
   transition: theme.transitions.create([
     "border-color",
     "background-color",
@@ -76,6 +76,7 @@ const TextField = (props: TextFieldProps) => {
     type,
     value,
     variant = "standard",
+    size,
     ...other
   } = props;
 
@@ -112,6 +113,7 @@ const TextField = (props: TextFieldProps) => {
       onFocus={onFocus}
       placeholder={placeholder}
       inputProps={inputProps}
+      size={size}
       {...InputMore}
       {...InputProps}
     />
@@ -125,6 +127,7 @@ const TextField = (props: TextFieldProps) => {
       required={required}
       color={color}
       variant={variant}
+      size={size}
       {...other}
     >
       {label && (

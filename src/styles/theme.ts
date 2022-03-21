@@ -16,6 +16,11 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiListItemButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
+    },
     MuiButton: {
       defaultProps: {
         disableElevation: true,
@@ -27,7 +32,26 @@ const theme = createTheme({
         },
       },
     },
+    MuiButtonGroup: {
+      defaultProps: {
+        disableRipple: true,
+        disableElevation: true,
+      },
+    },
   },
 });
 
-export default theme;
+export default createTheme(
+  {
+    components: {
+      MuiToolbar: {
+        styleOverrides: {
+          root: {
+            [theme.breakpoints.up("sm")]: { minHeight: 56 },
+          },
+        },
+      },
+    },
+  },
+  theme
+);

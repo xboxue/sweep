@@ -1,10 +1,14 @@
-import { LocalMallOutlined } from "@mui/icons-material";
+import {
+  ArrowBackIos,
+  ArrowBackIosNew,
+  ArrowForwardIos,
+  LocalMallOutlined,
+} from "@mui/icons-material";
 import {
   Badge,
   IconButton,
   Typography,
   Box,
-  Button,
   ButtonGroup,
   Popover,
 } from "@mui/material";
@@ -12,6 +16,7 @@ import { useState } from "react";
 import { Navigate, ToolbarProps } from "react-big-calendar";
 import { useGetMyCartQuery } from "../../generated/graphql";
 import CartCard from "../CartCard/CartCard";
+import Button from "../common/Button/Button";
 
 const CalendarToolbar = ({
   localizer: { messages },
@@ -31,19 +36,23 @@ const CalendarToolbar = ({
         flexDirection: "row",
         alignItems: "center",
         mb: 1,
+        px: 3,
       }}
     >
-      <ButtonGroup variant="contained">
-        <Button onClick={() => onNavigate(Navigate.TODAY)}>
-          {messages.today}
-        </Button>
-        <Button onClick={() => onNavigate(Navigate.PREVIOUS)}>
-          {messages.previous}
-        </Button>
-        <Button onClick={() => onNavigate(Navigate.NEXT)}>
-          {messages.next}
-        </Button>
-      </ButtonGroup>
+      <Button
+        variant="contained"
+        size="small"
+        onClick={() => onNavigate(Navigate.TODAY)}
+        sx={{ mr: 1 }}
+      >
+        {messages.today}
+      </Button>
+      <IconButton size="small" onClick={() => onNavigate(Navigate.PREVIOUS)}>
+        <ArrowBackIosNew sx={{ width: 16, height: 16 }} />
+      </IconButton>
+      <IconButton size="small" onClick={() => onNavigate(Navigate.NEXT)}>
+        <ArrowForwardIos sx={{ width: 16, height: 16 }} />
+      </IconButton>
       <Typography variant="subtitle1" sx={{ mx: "auto" }}>
         {label}
       </Typography>
@@ -66,9 +75,9 @@ const CalendarToolbar = ({
       >
         <CartCard />
       </Popover>
-      <ButtonGroup variant="contained">
+      <ButtonGroup size="small">
         {views.map((view) => (
-          <Button key={view} onClick={() => onView(view)}>
+          <Button variant="contained" key={view} onClick={() => onView(view)}>
             {messages[view]}
           </Button>
         ))}

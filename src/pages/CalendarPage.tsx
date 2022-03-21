@@ -39,8 +39,31 @@ const StyledCalendar = styled(withDragAndDrop(Calendar))({
   ".rbc-allday-cell": {
     display: "none",
   },
-  ".rbc-time-view .rbc-header ": {
-    borderBottom: "none",
+  // Hide header borders
+  ".rbc-header, .rbc-row.rbc-row-resource": {
+    borderBottom: 0,
+  },
+  ".rbc-time-header-content": {
+    borderLeft: 0,
+  },
+  ".rbc-time-header-gutter": {
+    borderRight: 0,
+  },
+  ".rbc-time-header.rbc-overflowing": {
+    borderRight: 0,
+  },
+  // Hide calendar container border
+  ".rbc-time-view": {
+    border: 0,
+  },
+  // Add space between resource names and calendar
+  ".rbc-time-view .rbc-row": {
+    minHeight: 24,
+  },
+  // Add padding around time label
+  ".rbc-label": {
+    paddingLeft: 16,
+    paddingRight: 8,
   },
   // Hide default event label
   // ".rbc-event-label": {
@@ -117,8 +140,8 @@ const CalendarPage = () => {
   );
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Box sx={{ flex: 1, height: 800 }}>
+    <Box sx={{ display: "flex", m: -3, height: "calc(100vh - 56px)" }}>
+      <Box sx={{ flex: 1, overflowY: "auto", pt: 2 }}>
         <Popover
           open={!!anchorEl}
           anchorEl={anchorEl}
@@ -180,7 +203,10 @@ const CalendarPage = () => {
           }}
           selectable
           onSelecting={() => false}
-          components={{ toolbar: CalendarToolbar, event: CalendarEventContent }}
+          components={{
+            toolbar: CalendarToolbar,
+            event: CalendarEventContent,
+          }}
           // onSelectSlot={onSelectSlot}
           // onEventDrop={onEventDrop}
           onSelectEvent={(event, e) => {
