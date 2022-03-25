@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { relayStylePagination } from "@apollo/client/utilities";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:8000/graphql",
+  uri: process.env.REACT_APP_API_URL,
 });
 
 const authLink = setContext(async (_, { headers }) => {
