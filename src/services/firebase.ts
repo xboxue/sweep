@@ -18,6 +18,17 @@ export const signInWithGoogle = () => {
   return firebase.signInWithPopup(auth, provider);
 };
 
+export const createUserWithEmailAndPassword = (
+  email: string,
+  password: string
+) => {
+  return firebase.createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInWithEmailAndPassword = (email: string, password: string) => {
+  return firebase.signInWithEmailAndPassword(auth, email, password);
+};
+
 export const signOut = () => {
   return firebase.signOut(auth);
 };

@@ -1,31 +1,53 @@
 import { Box } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { selectUser } from "../../features/auth/authSlice";
 import useAuth from "../../hooks/useAuth";
 import AppLayout from "../../layouts/AppLayout";
 import CalendarPage from "../../pages/CalendarPage";
 import CustomersPage from "../../pages/CustomersPage";
-import OrdersPage from "../../pages/OrdersPage";
 import ExperiencesPage from "../../pages/ExperiencesPage";
 import HomePage from "../../pages/HomePage";
 import LoginPage from "../../pages/LoginPage";
 import NotFoundPage from "../../pages/NotFoundPage";
+import OrdersPage from "../../pages/OrdersPage";
 import RegisterPage from "../../pages/RegisterPage";
 import SignUpPage from "../../pages/SignUpPage";
 import CreateOfferingForm from "../CreateOfferingForm/CreateOfferingForm";
 import OfferingDetailsForm from "../CreateOfferingForm/OfferingDetailsForm";
 import CreateOrderForm from "../CreateOrderForm/CreateOrderForm";
 import OrderDetailsForm from "../CreateOrderForm/OrderDetailsForm";
-import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
 const AdminApp = () => {
   useAuth();
+  const token = localStorage.getItem("token");
+  const user = useSelector(selectUser);
 
-  return (
-    <Routes>
-      <Route path="signup" element={<SignUpPage />} />
-      <Route path="login" element={<LoginPage />} />
-      <Route element={<ProtectedRoute />}>
-        <Route path="/register" element={<RegisterPage />} />
+  const renderRoutes = () => {
+    if (!user && !token) {
+      return (
+        <>
+          {/* Needed for YC demo */}
+          <Route index element={<LoginPage />} />
+
+          <Route path="signup" element={<SignUpPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      );
+    }
+
+    if (user && !user.businessId) {
+      return (
+        <>
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="*" element={<Navigate to="/register" replace />} />
+        </>
+      );
+    }
+
+    return (
+      <>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="calendar" element={<CalendarPage />} />
@@ -65,10 +87,12 @@ const AdminApp = () => {
             }
           />
         </Route>
-      </Route>
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
-  );
+        <Route path="*" element={<NotFoundPage />} />
+      </>
+    );
+  };
+
+  return <Routes>{renderRoutes()}</Routes>;
 };
 
 export default AdminApp;
