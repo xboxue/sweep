@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.5.8",
+    "@date-io/luxon": "^2.13.1",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@fullcalendar/core": "^5.10.1",
