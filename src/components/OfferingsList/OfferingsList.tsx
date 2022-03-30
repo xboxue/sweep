@@ -1,9 +1,23 @@
-import { Box, Grid, Skeleton, Typography } from "@mui/material";
+import { LocalMallOutlined } from "@mui/icons-material";
+import {
+  Badge,
+  Box,
+  Grid,
+  IconButton,
+  Popover,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { DateTime } from "luxon";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import {
+  useAddCartBookingsMutation,
+  useGetMyCartQuery,
+} from "../../generated/graphql";
 import { useGetPublicOfferingsQuery } from "../../generated/public/graphql";
 import BookingForm from "../BookingForm/BookingForm";
-import BookingSummaryCard from "../BookingSummaryCard/BookingSummaryCard";
+import CartCard from "../CartCard/CartCard";
+import CartSummaryCard from "../CartSummaryCard/CartSummaryCard";
 import Dialog from "../common/Dialog/Dialog";
 import OfferingCard from "../OfferingCard/OfferingCard";
 import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
@@ -11,8 +25,16 @@ import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
 const OfferingsList = () => {
   const [date, setDate] = useState(DateTime.now());
   const [numGuests, setNumGuests] = useState(4);
-  const [timeSlot, setTimeSlot] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
 
+  const [addCartBookings] = useAddCartBookingsMutation();
+  const {
+    loading: cartLoading,
+    error: cartError,
+    data: cartData,
+    refetch: refetchCart,
+  } = useGetMyCartQuery();
   const { loading, error, data } = useGetPublicOfferingsQuery({
     variables: { businessId: 1, numGuests, date },
     fetchPolicy: "network-only",
@@ -22,42 +44,76 @@ const OfferingsList = () => {
 
   return (
     <Box>
-      {!!timeSlot && (
-        <Dialog
-          title="Complete Reservation"
-          open
-          onClose={() => setTimeSlot(null)}
-          fullWidth
-          PaperProps={{ sx: { maxWidth: 700 } }}
-        >
-          <Box sx={{ display: "flex" }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle1">Reservation details</Typography>
-              <BookingForm />
-            </Box>
-            <Box sx={{ ml: 5, width: 300 }}>
-              <BookingSummaryCard
-                price={timeSlot.offering.pricePerPerson / 100}
-                numGuests={2}
-                startDateTime={timeSlot.startDateTime}
-                offering={timeSlot.offering}
-              />
-            </Box>
+      <Popover
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={() => setAnchorEl(null)}
+      >
+        <CartCard onCheckout={() => setCheckoutDialogOpen(true)} />
+      </Popover>
+      <Dialog
+        title="Complete Reservation"
+        open={checkoutDialogOpen}
+        onClose={() => setCheckoutDialogOpen(false)}
+        fullWidth
+        PaperProps={{ sx: { maxWidth: 700 } }}
+      >
+        <Box sx={{ display: "flex" }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="subtitle1">Reservation details</Typography>
+            <BookingForm />
           </Box>
-        </Dialog>
-      )}
+          <Box sx={{ ml: 5, width: 300 }}>
+            <CartSummaryCard />
+          </Box>
+        </Box>
+      </Dialog>
       <OfferingToolbar
         numGuests={numGuests}
         onNumGuestsChange={setNumGuests}
         date={date}
         onDateChange={setDate}
+        cartIcon={
+          <IconButton
+            onClick={(event) => setAnchorEl(event.currentTarget)}
+            sx={{ mr: 2 }}
+          >
+            <Badge
+              badgeContent={cartData?.myCart?.cartBookings?.length}
+              color="primary"
+            >
+              <LocalMallOutlined />
+            </Badge>
+          </IconButton>
+        }
       />
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data?.offerings.map((offering) => (
           <Grid item sm={6} key={offering.id}>
             <OfferingCard
+              date={date}
               offering={offering}
-              onTimeSlotClick={setTimeSlot}
+              onTimeSlotClick={async (timeSlot) => {
+                try {
+                  await addCartBookings({
+                    variables: {
+                      input: {
+                        cartBookings: [
+                          {
+                            timeSlotId: timeSlot.id,
+                            numGuests,
+                            offeringId: offering.id,
+                          },
+                        ],
+                      },
+                    },
+                  });
+                  await refetchCart();
+                  setCheckoutDialogOpen(true);
+                } catch (error) {
+                  console.log(error);
+                }
+              }}
               numGuests={numGuests}
             />
           </Grid>

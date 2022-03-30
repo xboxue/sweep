@@ -17,10 +17,40 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AddCartBookingsInput = {
+  cartBookings: Array<CartBookingInput>;
+};
+
+export type AddCartBookingsPayload = {
+  __typename?: 'AddCartBookingsPayload';
+  cart?: Maybe<Cart>;
+};
+
 export type Business = {
   __typename?: 'Business';
   id: Scalars['ID'];
   name: Scalars['String'];
+};
+
+export type Cart = {
+  __typename?: 'Cart';
+  cartBookings: Array<CartBooking>;
+  id: Scalars['ID'];
+};
+
+export type CartBooking = {
+  __typename?: 'CartBooking';
+  id: Scalars['ID'];
+  numGuests: Scalars['Int'];
+  offering: Offering;
+  timeSlot: TimeSlot;
+};
+
+export type CartBookingInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  numGuests: Scalars['Int'];
+  offeringId: Scalars['ID'];
+  timeSlotId: Scalars['ID'];
 };
 
 export enum DepositType {
@@ -54,6 +84,28 @@ export enum MinAdvanceFormat {
   Minute = 'MINUTE'
 }
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  addCartBookings: AddCartBookingsPayload;
+  removeCartBookings: RemoveCartBookingsPayload;
+  updateCartBookings: UpdateCartBookingsPayload;
+};
+
+
+export type MutationAddCartBookingsArgs = {
+  input: AddCartBookingsInput;
+};
+
+
+export type MutationRemoveCartBookingsArgs = {
+  input: RemoveCartBookingsInput;
+};
+
+
+export type MutationUpdateCartBookingsArgs = {
+  input: UpdateCartBookingsInput;
+};
+
 export type Offering = {
   __typename?: 'Offering';
   availableTimeSlots: Array<TimeSlot>;
@@ -64,7 +116,7 @@ export type Offering = {
   depositType?: Maybe<DepositType>;
   description?: Maybe<Scalars['String']>;
   duration: Scalars['Int'];
-  featuredImage?: Maybe<Image>;
+  featuredImage: Image;
   id: Scalars['ID'];
   maxAdvance: Scalars['Int'];
   maxAdvanceFormat: MaxAdvanceFormat;
@@ -112,6 +164,7 @@ export enum PricingType {
 
 export type Query = {
   __typename?: 'Query';
+  myCart?: Maybe<Cart>;
   offering: Offering;
   offerings: Array<Offering>;
 };
@@ -126,11 +179,34 @@ export type QueryOfferingsArgs = {
   businessId: Scalars['ID'];
 };
 
+export type RemoveCartBookingsInput = {
+  cartBookingIds: Array<Scalars['ID']>;
+};
+
+export type RemoveCartBookingsPayload = {
+  __typename?: 'RemoveCartBookingsPayload';
+  cart?: Maybe<Cart>;
+};
+
 export type TimeSlot = {
   __typename?: 'TimeSlot';
   endDateTime: Scalars['DateTime'];
   id: Scalars['ID'];
   startDateTime: Scalars['DateTime'];
+};
+
+export type UpdateCartBookingInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  numGuests: Scalars['Int'];
+};
+
+export type UpdateCartBookingsInput = {
+  cartBookings: Array<UpdateCartBookingInput>;
+};
+
+export type UpdateCartBookingsPayload = {
+  __typename?: 'UpdateCartBookingsPayload';
+  cart?: Maybe<Cart>;
 };
 
 export type GetPublicOfferingsQueryVariables = Exact<{
@@ -141,7 +217,7 @@ export type GetPublicOfferingsQueryVariables = Exact<{
 }>;
 
 
-export type GetPublicOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null }> };
+export type GetPublicOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
 
 
 export const GetPublicOfferingsDocument = gql`

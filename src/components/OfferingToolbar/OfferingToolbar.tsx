@@ -19,6 +19,7 @@ interface Props {
   onNumGuestsChange: (numGuests: number) => void;
   date: DateTime;
   onDateChange: (date: DateTime) => void;
+  cartIcon: React.ReactNode;
 }
 
 const NUM_DAYS_TO_SHOW = 10;
@@ -28,6 +29,7 @@ const OfferingToolbar = ({
   onNumGuestsChange,
   date,
   onDateChange,
+  cartIcon,
 }: Props) => {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
@@ -93,6 +95,7 @@ const OfferingToolbar = ({
             )}
           />
         </LocalizationProvider>
+        <Box sx={{ ml: 2 }}>{cartIcon}</Box>
       </Box>
       {date.diff(DateTime.now().startOf("day"), "days").days <
         NUM_DAYS_TO_SHOW && (

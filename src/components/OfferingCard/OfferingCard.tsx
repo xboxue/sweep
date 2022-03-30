@@ -8,14 +8,23 @@ import {
 } from "../../generated/public/graphql";
 
 interface Props {
+  date: DateTime;
   offering: Offering;
   onTimeSlotClick: (timeSlot: TimeSlot) => void;
   numGuests: number;
 }
 
-const OfferingCard = ({ offering, onTimeSlotClick, numGuests }: Props) => {
+const OfferingCard = ({
+  date,
+  offering,
+  onTimeSlotClick,
+  numGuests,
+}: Props) => {
   const renderContent = () => {
-    if (numGuests < offering.minGuests && !offering.availableTimeSlots.length) {
+    if (
+      (numGuests < offering.minGuests || numGuests > offering.maxGuests) &&
+      !offering.availableTimeSlots.length
+    ) {
       return (
         <Box
           sx={{
@@ -27,13 +36,15 @@ const OfferingCard = ({ offering, onTimeSlotClick, numGuests }: Props) => {
           }}
         >
           <Typography variant="body2">
-            Minimum of {offering.minGuests} players
+            {numGuests < offering.minGuests
+              ? `Minimum of ${offering.minGuests} players`
+              : `Maximum of ${offering.maxGuests} players`}
           </Typography>
         </Box>
       );
     }
 
-    if (numGuests > offering.maxGuests && !offering.availableTimeSlots.length) {
+    if (!offering.availableTimeSlots.length) {
       return (
         <Box
           sx={{
@@ -45,7 +56,7 @@ const OfferingCard = ({ offering, onTimeSlotClick, numGuests }: Props) => {
           }}
         >
           <Typography variant="body2">
-            Maximum of {offering.maxGuests} players
+            Sold out on {date.toFormat("MMM d")}
           </Typography>
         </Box>
       );
@@ -60,7 +71,7 @@ const OfferingCard = ({ offering, onTimeSlotClick, numGuests }: Props) => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={() => onTimeSlotClick({ ...timeSlot, offering })}
+                onClick={() => onTimeSlotClick(timeSlot)}
               >
                 {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
               </Button>

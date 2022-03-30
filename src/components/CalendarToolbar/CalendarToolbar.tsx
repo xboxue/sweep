@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Navigate, ToolbarProps } from "react-big-calendar";
+import { useNavigate } from "react-router-dom";
 import { useGetMyCartQuery } from "../../generated/graphql";
 import CartCard from "../CartCard/CartCard";
 import Button from "../common/Button/Button";
@@ -28,6 +29,7 @@ const CalendarToolbar = ({
 }: ToolbarProps) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { loading, error, data } = useGetMyCartQuery();
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -73,7 +75,7 @@ const CalendarToolbar = ({
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <CartCard />
+        <CartCard onCheckout={() => navigate("/orders/new")} />
       </Popover>
       <ButtonGroup size="small">
         {views.map((view) => (
