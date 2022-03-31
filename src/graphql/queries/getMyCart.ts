@@ -4,8 +4,12 @@ const GET_MY_CART = gql`
   query getMyCart {
     myCart {
       id
+      subtotal
+      total
+      tax
       cartBookings {
         id
+        total
         timeSlot {
           id
           startDateTime
@@ -18,6 +22,7 @@ const GET_MY_CART = gql`
             url
             altText
           }
+          paymentType
         }
         numGuests
       }

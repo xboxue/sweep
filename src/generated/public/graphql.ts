@@ -36,6 +36,9 @@ export type Cart = {
   __typename?: 'Cart';
   cartBookings: Array<CartBooking>;
   id: Scalars['ID'];
+  subtotal: Scalars['Int'];
+  tax: Scalars['Int'];
+  total: Scalars['Int'];
 };
 
 export type CartBooking = {
@@ -44,6 +47,7 @@ export type CartBooking = {
   numGuests: Scalars['Int'];
   offering: Offering;
   timeSlot: TimeSlot;
+  total: Scalars['Int'];
 };
 
 export type CartBookingInput = {

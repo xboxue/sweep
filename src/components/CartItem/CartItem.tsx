@@ -2,6 +2,7 @@ import { Avatar, Box, Link, MenuItem, Stack, Typography } from "@mui/material";
 import { range } from "lodash";
 import { DateTime } from "luxon";
 import { CartBooking } from "../../generated/graphql";
+import { PaymentType } from "../../generated/public/graphql";
 import TextField from "../common/TextField/TextField";
 
 interface Props {
@@ -19,7 +20,11 @@ const CartItem = ({ cartBooking, onUpdate, onRemove }: Props) => {
         sx={{ width: 56, height: 56 }}
       />
       <Stack sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{cartBooking.offering.name}</Typography>
+        <Typography variant="subtitle2">
+          {cartBooking.offering.name}{" "}
+          {cartBooking.offering.paymentType === PaymentType.Deposit &&
+            "(Deposit)"}
+        </Typography>
         <Typography variant="body2">
           {DateTime.fromISO(cartBooking.timeSlot.startDateTime).toFormat(
             "EEE, MMM d, h:mm a"
@@ -44,6 +49,9 @@ const CartItem = ({ cartBooking, onUpdate, onRemove }: Props) => {
           </Link>
         </Box>
       </Stack>
+      <Typography variant="body2" sx={{ ml: "auto" }}>
+        ${(cartBooking.total / 100).toFixed(2)}
+      </Typography>
     </Box>
   );
 };

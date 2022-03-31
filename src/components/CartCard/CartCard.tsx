@@ -1,4 +1,4 @@
-import { Box, Button, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Stack, Typography } from "@mui/material";
 import { sortBy } from "lodash";
 import {
   useGetMyCartQuery,
@@ -12,7 +12,9 @@ interface Props {
 }
 
 const CartCard = ({ onCheckout }: Props) => {
-  const { loading, error, data, refetch } = useGetMyCartQuery();
+  const { loading, error, data, refetch } = useGetMyCartQuery({
+    fetchPolicy: "network-only",
+  });
   const [removeCartBookings] = useRemoveCartBookingsMutation();
   const [updateCartBookings] = useUpdateCartBookingsMutation();
 
@@ -27,10 +29,8 @@ const CartCard = ({ onCheckout }: Props) => {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="subtitle1" sx={{ mb: 2 }}>
-        Cart
-      </Typography>
+    <Stack spacing={2} sx={{ p: 2 }}>
+      <Typography variant="subtitle1">Cart</Typography>
       {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
         <CartItem
           key={cartBooking.id}
@@ -49,7 +49,9 @@ const CartCard = ({ onCheckout }: Props) => {
             try {
               await updateCartBookings({
                 variables: {
-                  input: { cartBookings: [{ id: cartBooking.id, numGuests }] },
+                  input: {
+                    cartBookings: [{ id: cartBooking.id, numGuests }],
+                  },
                 },
               });
               await refetch();
@@ -59,11 +61,10 @@ const CartCard = ({ onCheckout }: Props) => {
           }}
         />
       ))}
-
-      <Button sx={{ mt: 2 }} variant="contained" onClick={onCheckout}>
+      <Button variant="contained" onClick={onCheckout}>
         Check out
       </Button>
-    </Box>
+    </Stack>
   );
 };
 

@@ -7,15 +7,10 @@ import {
 } from "../../generated/graphql";
 import CartItem from "../CartItem/CartItem";
 
-// const PriceListItem = ({ label, value, TypographyProps }: Props) => (
-//   <Box display="flex" justifyContent="space-between">
-//     <Typography {...TypographyProps}>{label}</Typography>
-//     <Typography {...TypographyProps}>${(value / 100).toFixed(2)}</Typography>
-//   </Box>
-// );
-
 const CartSummaryCard = () => {
-  const { loading, error, data, refetch } = useGetMyCartQuery();
+  const { loading, error, data, refetch } = useGetMyCartQuery({
+    fetchPolicy: "network-only",
+  });
   const [removeCartBookings] = useRemoveCartBookingsMutation();
   const [updateCartBookings] = useUpdateCartBookingsMutation();
 
@@ -62,20 +57,24 @@ const CartSummaryCard = () => {
 
       <Divider />
       <Stack spacing="4px" sx={{ mt: 1 }}>
-        <Typography variant="subtitle1" mt={1}>
+        <Typography variant="subtitle2" mt={1}>
           Pricing details
         </Typography>
 
-        {/* <PriceListItem
-          label={`${numGuests} × ${offering.name}`}
-          value={price.subtotal}
-        />
-        <PriceListItem label="Taxes" value={price.tax} />
-        <PriceListItem
-          label="Total"
-          value={price.total}
-          TypographyProps={{ fontWeight: 500 }}
-        /> */}
+        {[
+          { label: "Subtotal", value: data.myCart.subtotal },
+          { label: "Taxes", value: data.myCart.tax },
+          { label: "Total", value: data.myCart.total, variant: "subtitle2" },
+        ].map(({ label, value, ...props }) => (
+          <Box display="flex" justifyContent="space-between" key={label}>
+            <Typography variant="body2" {...props}>
+              {label}
+            </Typography>
+            <Typography variant="body2" {...props}>
+              ${(value / 100).toFixed(2)}
+            </Typography>
+          </Box>
+        ))}
       </Stack>
     </>
   );
