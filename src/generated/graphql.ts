@@ -53,6 +53,7 @@ export type Business = {
 export type Cart = {
   __typename?: 'Cart';
   cartBookings: Array<CartBooking>;
+  email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   subtotal: Scalars['Int'];
   tax: Scalars['Int'];
@@ -616,7 +617,7 @@ export type GetCustomersQuery = { __typename?: 'Query', customers: Array<{ __typ
 export type GetMyCartQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, subtotal: number, total: number, tax: number, cartBookings: Array<{ __typename?: 'CartBooking', id: string, total: number, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, paymentType: PaymentType, featuredImage: { __typename?: 'Image', url: string, altText?: string | null } } }> } | null };
+export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, email?: string | null, subtotal: number, total: number, tax: number, cartBookings: Array<{ __typename?: 'CartBooking', id: string, total: number, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, paymentType: PaymentType, featuredImage: { __typename?: 'Image', url: string, altText?: string | null } } }> } | null };
 
 export type GetOfferingQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1122,6 +1123,7 @@ export const GetMyCartDocument = gql`
     query getMyCart {
   myCart {
     id
+    email
     subtotal
     total
     tax

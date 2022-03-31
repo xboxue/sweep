@@ -14,7 +14,10 @@ import {
   useAddCartBookingsMutation,
   useGetMyCartQuery,
 } from "../../generated/graphql";
-import { useGetPublicOfferingsQuery } from "../../generated/public/graphql";
+import {
+  useGetPublicOfferingsQuery,
+  useUpdateCartEmailMutation,
+} from "../../generated/public/graphql";
 import BookingForm from "../BookingForm/BookingForm";
 import CartCard from "../CartCard/CartCard";
 import CartSummaryCard from "../CartSummaryCard/CartSummaryCard";
@@ -29,6 +32,7 @@ const OfferingsList = () => {
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
 
   const [addCartBookings] = useAddCartBookingsMutation();
+  const [updateCartEmail] = useUpdateCartEmailMutation();
   const {
     loading: cartLoading,
     error: cartError,
@@ -61,7 +65,18 @@ const OfferingsList = () => {
         <Box sx={{ display: "flex" }}>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle1">Reservation details</Typography>
-            <BookingForm />
+            <BookingForm
+              onSubmit={() => {}}
+              email={cartData?.myCart?.email}
+              onEmailChange={async (email) => {
+                try {
+                  await updateCartEmail({ variables: { input: { email } } });
+                  await refetchCart();
+                } catch (error) {
+                  console.log(error);
+                }
+              }}
+            />
           </Box>
           <Box sx={{ ml: 5, width: 300 }}>
             <CartSummaryCard />

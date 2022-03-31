@@ -1,10 +1,11 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, MenuItem, Stack, Typography } from "@mui/material";
 import { PaymentElement } from "@stripe/react-stripe-js";
-import { Formik, useFormik } from "formik";
-import React, { useCallback } from "react";
+import { Formik, useFormik, useFormikContext } from "formik";
+import { useEffect, useCallback } from "react";
 // import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import * as Yup from "yup";
+import useDebounce from "../../hooks/useDebounce";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
 
 interface Props {
@@ -14,6 +15,12 @@ interface Props {
 // const PhoneTextField = React.forwardRef((props, ref) => {
 //   return <TextField {...props} inputRef={ref} />;
 // });
+const initialValues = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  // phoneNumber: "",
+};
 
 const CountrySelect = ({ options, onChange, onBlur, ...rest }) => {
   const handleChange = useCallback(
@@ -46,25 +53,35 @@ const validationSchema = Yup.object({
     .max(50, "Too long")
     .required("Required"),
   email: Yup.string().email("Invalid email").required("Required"),
-  phoneNumber: Yup.string()
-    // .test(
-    //   "valid-phone-number",
-    //   "Invalid phone number",
-    //   (value) => Boolean(value) && isValidPhoneNumber(value)
-    // )
-    .required("Required"),
+  // phoneNumber: Yup.string()
+  // .test(
+  //   "valid-phone-number",
+  //   "Invalid phone number",
+  //   (value) => Boolean(value) && isValidPhoneNumber(value)
+  // )
+  // .required("Required"),
 });
 
-const BookingForm = ({ onSubmit }: Props) => {
+const Autosave = ({ onEmailChange }) => {
+  const { values } = useFormikContext<typeof initialValues>();
+  const debouncedEmail = useDebounce(values.email, 1000);
+
+  useEffect(() => {
+    try {
+      validationSchema.validateSyncAt("email", { email: debouncedEmail });
+      onEmailChange(debouncedEmail);
+    } catch (error) {}
+  }, [debouncedEmail, onEmailChange]);
+
+  return null;
+};
+
+const BookingForm = ({ onSubmit, onEmailChange, email }: Props) => {
   return (
     <Formik
-      initialValues={{
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-      }}
+      initialValues={{ ...initialValues, email: email || initialValues.email }}
       validationSchema={validationSchema}
+      enableReinitialize
       onSubmit={(values) => {
         console.log(values);
 
@@ -74,6 +91,7 @@ const BookingForm = ({ onSubmit }: Props) => {
     >
       {(formik) => (
         <Stack spacing={2} component="form" onSubmit={formik.handleSubmit}>
+          <Autosave onEmailChange={onEmailChange} />
           <FormikTextField label="Email" field="email" />
           <FormikTextField label="First name" field="firstName" />
           <FormikTextField label="Last name" field="lastName" />
@@ -107,7 +125,7 @@ const BookingForm = ({ onSubmit }: Props) => {
         subject to availability
       </Typography> */}
 
-          <Button size="large" variant="contained">
+          <Button size="large" variant="contained" type="submit">
             Continue
           </Button>
         </Stack>
