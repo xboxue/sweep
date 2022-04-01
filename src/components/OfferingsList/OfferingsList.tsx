@@ -1,13 +1,5 @@
 import { LocalMallOutlined } from "@mui/icons-material";
-import {
-  Badge,
-  Box,
-  Grid,
-  IconButton,
-  Popover,
-  Skeleton,
-  Typography,
-} from "@mui/material";
+import { Badge, Box, Grid, IconButton, Popover, Skeleton } from "@mui/material";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import {
@@ -18,10 +10,8 @@ import {
   useGetPublicOfferingsQuery,
   useUpdateCartEmailMutation,
 } from "../../generated/public/graphql";
-import BookingForm from "../BookingForm/BookingForm";
 import CartCard from "../CartCard/CartCard";
-import CartSummaryCard from "../CartSummaryCard/CartSummaryCard";
-import Dialog from "../common/Dialog/Dialog";
+import CheckoutDialog from "../CheckoutDialog/CheckoutDialog";
 import OfferingCard from "../OfferingCard/OfferingCard";
 import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
 
@@ -32,7 +22,6 @@ const OfferingsList = () => {
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
 
   const [addCartBookings] = useAddCartBookingsMutation();
-  const [updateCartEmail] = useUpdateCartEmailMutation();
   const {
     loading: cartLoading,
     error: cartError,
@@ -55,34 +44,10 @@ const OfferingsList = () => {
       >
         <CartCard onCheckout={() => setCheckoutDialogOpen(true)} />
       </Popover>
-      <Dialog
-        title="Complete Reservation"
+      <CheckoutDialog
         open={checkoutDialogOpen}
         onClose={() => setCheckoutDialogOpen(false)}
-        fullWidth
-        PaperProps={{ sx: { maxWidth: 700 } }}
-      >
-        <Box sx={{ display: "flex" }}>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="subtitle1">Reservation details</Typography>
-            <BookingForm
-              onSubmit={() => {}}
-              email={cartData?.myCart?.email}
-              onEmailChange={async (email) => {
-                try {
-                  await updateCartEmail({ variables: { input: { email } } });
-                  await refetchCart();
-                } catch (error) {
-                  console.log(error);
-                }
-              }}
-            />
-          </Box>
-          <Box sx={{ ml: 5, width: 300 }}>
-            <CartSummaryCard />
-          </Box>
-        </Box>
-      </Dialog>
+      />
       <OfferingToolbar
         numGuests={numGuests}
         onNumGuestsChange={setNumGuests}

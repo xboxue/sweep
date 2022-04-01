@@ -8,6 +8,7 @@ const GET_MY_CART = gql`
       subtotal
       total
       tax
+      stripeClientSecret
       cartBookings {
         id
         total

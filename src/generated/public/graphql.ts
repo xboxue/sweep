@@ -37,6 +37,7 @@ export type Cart = {
   cartBookings: Array<CartBooking>;
   email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  stripeClientSecret?: Maybe<Scalars['String']>;
   subtotal: Scalars['Int'];
   tax: Scalars['Int'];
   total: Scalars['Int'];
