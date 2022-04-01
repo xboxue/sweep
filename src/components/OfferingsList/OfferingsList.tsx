@@ -47,6 +47,7 @@ const OfferingsList = () => {
       <CheckoutDialog
         open={checkoutDialogOpen}
         onClose={() => setCheckoutDialogOpen(false)}
+        cart={cartData?.myCart}
       />
       <OfferingToolbar
         numGuests={numGuests}

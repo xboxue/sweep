@@ -36,7 +36,10 @@ export type Cart = {
   __typename?: 'Cart';
   cartBookings: Array<CartBooking>;
   email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
   stripeClientSecret?: Maybe<Scalars['String']>;
   subtotal: Scalars['Int'];
   tax: Scalars['Int'];
@@ -95,6 +98,7 @@ export type Mutation = {
   addCartBookings: AddCartBookingsPayload;
   removeCartBookings: RemoveCartBookingsPayload;
   updateCartBookings: UpdateCartBookingsPayload;
+  updateCartContactInfo: UpdateCartContactInfoPayload;
   updateCartEmail: UpdateCartEmailPayload;
 };
 
@@ -111,6 +115,11 @@ export type MutationRemoveCartBookingsArgs = {
 
 export type MutationUpdateCartBookingsArgs = {
   input: UpdateCartBookingsInput;
+};
+
+
+export type MutationUpdateCartContactInfoArgs = {
+  input: UpdateCartContactInfoInput;
 };
 
 
@@ -221,6 +230,18 @@ export type UpdateCartBookingsPayload = {
   cart?: Maybe<Cart>;
 };
 
+export type UpdateCartContactInfoInput = {
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phoneNumber?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCartContactInfoPayload = {
+  __typename?: 'UpdateCartContactInfoPayload';
+  cart?: Maybe<Cart>;
+};
+
 export type UpdateCartEmailInput = {
   email: Scalars['String'];
 };
@@ -229,6 +250,13 @@ export type UpdateCartEmailPayload = {
   __typename?: 'UpdateCartEmailPayload';
   cart?: Maybe<Cart>;
 };
+
+export type UpdateCartContactInfoMutationVariables = Exact<{
+  input: UpdateCartContactInfoInput;
+}>;
+
+
+export type UpdateCartContactInfoMutation = { __typename?: 'Mutation', updateCartContactInfo: { __typename?: 'UpdateCartContactInfoPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
 export type UpdateCartEmailMutationVariables = Exact<{
   input: UpdateCartEmailInput;
@@ -248,6 +276,41 @@ export type GetPublicOfferingsQueryVariables = Exact<{
 export type GetPublicOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
 
 
+export const UpdateCartContactInfoDocument = gql`
+    mutation updateCartContactInfo($input: UpdateCartContactInfoInput!) {
+  updateCartContactInfo(input: $input) {
+    cart {
+      id
+    }
+  }
+}
+    `;
+export type UpdateCartContactInfoMutationFn = Apollo.MutationFunction<UpdateCartContactInfoMutation, UpdateCartContactInfoMutationVariables>;
+
+/**
+ * __useUpdateCartContactInfoMutation__
+ *
+ * To run a mutation, you first call `useUpdateCartContactInfoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCartContactInfoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCartContactInfoMutation, { data, loading, error }] = useUpdateCartContactInfoMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateCartContactInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCartContactInfoMutation, UpdateCartContactInfoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCartContactInfoMutation, UpdateCartContactInfoMutationVariables>(UpdateCartContactInfoDocument, options);
+      }
+export type UpdateCartContactInfoMutationHookResult = ReturnType<typeof useUpdateCartContactInfoMutation>;
+export type UpdateCartContactInfoMutationResult = Apollo.MutationResult<UpdateCartContactInfoMutation>;
+export type UpdateCartContactInfoMutationOptions = Apollo.BaseMutationOptions<UpdateCartContactInfoMutation, UpdateCartContactInfoMutationVariables>;
 export const UpdateCartEmailDocument = gql`
     mutation updateCartEmail($input: UpdateCartEmailInput!) {
   updateCartEmail(input: $input) {

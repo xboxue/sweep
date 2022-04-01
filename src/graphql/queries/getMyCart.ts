@@ -5,6 +5,9 @@ const GET_MY_CART = gql`
     myCart {
       id
       email
+      firstName
+      lastName
+      phoneNumber
       subtotal
       total
       tax

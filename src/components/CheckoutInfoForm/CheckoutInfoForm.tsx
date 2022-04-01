@@ -10,6 +10,10 @@ import { Formik, useFormikContext } from "formik";
 import React, { useEffect } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import * as Yup from "yup";
+import {
+  Cart,
+  useUpdateCartContactInfoMutation,
+} from "../../generated/public/graphql";
 import useDebounce from "../../hooks/useDebounce";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
 import TextField from "../common/TextField/TextField";
@@ -17,7 +21,7 @@ import TextField from "../common/TextField/TextField";
 interface Props {
   onSubmit: () => void;
   onEmailChange: (email: string) => void;
-  email?: string;
+  cart: Cart;
 }
 
 const initialValues = {
@@ -100,22 +104,34 @@ const Autosave = ({ onEmailChange }) => {
       validationSchema.validateSyncAt("email", { email: debouncedEmail });
       onEmailChange(debouncedEmail);
     } catch (error) {}
-  }, [debouncedEmail]);
+  }, [debouncedEmail, onEmailChange]);
 
   return null;
 };
 
-const CheckoutInfoForm = ({ onSubmit, onEmailChange, email }: Props) => {
+const CheckoutInfoForm = ({ onSubmit, onEmailChange, cart }: Props) => {
+  const [updateCartContactInfo] = useUpdateCartContactInfoMutation();
+
   return (
     <Formik
-      initialValues={{ ...initialValues, email }}
+      initialValues={{
+        email: cart.email,
+        firstName: cart.firstName,
+        lastName: cart.lastName,
+        phoneNumber: cart.phoneNumber,
+      }}
       validationSchema={validationSchema}
-      onSubmit={(values) => onSubmit(values)}
+      onSubmit={async (values) => {
+        try {
+          await updateCartContactInfo({ variables: { input: values } });
+          onSubmit(values);
+        } catch (error) {}
+      }}
       validateOnChange={false}
     >
       {(formik) => (
         <Stack spacing={2} component="form" onSubmit={formik.handleSubmit}>
-          <Autosave onEmailChange={onEmailChange} email={email} />
+          <Autosave onEmailChange={onEmailChange} />
           <FormikTextField label="Email" field="email" />
           <FormikTextField label="First name" field="firstName" />
           <FormikTextField label="Last name" field="lastName" />
@@ -126,7 +142,9 @@ const CheckoutInfoForm = ({ onSubmit, onEmailChange, email }: Props) => {
               countrySelectComponent={PhoneCountrySelect}
               style={{ display: "flex" }}
               defaultCountry="CA"
+              international={false}
               onChange={(value) => formik.setFieldValue("phoneNumber", value)}
+              value={formik.values.phoneNumber || ""}
               field="phoneNumber"
               fullWidth
             />

@@ -2,30 +2,78 @@ import { Box, Typography } from "@mui/material";
 import { Elements } from "@stripe/react-stripe-js";
 import { useCallback, useState } from "react";
 import { useGetMyCartQuery } from "../../generated/graphql";
-import { useUpdateCartEmailMutation } from "../../generated/public/graphql";
+import {
+  Cart,
+  useUpdateCartEmailMutation,
+} from "../../generated/public/graphql";
 import theme from "../../styles/theme";
 import getStripe from "../../utils/getStripe";
 import CartSummaryCard from "../CartSummaryCard/CartSummaryCard";
 import CheckoutInfoForm from "../CheckoutInfoForm/CheckoutInfoForm";
-import Dialog from "../common/Dialog/Dialog";
 import CheckoutPaymentForm from "../CheckoutPaymentForm/CheckoutPaymentForm";
+import Dialog from "../common/Dialog/Dialog";
 
-const CheckoutDialog = ({ open, onClose }) => {
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  cart: Cart;
+}
+
+const CheckoutDialog = ({ open, onClose, cart }) => {
   const [step, setStep] = useState(0);
   const [updateCartEmail] = useUpdateCartEmailMutation();
-  const { loading, error, data, refetch } = useGetMyCartQuery();
+  const { refetch } = useGetMyCartQuery();
 
   const handleEmailChange = useCallback(
     async (email) => {
       try {
         await updateCartEmail({ variables: { input: { email } } });
         await refetch();
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     },
     [updateCartEmail, refetch]
   );
+
+  const renderStep = () => {
+    if (step === 0)
+      return (
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="subtitle1">Reservation details</Typography>
+          <CheckoutInfoForm
+            onSubmit={() => {
+              refetch();
+              setStep(1);
+            }}
+            cart={cart}
+            onEmailChange={handleEmailChange}
+          />
+        </Box>
+      );
+    if (step === 1)
+      return (
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="subtitle1">Payment details</Typography>
+          <Elements
+            stripe={getStripe()}
+            options={{
+              clientSecret: cart.stripeClientSecret,
+              appearance: {
+                variables: {
+                  fontFamily: theme.typography.fontFamily,
+                },
+                rules: {
+                  ".Label": {
+                    ...theme.typography.subtitle2,
+                  },
+                },
+              },
+            }}
+          >
+            <CheckoutPaymentForm onBack={() => setStep(0)} />
+          </Elements>
+        </Box>
+      );
+  };
 
   return (
     <Dialog
@@ -36,37 +84,7 @@ const CheckoutDialog = ({ open, onClose }) => {
       PaperProps={{ sx: { maxWidth: 700 } }}
     >
       <Box sx={{ display: "flex" }}>
-        {step === 0 && (
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="subtitle1">Reservation details</Typography>
-            <CheckoutInfoForm
-              onSubmit={() => setStep(1)}
-              email={data?.myCart?.email}
-              onEmailChange={handleEmailChange}
-            />
-          </Box>
-        )}
-        {step === 1 && (
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="subtitle1">Payment details</Typography>
-            <Elements
-              stripe={getStripe()}
-              options={{
-                clientSecret: data?.myCart?.stripeClientSecret,
-                appearance: {
-                  fontFamily: theme.typography.fontFamily,
-                },
-              }}
-            >
-              <CheckoutPaymentForm
-                onSubmit={() => setStep(1)}
-                email={data?.myCart?.email}
-                onEmailChange={handleEmailChange}
-                onBack={() => setStep(0)}
-              />
-            </Elements>
-          </Box>
-        )}
+        {renderStep()}
         <Box sx={{ ml: 5, width: 300 }}>
           <CartSummaryCard />
         </Box>

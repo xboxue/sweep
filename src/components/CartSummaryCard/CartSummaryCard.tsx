@@ -57,14 +57,14 @@ const CartSummaryCard = () => {
 
       <Divider />
       <Stack spacing="4px" sx={{ mt: 1 }}>
-        <Typography variant="subtitle2" mt={1}>
+        <Typography variant="subtitle1" mt={1}>
           Pricing details
         </Typography>
 
         {[
           { label: "Subtotal", value: data.myCart.subtotal },
           { label: "Taxes", value: data.myCart.tax },
-          { label: "Total", value: data.myCart.total, variant: "subtitle2" },
+          { label: "Total", value: data.myCart.total, variant: "subtitle1" },
         ].map(({ label, value, ...props }) => (
           <Box display="flex" justifyContent="space-between" key={label}>
             <Typography variant="body2" {...props}>
