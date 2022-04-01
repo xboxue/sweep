@@ -7,7 +7,11 @@ import {
 } from "../../generated/graphql";
 import CartItem from "../CartItem/CartItem";
 
-const CartSummaryCard = () => {
+interface Props {
+  editable: boolean;
+}
+
+const CartSummaryCard = ({ editable }: false) => {
   const { loading, error, data, refetch } = useGetMyCartQuery({
     fetchPolicy: "network-only",
   });
@@ -27,6 +31,7 @@ const CartSummaryCard = () => {
           <CartItem
             key={cartBooking.id}
             cartBooking={cartBooking}
+            editable={editable}
             onRemove={async () => {
               try {
                 await removeCartBookings({

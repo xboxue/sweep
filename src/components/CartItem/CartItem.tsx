@@ -9,9 +9,10 @@ interface Props {
   cartBooking: CartBooking;
   onRemove: () => void;
   onUpdate: (numGuests: number) => void;
+  editable: boolean;
 }
 
-const CartItem = ({ cartBooking, onUpdate, onRemove }: Props) => {
+const CartItem = ({ cartBooking, onUpdate, onRemove, editable }: Props) => {
   return (
     <Box sx={{ display: "flex" }}>
       <Avatar
@@ -30,24 +31,30 @@ const CartItem = ({ cartBooking, onUpdate, onRemove }: Props) => {
             "EEE, MMM d, h:mm a"
           )}
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <TextField
-            select
-            size="small"
-            value={cartBooking.numGuests}
-            onChange={(event) => onUpdate(event.target.value)}
-          >
-            {/* TODO: FIX */}
-            {range(1, 11).map((value) => (
-              <MenuItem key={value} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Link component="button" sx={{ ml: 1 }} onClick={onRemove}>
-            Remove
-          </Link>
-        </Box>
+        {editable ? (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <TextField
+              select
+              size="small"
+              value={cartBooking.numGuests}
+              onChange={(event) => onUpdate(event.target.value)}
+            >
+              {/* TODO: FIX */}
+              {range(1, 11).map((value) => (
+                <MenuItem key={value} value={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Link component="button" sx={{ ml: 1 }} onClick={onRemove}>
+              Remove
+            </Link>
+          </Box>
+        ) : (
+          <Typography variant="body2">
+            <strong>{cartBooking.numGuests}</strong> players
+          </Typography>
+        )}
       </Stack>
       <Typography variant="body2" sx={{ ml: "auto" }}>
         ${(cartBooking.total / 100).toFixed(2)}

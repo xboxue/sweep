@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Elements } from "@stripe/react-stripe-js";
 import { useCallback, useState } from "react";
 import { useGetMyCartQuery } from "../../generated/graphql";
@@ -53,40 +53,72 @@ const CheckoutDialog = ({ open, onClose, cart }) => {
       return (
         <Box sx={{ flex: 1 }}>
           <Typography variant="subtitle1">Payment details</Typography>
-          <Elements
-            stripe={getStripe()}
-            options={{
-              clientSecret: cart.stripeClientSecret,
-              appearance: {
-                variables: {
-                  fontFamily: theme.typography.fontFamily,
-                },
-                rules: {
-                  ".Label": {
-                    ...theme.typography.subtitle2,
-                  },
-                },
-              },
-            }}
+          <CheckoutPaymentForm
+            onBack={() => setStep(0)}
+            onSuccess={() => setStep(2)}
+          />
+        </Box>
+      );
+
+    if (step === 2)
+      return (
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="subtitle1">
+            Your reservation is confirmed.
+          </Typography>
+          <Typography variant="body2">
+            Please check your inbox for a confirmation email.
+          </Typography>
+          <Typography mt={2} variant="subtitle2">
+            Know before you go
+          </Typography>
+          <Typography variant="body2">
+            Please show up 15 minutes before your booking to ensure a prompt
+            start!
+          </Typography>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={onClose}
+            sx={{ mt: 2 }}
           >
-            <CheckoutPaymentForm onBack={() => setStep(0)} />
-          </Elements>
+            Done
+          </Button>
         </Box>
       );
   };
 
   return (
     <Dialog
-      title="Complete Reservation"
+      title={
+        step === 2 ? `Thank you ${cart.firstName}!` : "Complete Reservation"
+      }
       open={open}
       onClose={onClose}
       fullWidth
       PaperProps={{ sx: { maxWidth: 700 } }}
     >
       <Box sx={{ display: "flex" }}>
-        {renderStep()}
+        <Elements
+          stripe={getStripe()}
+          options={{
+            clientSecret: cart.stripeClientSecret,
+            appearance: {
+              variables: {
+                fontFamily: theme.typography.fontFamily,
+              },
+              rules: {
+                ".Label": {
+                  ...theme.typography.subtitle2,
+                },
+              },
+            },
+          }}
+        >
+          {renderStep()}
+        </Elements>
         <Box sx={{ ml: 5, width: 300 }}>
-          <CartSummaryCard />
+          <CartSummaryCard editable={step !== 2} />
         </Box>
       </Box>
     </Dialog>

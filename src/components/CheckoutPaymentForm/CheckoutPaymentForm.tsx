@@ -1,4 +1,5 @@
 import { ArrowBackIosNew } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { Button, Typography } from "@mui/material";
 import {
   PaymentElement,
@@ -7,52 +8,33 @@ import {
 } from "@stripe/react-stripe-js";
 import { useState } from "react";
 
-const CheckoutPaymentForm = ({ onBack }) => {
+const CheckoutPaymentForm = ({ onBack, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (user) => {
     if (!stripe || !elements) return;
 
-    // setLoading(true);
+    setLoading(true);
     setError(null);
     try {
-      //   const { data } = await createBooking({
-      //     variables: {
-      //       input: {
-      //         numGuests: parseInt(numGuests, 10),
-      //         offeringId,
-      //         startDateTime,
-      //         stripePaymentIntentId,
-      //         user,
-      //       },
-      //     },
-      //   });
-
       const result = await stripe.confirmPayment({
         elements,
-        confirmParams: {
-          return_url: window.location.href,
-        },
+        confirmParams: { return_url: "" },
         redirect: "if_required",
       });
 
       if (result.error) {
         setError(result.error.message);
-      } else if (
-        result.paymentIntent.status === "succeeded" ||
-        result.paymentIntent.status === "processing"
-      ) {
-      } else if (result.paymentIntent.status === "requires_payment_method") {
-        setError("Payment failed. Please try another payment method.");
-      } else {
-        setError("Something went wrong.");
+      } else if (result.paymentIntent.status === "succeeded") {
+        onSuccess();
       }
     } catch (err) {
       setError("Something went wrong");
     }
-    // setLoading(false);
+    setLoading(false);
   };
 
   return (
@@ -67,15 +49,16 @@ const CheckoutPaymentForm = ({ onBack }) => {
         prior to your reservation if you wish to reschedule. All reschedules are
         subject to availability
       </Typography> */}
-      <Button
+      <LoadingButton
         size="large"
         variant="contained"
         fullWidth
         onClick={handleSubmit}
         sx={{ mt: 2 }}
+        loading={loading}
       >
         Pay now
-      </Button>
+      </LoadingButton>
       <Button
         onClick={onBack}
         startIcon={<ArrowBackIosNew sx={{ width: 14, height: 14 }} />}
