@@ -1,6 +1,6 @@
 import { ArrowBackIosNew } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Button, Typography } from "@mui/material";
+import { Alert, Button, Typography } from "@mui/material";
 import {
   PaymentElement,
   useElements,
@@ -40,7 +40,11 @@ const CheckoutPaymentForm = ({ onBack, onSuccess }) => {
   return (
     <>
       <PaymentElement />
-      {error && <Typography>{error}</Typography>}
+      {error && (
+        <Alert severity="error" sx={{ mt: 1 }}>
+          {error}
+        </Alert>
+      )}
       {/* <Typography variant="subtitle2" mt={2}>
         Cancellation policy
       </Typography>

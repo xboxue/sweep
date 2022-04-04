@@ -115,10 +115,10 @@ const CheckoutInfoForm = ({ onSubmit, onEmailChange, cart }: Props) => {
   return (
     <Formik
       initialValues={{
-        email: cart.email,
-        firstName: cart.firstName,
-        lastName: cart.lastName,
-        phoneNumber: cart.phoneNumber,
+        email: cart.email || "",
+        firstName: cart.firstName || "",
+        lastName: cart.lastName || "",
+        phoneNumber: cart.phoneNumber || "",
       }}
       validationSchema={validationSchema}
       onSubmit={async (values) => {

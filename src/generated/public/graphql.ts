@@ -195,11 +195,6 @@ export type QueryOfferingArgs = {
   id: Scalars['ID'];
 };
 
-
-export type QueryOfferingsArgs = {
-  businessId: Scalars['ID'];
-};
-
 export type RemoveCartBookingsInput = {
   cartBookingIds: Array<Scalars['ID']>;
 };
@@ -266,7 +261,6 @@ export type UpdateCartEmailMutationVariables = Exact<{
 export type UpdateCartEmailMutation = { __typename?: 'Mutation', updateCartEmail: { __typename?: 'UpdateCartEmailPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
 export type GetPublicOfferingsQueryVariables = Exact<{
-  businessId: Scalars['ID'];
   date: Scalars['DateTime'];
   time?: InputMaybe<Scalars['String']>;
   numGuests?: InputMaybe<Scalars['Int']>;
@@ -347,8 +341,8 @@ export type UpdateCartEmailMutationHookResult = ReturnType<typeof useUpdateCartE
 export type UpdateCartEmailMutationResult = Apollo.MutationResult<UpdateCartEmailMutation>;
 export type UpdateCartEmailMutationOptions = Apollo.BaseMutationOptions<UpdateCartEmailMutation, UpdateCartEmailMutationVariables>;
 export const GetPublicOfferingsDocument = gql`
-    query getPublicOfferings($businessId: ID!, $date: DateTime!, $time: String, $numGuests: Int) {
-  offerings(businessId: $businessId) {
+    query getPublicOfferings($date: DateTime!, $time: String, $numGuests: Int) {
+  offerings {
     id
     name
     minGuests
@@ -388,7 +382,6 @@ export const GetPublicOfferingsDocument = gql`
  * @example
  * const { data, loading, error } = useGetPublicOfferingsQuery({
  *   variables: {
- *      businessId: // value for 'businessId'
  *      date: // value for 'date'
  *      time: // value for 'time'
  *      numGuests: // value for 'numGuests'

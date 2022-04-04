@@ -1,13 +1,8 @@
 import { gql } from "@apollo/client";
 
 const GET_PUBLIC_OFFERINGS = gql`
-  query getPublicOfferings(
-    $businessId: ID!
-    $date: DateTime!
-    $time: String
-    $numGuests: Int
-  ) {
-    offerings(businessId: $businessId) {
+  query getPublicOfferings($date: DateTime!, $time: String, $numGuests: Int) {
+    offerings {
       id
       name
       minGuests

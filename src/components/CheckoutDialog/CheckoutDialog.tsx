@@ -34,6 +34,8 @@ const CheckoutDialog = ({ open, onClose, cart }) => {
     [updateCartEmail, refetch]
   );
 
+  if (!cart?.cartBookings.length) return null;
+
   const renderStep = () => {
     if (step === 0)
       return (
@@ -53,10 +55,27 @@ const CheckoutDialog = ({ open, onClose, cart }) => {
       return (
         <Box sx={{ flex: 1 }}>
           <Typography variant="subtitle1">Payment details</Typography>
-          <CheckoutPaymentForm
-            onBack={() => setStep(0)}
-            onSuccess={() => setStep(2)}
-          />
+          <Elements
+            stripe={getStripe()}
+            options={{
+              clientSecret: cart.stripeClientSecret,
+              appearance: {
+                variables: {
+                  fontFamily: theme.typography.fontFamily,
+                },
+                rules: {
+                  ".Label": {
+                    ...theme.typography.subtitle2,
+                  },
+                },
+              },
+            }}
+          >
+            <CheckoutPaymentForm
+              onBack={() => setStep(0)}
+              onSuccess={() => setStep(2)}
+            />
+          </Elements>
         </Box>
       );
 
@@ -99,24 +118,7 @@ const CheckoutDialog = ({ open, onClose, cart }) => {
       PaperProps={{ sx: { maxWidth: 700 } }}
     >
       <Box sx={{ display: "flex" }}>
-        <Elements
-          stripe={getStripe()}
-          options={{
-            clientSecret: cart.stripeClientSecret,
-            appearance: {
-              variables: {
-                fontFamily: theme.typography.fontFamily,
-              },
-              rules: {
-                ".Label": {
-                  ...theme.typography.subtitle2,
-                },
-              },
-            },
-          }}
-        >
-          {renderStep()}
-        </Elements>
+        {renderStep()}
         <Box sx={{ ml: 5, width: 300 }}>
           <CartSummaryCard editable={step !== 2} />
         </Box>

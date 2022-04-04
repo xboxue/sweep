@@ -1,15 +1,12 @@
 import { LocalMallOutlined } from "@mui/icons-material";
 import { Badge, Box, Grid, IconButton, Popover, Skeleton } from "@mui/material";
 import { DateTime } from "luxon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useAddCartBookingsMutation,
   useGetMyCartQuery,
 } from "../../generated/graphql";
-import {
-  useGetPublicOfferingsQuery,
-  useUpdateCartEmailMutation,
-} from "../../generated/public/graphql";
+import { useGetPublicOfferingsQuery } from "../../generated/public/graphql";
 import CartCard from "../CartCard/CartCard";
 import CheckoutDialog from "../CheckoutDialog/CheckoutDialog";
 import OfferingCard from "../OfferingCard/OfferingCard";
@@ -28,7 +25,7 @@ const OfferingsList = () => {
     data: cartData,
     refetch: refetchCart,
   } = useGetMyCartQuery();
-  const { loading, error, data } = useGetPublicOfferingsQuery({
+  const { loading, error, data, refetch } = useGetPublicOfferingsQuery({
     variables: { businessId: 1, numGuests, date },
     fetchPolicy: "network-only",
   });
@@ -46,7 +43,11 @@ const OfferingsList = () => {
       </Popover>
       <CheckoutDialog
         open={checkoutDialogOpen}
-        onClose={() => setCheckoutDialogOpen(false)}
+        onClose={() => {
+          refetchCart();
+          refetch();
+          setCheckoutDialogOpen(false);
+        }}
         cart={cartData?.myCart}
       />
       <OfferingToolbar

@@ -9,10 +9,15 @@ interface Props {
   cartBooking: CartBooking;
   onRemove: () => void;
   onUpdate: (numGuests: number) => void;
-  editable: boolean;
+  editable?: boolean;
 }
 
-const CartItem = ({ cartBooking, onUpdate, onRemove, editable }: Props) => {
+const CartItem = ({
+  cartBooking,
+  onUpdate,
+  onRemove,
+  editable = true,
+}: Props) => {
   return (
     <Box sx={{ display: "flex" }}>
       <Avatar
