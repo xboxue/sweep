@@ -11,7 +11,7 @@
     <script>
       const offeringsWidget = zoid.create({
         tag: "offerings-widget",
-        url: "http://localhost:3000/",
+        url: "http://localhost:3000/widget",
         dimensions: {
           width: "100%",
           height: "100%",
@@ -25,12 +25,16 @@
             type: "function",
             required: true,
           },
+          businessId: {
+            type: "number",
+            required: true,
+          },
         },
       });
 
       const checkoutWidget = zoid.create({
         tag: "checkout-widget",
-        url: "http://localhost:3000/checkout",
+        url: "http://localhost:3000/widget/checkout",
         dimensions: {
           width: "100%",
           height: "100%",
@@ -61,6 +65,10 @@
             type: "boolean",
             required: true,
           },
+          businessId: {
+            type: "number",
+            required: true,
+          },
         },
       });
 
@@ -72,6 +80,7 @@
           checkoutWidgetInstance.updateProps({ open: false });
         },
         open: false,
+        businessId: 1,
       });
       checkoutWidgetInstance.render("#checkout-widget");
 
@@ -84,6 +93,7 @@
           document.body.style.overflow = "hidden";
           checkoutWidgetInstance.updateProps({ open: true });
         },
+        businessId: 1,
       }).render("#offerings-widget");
     </script>
     <div id="offerings-widget" style="width: 100%; min-height: 800px"></div>

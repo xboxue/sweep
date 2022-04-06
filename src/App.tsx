@@ -6,17 +6,18 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import AdminApp from "./components/AdminApp/AdminApp";
 import client from "./services/apolloClient";
+import publicClient from "./services/apolloClientPublic";
 import { store } from "./store";
 import theme from "./styles/theme";
 import WidgetApp from "./widgets/WidgetApp";
 
 const App = () => {
-  if (process.env.REACT_APP_WIDGET) {
+  if (window.location.pathname.startsWith("/widget"))
     return (
       <>
         <CssBaseline />
         <GlobalStyles styles={{ body: { background: "none" } }} />
-        <ApolloProvider client={client}>
+        <ApolloProvider client={publicClient}>
           <ThemeProvider theme={theme}>
             <LocalizationProvider dateAdapter={AdapterLuxon}>
               <BrowserRouter>
@@ -27,7 +28,6 @@ const App = () => {
         </ApolloProvider>
       </>
     );
-  }
 
   return (
     <>

@@ -4,7 +4,7 @@ import CheckoutDialog from "../components/CheckoutDialog/CheckoutDialog";
 
 zoid.create({
   tag: "checkout-widget",
-  url: "http://localhost:3000/checkout",
+  url: "http://localhost:3000/widget/checkout",
   dimensions: {
     width: "100%",
     height: "100%",
@@ -29,6 +29,10 @@ zoid.create({
       type: "boolean",
       required: true,
     },
+    businessId: {
+      type: "number",
+      required: true,
+    },
   },
 });
 
@@ -37,6 +41,9 @@ const CheckoutWidget = () => {
 
   useEffect(() => {
     window.xprops.onProps((props) => setOpen(props.open));
+
+    if (window.xprops)
+      localStorage.setItem("businessId", window.xprops.businessId);
   }, []);
 
   return (
