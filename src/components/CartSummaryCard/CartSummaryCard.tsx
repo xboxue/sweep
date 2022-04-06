@@ -11,7 +11,7 @@ interface Props {
   editable: boolean;
 }
 
-const CartSummaryCard = ({ editable }: false) => {
+const CartSummaryCard = ({ editable = false }: Props) => {
   const { loading, error, data, refetch } = useGetMyCartQuery({
     fetchPolicy: "network-only",
   });

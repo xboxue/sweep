@@ -1,31 +1,31 @@
 import { ApolloProvider } from "@apollo/client";
 import { LocalizationProvider } from "@mui/lab";
 import AdapterLuxon from "@mui/lab/AdapterLuxon";
-import { CssBaseline, ScopedCssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline, GlobalStyles, ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import AdminApp from "./components/AdminApp/AdminApp";
 import client from "./services/apolloClient";
 import { store } from "./store";
 import theme from "./styles/theme";
-import OfferingsWidget from "./widgets/OfferingsWidget";
+import WidgetApp from "./widgets/WidgetApp";
 
 const App = () => {
-  const widgets = {
-    offerings: <OfferingsWidget />,
-  };
-
-  if (widgets[process.env.REACT_APP_WIDGET]) {
+  if (process.env.REACT_APP_WIDGET) {
     return (
-      <ApolloProvider client={client}>
-        <Provider store={store}>
-          <ScopedCssBaseline>
-            <ThemeProvider theme={theme}>
-              {widgets[process.env.REACT_APP_WIDGET]}
-            </ThemeProvider>
-          </ScopedCssBaseline>
-        </Provider>
-      </ApolloProvider>
+      <>
+        <CssBaseline />
+        <GlobalStyles styles={{ body: { background: "none" } }} />
+        <ApolloProvider client={client}>
+          <ThemeProvider theme={theme}>
+            <LocalizationProvider dateAdapter={AdapterLuxon}>
+              <BrowserRouter>
+                <WidgetApp />
+              </BrowserRouter>
+            </LocalizationProvider>
+          </ThemeProvider>
+        </ApolloProvider>
+      </>
     );
   }
 

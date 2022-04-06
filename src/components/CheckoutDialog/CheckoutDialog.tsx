@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { Elements } from "@stripe/react-stripe-js";
 import { useCallback, useState } from "react";
 import { useGetMyCartQuery } from "../../generated/graphql";
@@ -16,13 +16,14 @@ import Dialog from "../common/Dialog/Dialog";
 interface Props {
   open: boolean;
   onClose: () => void;
-  cart: Cart;
 }
 
-const CheckoutDialog = ({ open, onClose, cart }) => {
+const CheckoutDialog = ({ open, onClose }: Props) => {
   const [step, setStep] = useState(0);
   const [updateCartEmail] = useUpdateCartEmailMutation();
-  const { refetch } = useGetMyCartQuery();
+  const { data, loading, error, refetch } = useGetMyCartQuery({
+    fetchPolicy: "network-only",
+  });
 
   const handleEmailChange = useCallback(
     async (email) => {
@@ -34,9 +35,11 @@ const CheckoutDialog = ({ open, onClose, cart }) => {
     [updateCartEmail, refetch]
   );
 
-  if (!cart?.cartBookings.length) return null;
-
   const renderStep = () => {
+    if (loading) return <Skeleton />;
+    const cart = data?.myCart;
+    if (!cart) return null;
+
     if (step === 0)
       return (
         <Box sx={{ flex: 1 }}>
@@ -109,11 +112,17 @@ const CheckoutDialog = ({ open, onClose, cart }) => {
 
   return (
     <Dialog
+      disablePortal
       title={
-        step === 2 ? `Thank you ${cart.firstName}!` : "Complete Reservation"
+        step === 2
+          ? `Thank you ${data?.myCart?.firstName}!`
+          : "Complete Reservation"
       }
       open={open}
-      onClose={onClose}
+      onClose={() => {
+        setStep(0);
+        onClose();
+      }}
       fullWidth
       PaperProps={{ sx: { maxWidth: 700 } }}
     >

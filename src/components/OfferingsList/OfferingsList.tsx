@@ -8,15 +8,17 @@ import {
 } from "../../generated/graphql";
 import { useGetPublicOfferingsQuery } from "../../generated/public/graphql";
 import CartCard from "../CartCard/CartCard";
-import CheckoutDialog from "../CheckoutDialog/CheckoutDialog";
 import OfferingCard from "../OfferingCard/OfferingCard";
 import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
 
-const OfferingsList = () => {
+interface Props {
+  onCheckout: () => void;
+}
+
+const OfferingsList = ({ onCheckout }: Props) => {
   const [date, setDate] = useState(DateTime.now());
   const [numGuests, setNumGuests] = useState(4);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
 
   const [addCartBookings] = useAddCartBookingsMutation();
   const {
@@ -39,17 +41,13 @@ const OfferingsList = () => {
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <CartCard onCheckout={() => setCheckoutDialogOpen(true)} />
+        <CartCard
+          onCheckout={() => {
+            setAnchorEl(null);
+            onCheckout();
+          }}
+        />
       </Popover>
-      <CheckoutDialog
-        open={checkoutDialogOpen}
-        onClose={() => {
-          refetchCart();
-          refetch();
-          setCheckoutDialogOpen(false);
-        }}
-        cart={cartData?.myCart}
-      />
       <OfferingToolbar
         numGuests={numGuests}
         onNumGuestsChange={setNumGuests}
@@ -91,7 +89,8 @@ const OfferingsList = () => {
                     },
                   });
                   await refetchCart();
-                  setCheckoutDialogOpen(true);
+                  // setCheckoutDialogOpen(true);
+                  onCheckout();
                 } catch (error) {
                   console.log(error);
                 }
