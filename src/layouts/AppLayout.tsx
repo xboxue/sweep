@@ -6,6 +6,7 @@ import {
   Search,
   Sell,
   Settings,
+  Store,
   Today,
 } from "@mui/icons-material";
 import {
@@ -17,6 +18,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   Menu,
   MenuItem,
   Toolbar,
@@ -160,6 +162,23 @@ const AppLayout = () => {
                 <ListItemText primary={title} />
               </ListItemButton>
             ))}
+          </List>
+          <List
+            dense
+            sx={{ px: 1 }}
+            subheader={<ListSubheader>Sales channels</ListSubheader>}
+          >
+            <ListItemButton
+              component="a"
+              href="https://xboxue.github.io/captive-demo/captive"
+              target="_blank"
+              sx={{ borderRadius: 1, my: "2px" }}
+            >
+              <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
+                <Store fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Online Store" />
+            </ListItemButton>
           </List>
         </Box>
       </Drawer>
