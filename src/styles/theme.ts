@@ -38,20 +38,28 @@ const theme = createTheme({
         disableElevation: true,
       },
     },
-  },
-});
-
-export default createTheme(
-  {
-    components: {
-      MuiToolbar: {
-        styleOverrides: {
-          root: {
-            [theme.breakpoints.up("sm")]: { minHeight: 56 },
-          },
+    MuiMenu: {
+      styleOverrides: {
+        root: {
+          maxHeight: 300,
         },
       },
     },
   },
-  theme
-);
+});
+
+export default theme;
+// export default createTheme(
+//   {
+//     components: {
+//       MuiToolbar: {
+//         styleOverrides: {
+//           root: {
+//             [theme.breakpoints.up("sm")]: { minHeight: 56 },
+//           },
+//         },
+//       },
+//     },
+//   },
+//   theme
+// );

@@ -30,7 +30,7 @@ const Dialog = ({
       {title}
       <IconButton
         aria-label="close"
-        onClick={() => onClose()}
+        onClick={onClose}
         sx={{
           position: "absolute",
           right: 8,

@@ -52,8 +52,16 @@ export type Business = {
 
 export type Cart = {
   __typename?: 'Cart';
-  cartBookings?: Maybe<Array<CartBooking>>;
+  cartBookings: Array<CartBooking>;
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  stripeClientSecret?: Maybe<Scalars['String']>;
+  subtotal: Scalars['Int'];
+  tax: Scalars['Int'];
+  total: Scalars['Int'];
 };
 
 export type CartBooking = {
@@ -62,6 +70,7 @@ export type CartBooking = {
   numGuests: Scalars['Int'];
   offering: Offering;
   timeSlot: TimeSlot;
+  total: Scalars['Int'];
 };
 
 export type CartBookingInput = {
@@ -78,15 +87,6 @@ export type CreateBusinessInput = {
 export type CreateBusinessPayload = {
   __typename?: 'CreateBusinessPayload';
   business?: Maybe<Business>;
-};
-
-export type CreateCartInput = {
-  cartBookings?: InputMaybe<Array<CartBookingInput>>;
-};
-
-export type CreateCartPayload = {
-  __typename?: 'CreateCartPayload';
-  cart?: Maybe<Cart>;
 };
 
 export type CreateCustomerPayload = {
@@ -290,7 +290,7 @@ export type Offering = {
   depositType?: Maybe<DepositType>;
   description?: Maybe<Scalars['String']>;
   duration: Scalars['Int'];
-  featuredImage?: Maybe<Image>;
+  featuredImage: Image;
   id: Scalars['ID'];
   maxAdvance: Scalars['Int'];
   maxAdvanceFormat: MaxAdvanceFormat;
@@ -621,14 +621,14 @@ export type GetCustomersQuery = { __typename?: 'Query', customers: Array<{ __typ
 export type GetMyCartQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, cartBookings?: Array<{ __typename?: 'CartBooking', id: string, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, featuredImage?: { __typename?: 'Image', url: string, altText?: string | null } | null } }> | null } | null };
+export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, email?: string | null, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, subtotal: number, total: number, tax: number, stripeClientSecret?: string | null, cartBookings: Array<{ __typename?: 'CartBooking', id: string, total: number, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, paymentType: PaymentType, featuredImage: { __typename?: 'Image', url: string, altText?: string | null } } }> } | null };
 
 export type GetOfferingQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null, schedule: { __typename?: 'Schedule', id: string, name: string, timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', id: string, startTime: string, day: number }> } } };
+export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null }, schedule: { __typename?: 'Schedule', id: string, name: string, timeSlots: Array<{ __typename?: 'ScheduleTimeSlot', id: string, startTime: string, day: number }> } } };
 
 export type GetOfferingSchedulesQueryVariables = Exact<{
   date: Scalars['DateTime'];
@@ -640,14 +640,14 @@ export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null }> };
+export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, status: OfferingStatus, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, maxAdvance: number, maxAdvanceFormat: MaxAdvanceFormat, minAdvance: number, minAdvanceFormat: MinAdvanceFormat, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
 
 export type GetOrderQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, featuredImage?: { __typename?: 'Image', id: string, url: string, altText?: string | null } | null } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
+export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
 
 export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1127,8 +1127,17 @@ export const GetMyCartDocument = gql`
     query getMyCart {
   myCart {
     id
+    email
+    firstName
+    lastName
+    phoneNumber
+    subtotal
+    total
+    tax
+    stripeClientSecret
     cartBookings {
       id
+      total
       timeSlot {
         id
         startDateTime
@@ -1141,6 +1150,7 @@ export const GetMyCartDocument = gql`
           url
           altText
         }
+        paymentType
       }
       numGuests
     }

@@ -4,8 +4,17 @@ const GET_MY_CART = gql`
   query getMyCart {
     myCart {
       id
+      email
+      firstName
+      lastName
+      phoneNumber
+      subtotal
+      total
+      tax
+      stripeClientSecret
       cartBookings {
         id
+        total
         timeSlot {
           id
           startDateTime
@@ -18,6 +27,7 @@ const GET_MY_CART = gql`
             url
             altText
           }
+          paymentType
         }
         numGuests
       }
