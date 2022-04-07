@@ -5,7 +5,7 @@ import OfferingsList from "../components/OfferingsList/OfferingsList";
 
 zoid.create({
   tag: "offerings-widget",
-  url: "http://localhost:3000/widget",
+  url: `${process.env.VERCEL_URL || "http://localhost:3000"}/widget`,
   dimensions: {
     width: "100%",
     height: "100%",

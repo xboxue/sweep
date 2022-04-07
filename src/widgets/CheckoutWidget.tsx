@@ -4,7 +4,7 @@ import CheckoutDialog from "../components/CheckoutDialog/CheckoutDialog";
 
 zoid.create({
   tag: "checkout-widget",
-  url: "http://localhost:3000/widget/checkout",
+  url: `${process.env.VERCEL_URL || "http://localhost:3000"}/widget/checkout`,
   dimensions: {
     width: "100%",
     height: "100%",
