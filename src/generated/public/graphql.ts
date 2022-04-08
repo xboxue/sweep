@@ -260,14 +260,24 @@ export type UpdateCartEmailMutationVariables = Exact<{
 
 export type UpdateCartEmailMutation = { __typename?: 'Mutation', updateCartEmail: { __typename?: 'UpdateCartEmailPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
-export type GetPublicOfferingsQueryVariables = Exact<{
+export type GetOfferingQueryVariables = Exact<{
+  id: Scalars['ID'];
   date: Scalars['DateTime'];
   time?: InputMaybe<Scalars['String']>;
   numGuests?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetPublicOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
+export type GetOfferingQuery = { __typename?: 'Query', offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } };
+
+export type GetOfferingsQueryVariables = Exact<{
+  date: Scalars['DateTime'];
+  time?: InputMaybe<Scalars['String']>;
+  numGuests?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
 
 
 export const UpdateCartContactInfoDocument = gql`
@@ -340,8 +350,68 @@ export function useUpdateCartEmailMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateCartEmailMutationHookResult = ReturnType<typeof useUpdateCartEmailMutation>;
 export type UpdateCartEmailMutationResult = Apollo.MutationResult<UpdateCartEmailMutation>;
 export type UpdateCartEmailMutationOptions = Apollo.BaseMutationOptions<UpdateCartEmailMutation, UpdateCartEmailMutationVariables>;
-export const GetPublicOfferingsDocument = gql`
-    query getPublicOfferings($date: DateTime!, $time: String, $numGuests: Int) {
+export const GetOfferingDocument = gql`
+    query getOffering($id: ID!, $date: DateTime!, $time: String, $numGuests: Int) {
+  offering(id: $id) {
+    id
+    name
+    minGuests
+    maxGuests
+    description
+    pricingType
+    pricePerPerson
+    priceTotalAmount
+    paymentType
+    depositType
+    depositPerPerson
+    depositFixedAmount
+    depositPercent
+    duration
+    availableTimeSlots(date: $date, time: $time, numGuests: $numGuests) {
+      id
+      startDateTime
+    }
+    featuredImage {
+      id
+      url
+      altText
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOfferingQuery__
+ *
+ * To run a query within a React component, call `useGetOfferingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOfferingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOfferingQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      date: // value for 'date'
+ *      time: // value for 'time'
+ *      numGuests: // value for 'numGuests'
+ *   },
+ * });
+ */
+export function useGetOfferingQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingQuery, GetOfferingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOfferingQuery, GetOfferingQueryVariables>(GetOfferingDocument, options);
+      }
+export function useGetOfferingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferingQuery, GetOfferingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOfferingQuery, GetOfferingQueryVariables>(GetOfferingDocument, options);
+        }
+export type GetOfferingQueryHookResult = ReturnType<typeof useGetOfferingQuery>;
+export type GetOfferingLazyQueryHookResult = ReturnType<typeof useGetOfferingLazyQuery>;
+export type GetOfferingQueryResult = Apollo.QueryResult<GetOfferingQuery, GetOfferingQueryVariables>;
+export const GetOfferingsDocument = gql`
+    query getOfferings($date: DateTime!, $time: String, $numGuests: Int) {
   offerings {
     id
     name
@@ -371,16 +441,16 @@ export const GetPublicOfferingsDocument = gql`
     `;
 
 /**
- * __useGetPublicOfferingsQuery__
+ * __useGetOfferingsQuery__
  *
- * To run a query within a React component, call `useGetPublicOfferingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPublicOfferingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetOfferingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOfferingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPublicOfferingsQuery({
+ * const { data, loading, error } = useGetOfferingsQuery({
  *   variables: {
  *      date: // value for 'date'
  *      time: // value for 'time'
@@ -388,14 +458,14 @@ export const GetPublicOfferingsDocument = gql`
  *   },
  * });
  */
-export function useGetPublicOfferingsQuery(baseOptions: Apollo.QueryHookOptions<GetPublicOfferingsQuery, GetPublicOfferingsQueryVariables>) {
+export function useGetOfferingsQuery(baseOptions: Apollo.QueryHookOptions<GetOfferingsQuery, GetOfferingsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPublicOfferingsQuery, GetPublicOfferingsQueryVariables>(GetPublicOfferingsDocument, options);
+        return Apollo.useQuery<GetOfferingsQuery, GetOfferingsQueryVariables>(GetOfferingsDocument, options);
       }
-export function useGetPublicOfferingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicOfferingsQuery, GetPublicOfferingsQueryVariables>) {
+export function useGetOfferingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferingsQuery, GetOfferingsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPublicOfferingsQuery, GetPublicOfferingsQueryVariables>(GetPublicOfferingsDocument, options);
+          return Apollo.useLazyQuery<GetOfferingsQuery, GetOfferingsQueryVariables>(GetOfferingsDocument, options);
         }
-export type GetPublicOfferingsQueryHookResult = ReturnType<typeof useGetPublicOfferingsQuery>;
-export type GetPublicOfferingsLazyQueryHookResult = ReturnType<typeof useGetPublicOfferingsLazyQuery>;
-export type GetPublicOfferingsQueryResult = Apollo.QueryResult<GetPublicOfferingsQuery, GetPublicOfferingsQueryVariables>;
+export type GetOfferingsQueryHookResult = ReturnType<typeof useGetOfferingsQuery>;
+export type GetOfferingsLazyQueryHookResult = ReturnType<typeof useGetOfferingsLazyQuery>;
+export type GetOfferingsQueryResult = Apollo.QueryResult<GetOfferingsQuery, GetOfferingsQueryVariables>;

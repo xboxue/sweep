@@ -19,6 +19,10 @@ zoid.create({
       type: "function",
       required: true,
     },
+    onShowAll: {
+      type: "function",
+      required: true,
+    },
     businessId: {
       type: "number",
       required: true,
@@ -34,7 +38,10 @@ const OfferingsWidget = () => {
 
   return (
     <Box sx={{ mx: "auto", py: 3, maxWidth: 900 }}>
-      <OfferingsList onCheckout={() => window.xprops.onCheckout()} />
+      <OfferingsList
+        onCheckout={() => window.xprops.onCheckout()}
+        onShowAll={window.xprops.onShowAll}
+      />
     </Box>
   );
 };

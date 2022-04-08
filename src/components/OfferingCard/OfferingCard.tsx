@@ -1,93 +1,12 @@
-import { Box, Button, Grid, Link, Typography } from "@mui/material";
-import { sortBy } from "lodash";
-import { DateTime } from "luxon";
-import {
-  Offering,
-  PricingType,
-  TimeSlot,
-} from "../../generated/public/graphql";
+import { Box, Typography } from "@mui/material";
+import { Offering, PricingType } from "../../generated/public/graphql";
 
 interface Props {
-  date: DateTime;
   offering: Offering;
-  onTimeSlotClick: (timeSlot: TimeSlot) => void;
-  numGuests: number;
+  timeSlotsComponent: React.ReactNode;
 }
 
-const OfferingCard = ({
-  date,
-  offering,
-  onTimeSlotClick,
-  numGuests,
-}: Props) => {
-  const renderContent = () => {
-    if (
-      (numGuests < offering.minGuests || numGuests > offering.maxGuests) &&
-      !offering.availableTimeSlots.length
-    ) {
-      return (
-        <Box
-          sx={{
-            borderRadius: 1,
-            bgcolor: "#F6F6F7",
-            p: 2,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Typography variant="body2">
-            {numGuests < offering.minGuests
-              ? `Minimum of ${offering.minGuests} players`
-              : `Maximum of ${offering.maxGuests} players`}
-          </Typography>
-        </Box>
-      );
-    }
-
-    if (!offering.availableTimeSlots.length) {
-      return (
-        <Box
-          sx={{
-            borderRadius: 1,
-            bgcolor: "#F6F6F7",
-            p: 2,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Typography variant="body2">
-            Sold out on {date.toFormat("MMM d")}
-          </Typography>
-        </Box>
-      );
-    }
-
-    return (
-      <Grid container spacing={1} sx={{ mt: 1 }}>
-        {sortBy(offering.availableTimeSlots, "startDateTime")
-          .slice(0, 7)
-          .map((timeSlot) => (
-            <Grid item key={timeSlot.id} xs={3}>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={() => onTimeSlotClick(timeSlot)}
-              >
-                {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
-              </Button>
-            </Grid>
-          ))}
-        {offering.availableTimeSlots.length > 7 && (
-          <Grid item xs={3}>
-            <Link component="button">
-              +{offering.availableTimeSlots.length - 7} more
-            </Link>{" "}
-          </Grid>
-        )}
-      </Grid>
-    );
-  };
-
+const OfferingCard = ({ offering, timeSlotsComponent }: Props) => {
   return (
     <Box>
       <Box
@@ -111,7 +30,7 @@ const OfferingCard = ({
         </strong>{" "}
         players | <strong>7/10</strong> difficulty
       </Typography>
-      {renderContent()}
+      {timeSlotsComponent}
     </Box>
   );
 };

@@ -6,16 +6,18 @@ import {
   useAddCartBookingsMutation,
   useGetMyCartQuery,
 } from "../../generated/graphql";
-import { useGetPublicOfferingsQuery } from "../../generated/public/graphql";
+import { TimeSlot, useGetOfferingsQuery } from "../../generated/public/graphql";
 import CartCard from "../CartCard/CartCard";
 import OfferingCard from "../OfferingCard/OfferingCard";
+import OfferingTimeSlots from "../OfferingTimeSlots/OfferingTimeSlots";
 import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
 
 interface Props {
   onCheckout: () => void;
+  onShowAll: (offeringId: string, numGuests: number, date: string) => void;
 }
 
-const OfferingsList = ({ onCheckout }: Props) => {
+const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
   const [date, setDate] = useState(DateTime.now());
   const [numGuests, setNumGuests] = useState(4);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -27,10 +29,26 @@ const OfferingsList = ({ onCheckout }: Props) => {
     data: cartData,
     refetch: refetchCart,
   } = useGetMyCartQuery();
-  const { loading, error, data, refetch } = useGetPublicOfferingsQuery({
-    variables: { businessId: 1, numGuests, date },
+  const { loading, error, data, refetch } = useGetOfferingsQuery({
+    variables: { numGuests, date },
     fetchPolicy: "network-only",
   });
+
+  const onTimeSlotClick = async (timeSlot: TimeSlot, offeringId: string) => {
+    try {
+      await addCartBookings({
+        variables: {
+          input: {
+            cartBookings: [{ timeSlotId: timeSlot.id, numGuests, offeringId }],
+          },
+        },
+      });
+      await refetchCart();
+      onCheckout();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (loading) return <Skeleton />;
 
@@ -71,31 +89,18 @@ const OfferingsList = ({ onCheckout }: Props) => {
         {data?.offerings.map((offering) => (
           <Grid item sm={6} key={offering.id}>
             <OfferingCard
-              date={date}
               offering={offering}
-              onTimeSlotClick={async (timeSlot) => {
-                try {
-                  await addCartBookings({
-                    variables: {
-                      input: {
-                        cartBookings: [
-                          {
-                            timeSlotId: timeSlot.id,
-                            numGuests,
-                            offeringId: offering.id,
-                          },
-                        ],
-                      },
-                    },
-                  });
-                  await refetchCart();
-                  // setCheckoutDialogOpen(true);
-                  onCheckout();
-                } catch (error) {
-                  console.log(error);
-                }
-              }}
-              numGuests={numGuests}
+              timeSlotsComponent={
+                <OfferingTimeSlots
+                  date={date}
+                  numGuests={numGuests}
+                  onTimeSlotClick={(timeSlot: TimeSlot) =>
+                    onTimeSlotClick(timeSlot, offering.id)
+                  }
+                  offering={offering}
+                  onShowAll={onShowAll}
+                />
+              }
             />
           </Grid>
         ))}
