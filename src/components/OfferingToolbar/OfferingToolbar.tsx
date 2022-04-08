@@ -19,7 +19,7 @@ interface Props {
   onNumGuestsChange: (numGuests: number) => void;
   date: DateTime;
   onDateChange: (date: DateTime) => void;
-  cartIcon: React.ReactNode;
+  cartIcon?: React.ReactNode;
 }
 
 const NUM_DAYS_TO_SHOW = 10;

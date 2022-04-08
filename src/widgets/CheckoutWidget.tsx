@@ -1,6 +1,8 @@
+import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import zoid from "zoid";
 import CheckoutDialog from "../components/CheckoutDialog/CheckoutDialog";
+import OfferingDialog from "../components/OfferingDialog/OfferingDialog";
 
 zoid.create({
   tag: "checkout-widget",
@@ -33,18 +35,59 @@ zoid.create({
       type: "number",
       required: true,
     },
+    offeringId: {
+      type: "string",
+      required: false,
+    },
+    numGuests: {
+      type: "number",
+      required: false,
+    },
+    date: {
+      type: "string",
+      required: false,
+    },
   },
 });
 
 const CheckoutWidget = () => {
-  const [open, setOpen] = useState(window.xprops.open);
+  const [open, setOpen] = useState<boolean>(window.xprops?.open);
+  const [offeringState, setOfferingState] = useState<{
+    offeringId: string;
+    numGuests: number;
+    date: string;
+  } | null>(null);
 
   useEffect(() => {
-    window.xprops.onProps((props) => setOpen(props.open));
-
-    if (window.xprops)
+    if (window.xprops) {
+      window.xprops.onProps((props) => {
+        setOpen(props.open);
+        if (props.offeringId) {
+          setOfferingState({
+            offeringId: props.offeringId,
+            numGuests: props.numGuests,
+            date: props.date,
+          });
+        }
+      });
       localStorage.setItem("businessId", window.xprops.businessId);
+    }
   }, []);
+
+  if (offeringState)
+    return (
+      <OfferingDialog
+        open={open}
+        offeringId={offeringState.offeringId}
+        onClose={() => {
+          setOfferingState(null);
+          window.xprops.onClose();
+        }}
+        initialNumGuests={offeringState.numGuests}
+        initialDate={DateTime.fromISO(offeringState.date)}
+        onCheckout={() => setOfferingState(null)}
+      />
+    );
 
   return (
     <CheckoutDialog

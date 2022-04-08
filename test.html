@@ -25,6 +25,10 @@
             type: "function",
             required: true,
           },
+          onShowAll: {
+            type: "function",
+            required: true,
+          },
           businessId: {
             type: "number",
             required: true,
@@ -69,6 +73,18 @@
             type: "number",
             required: true,
           },
+          offeringId: {
+            type: "string",
+            required: false,
+          },
+          numGuests: {
+            type: "number",
+            required: false,
+          },
+          date: {
+            type: "string",
+            required: false,
+          },
         },
       });
 
@@ -77,7 +93,7 @@
           document.querySelector("#checkout-widget").style.display = "none";
           document.body.style.removeProperty("padding-right");
           document.body.style.removeProperty("overflow");
-          checkoutWidgetInstance.updateProps({ open: false });
+          checkoutWidgetInstance.updateProps({ open: false, offeringId: null });
         },
         open: false,
         businessId: 1,
@@ -92,6 +108,19 @@
           }px`;
           document.body.style.overflow = "hidden";
           checkoutWidgetInstance.updateProps({ open: true });
+        },
+        onShowAll: (offeringId, numGuests, date) => {
+          document.querySelector("#checkout-widget").style.display = "block";
+          document.body.style.paddingRight = `${
+            window.innerWidth - document.documentElement.clientWidth
+          }px`;
+          document.body.style.overflow = "hidden";
+          checkoutWidgetInstance.updateProps({
+            open: true,
+            offeringId,
+            numGuests,
+            date,
+          });
         },
         businessId: 1,
       }).render("#offerings-widget");
