@@ -60,7 +60,7 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
   };
 
   const renderContent = () => {
-    if (loading)
+    if (loading || cartLoading)
       return (
         <Grid container spacing={3} sx={{ mt: 1 }}>
           {range(0, 2).map((value) => (
@@ -96,6 +96,10 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
                   }
                   offering={offering}
                   onShowAll={onShowAll}
+                  cartTimeSlotIds={cartData?.myCart?.cartBookings.map(
+                    (cartBooking) => cartBooking.timeSlot.id
+                  )}
+                  onCheckout={onCheckout}
                 />
               }
             />
@@ -111,6 +115,7 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
+        PaperProps={{ sx: { width: 350 } }}
       >
         <CartCard
           onCheckout={() => {

@@ -1,14 +1,5 @@
-import {
-  ArrowDropDown,
-  CalendarToday,
-  PersonOutline,
-} from "@mui/icons-material";
-import {
-  CalendarPicker,
-  DatePicker,
-  LocalizationProvider,
-  StaticDatePicker,
-} from "@mui/lab";
+import { CalendarToday, PersonOutline } from "@mui/icons-material";
+import { CalendarPicker, LocalizationProvider } from "@mui/lab";
 import AdapterLuxon from "@mui/lab/AdapterLuxon";
 import {
   Avatar,
@@ -21,7 +12,7 @@ import {
 } from "@mui/material";
 import { range } from "lodash";
 import { DateTime, Interval } from "luxon";
-import { useMemo, useState, useRef } from "react";
+import { useMemo } from "react";
 import TextField from "../common/TextField/TextField";
 
 interface Props {

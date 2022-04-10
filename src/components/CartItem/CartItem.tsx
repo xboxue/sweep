@@ -25,8 +25,15 @@ const CartItem = ({
         src={cartBooking.offering.featuredImage?.url}
         sx={{ width: 56, height: 56 }}
       />
-      <Stack sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">
+      <Stack sx={{ ml: 2, flex: 1, minWidth: 0 }}>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
           {cartBooking.offering.name}{" "}
           {cartBooking.offering.paymentType === PaymentType.Deposit &&
             "(Deposit)"}
@@ -61,7 +68,7 @@ const CartItem = ({
           </Typography>
         )}
       </Stack>
-      <Typography variant="body2" sx={{ ml: "auto" }}>
+      <Typography variant="body2">
         ${(cartBooking.total / 100).toFixed(2)}
       </Typography>
     </Box>

@@ -1,3 +1,4 @@
+import { CheckCircle } from "@mui/icons-material";
 import { Box, Button, Grid, Link, Typography } from "@mui/material";
 import { sortBy } from "lodash";
 import { DateTime } from "luxon";
@@ -10,6 +11,8 @@ interface Props {
   numGuests: number;
   showAll?: boolean;
   onShowAll: (offeringId: string, numGuests: number, date: string) => void;
+  cartTimeSlotIds?: string[];
+  onCheckout: () => void;
 }
 
 const OfferingTimeSlots = ({
@@ -19,7 +22,35 @@ const OfferingTimeSlots = ({
   numGuests,
   showAll = false,
   onShowAll,
+  onCheckout,
+  cartTimeSlotIds = [],
 }: Props) => {
+  const renderTimeSlot = (timeSlot: TimeSlot) => {
+    if (cartTimeSlotIds.includes(timeSlot.id))
+      return (
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={onCheckout}
+          color="success"
+          sx={{ px: 1 }}
+        >
+          <CheckCircle fontSize="small" sx={{ mr: "4px" }} />
+          {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
+        </Button>
+      );
+
+    return (
+      <Button
+        fullWidth
+        variant="contained"
+        onClick={() => onTimeSlotClick(timeSlot)}
+      >
+        {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
+      </Button>
+    );
+  };
+
   if (
     (numGuests < offering.minGuests || numGuests > offering.maxGuests) &&
     !offering.availableTimeSlots.length
@@ -67,13 +98,7 @@ const OfferingTimeSlots = ({
         {sortBy(offering.availableTimeSlots, "startDateTime").map(
           (timeSlot) => (
             <Grid item key={timeSlot.id} xs={3}>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={() => onTimeSlotClick(timeSlot)}
-              >
-                {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
-              </Button>
+              {renderTimeSlot(timeSlot)}
             </Grid>
           )
         )}
@@ -87,13 +112,7 @@ const OfferingTimeSlots = ({
         .slice(0, 7)
         .map((timeSlot) => (
           <Grid item key={timeSlot.id} xs={3}>
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => onTimeSlotClick(timeSlot)}
-            >
-              {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
-            </Button>
+            {renderTimeSlot(timeSlot)}
           </Grid>
         ))}
       {offering.availableTimeSlots.length > 7 && (
