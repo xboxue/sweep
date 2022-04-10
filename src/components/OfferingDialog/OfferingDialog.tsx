@@ -79,7 +79,7 @@ const OfferingDialog = ({
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                 }),
-                "& p, & h4": {
+                "& p": {
                   margin: 0,
                 },
               }}

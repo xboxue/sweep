@@ -40,7 +40,7 @@ const OfferingsWidget = () => {
     <Box sx={{ mx: "auto", py: 3, maxWidth: 900 }}>
       <OfferingsList
         onCheckout={() => window.xprops.onCheckout()}
-        onShowAll={window.xprops.onShowAll}
+        onShowAll={(...args) => window.xprops.onShowAll(...args)}
       />
     </Box>
   );

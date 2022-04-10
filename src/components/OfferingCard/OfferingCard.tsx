@@ -30,7 +30,7 @@ const OfferingCard = ({ offering, timeSlotsComponent }: Props) => {
         </strong>{" "}
         players | <strong>7/10</strong> difficulty
       </Typography>
-      {timeSlotsComponent}
+      <Box sx={{ mt: 1 }}>{timeSlotsComponent}</Box>
     </Box>
   );
 };

@@ -15,7 +15,7 @@
     "@fullcalendar/timegrid": "^5.10.1",
     "@graphql-codegen/typescript-react-apollo": "^3.2.5",
     "@mui/icons-material": "^5.3.1",
-    "@mui/lab": "^5.0.0-alpha.67",
+    "@mui/lab": "^5.0.0-alpha.76",
     "@mui/material": "^5.4.0",
     "@mui/system": "^5.4.4",
     "@mui/x-data-grid": "^5.5.0",

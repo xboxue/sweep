@@ -1,5 +1,14 @@
 import { LocalMallOutlined } from "@mui/icons-material";
-import { Badge, Box, Grid, IconButton, Popover, Skeleton } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Grid,
+  IconButton,
+  Popover,
+  Skeleton,
+  Typography,
+} from "@mui/material";
+import { range } from "lodash";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import {
@@ -50,7 +59,51 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
     }
   };
 
-  if (loading) return <Skeleton />;
+  const renderContent = () => {
+    if (loading)
+      return (
+        <Grid container spacing={3} sx={{ mt: 1 }}>
+          {range(0, 2).map((value) => (
+            <Grid item sm={6} key={value}>
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height={300}
+                sx={{ borderRadius: 2 }}
+              />
+              <Typography variant="h6" sx={{ mt: 1 }}>
+                <Skeleton />
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      );
+
+    // if (loading) return <Skeleton sx={{ mt: 1 }} />;
+
+    return (
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        {data?.offerings.map((offering) => (
+          <Grid item sm={6} key={offering.id}>
+            <OfferingCard
+              offering={offering}
+              timeSlotsComponent={
+                <OfferingTimeSlots
+                  date={date}
+                  numGuests={numGuests}
+                  onTimeSlotClick={(timeSlot: TimeSlot) =>
+                    onTimeSlotClick(timeSlot, offering.id)
+                  }
+                  offering={offering}
+                  onShowAll={onShowAll}
+                />
+              }
+            />
+          </Grid>
+        ))}
+      </Grid>
+    );
+  };
 
   return (
     <Box>
@@ -79,32 +132,24 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
             <Badge
               badgeContent={cartData?.myCart?.cartBookings?.length}
               color="primary"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              sx={{
+                "& .MuiBadge-badge": {
+                  height: 16,
+                  width: 16,
+                  minWidth: 16,
+                  bottom: 4,
+                  right: 4,
+                  fontSize: 12,
+                },
+              }}
             >
               <LocalMallOutlined />
             </Badge>
           </IconButton>
         }
       />
-      <Grid container spacing={3} sx={{ mt: 1 }}>
-        {data?.offerings.map((offering) => (
-          <Grid item sm={6} key={offering.id}>
-            <OfferingCard
-              offering={offering}
-              timeSlotsComponent={
-                <OfferingTimeSlots
-                  date={date}
-                  numGuests={numGuests}
-                  onTimeSlotClick={(timeSlot: TimeSlot) =>
-                    onTimeSlotClick(timeSlot, offering.id)
-                  }
-                  offering={offering}
-                  onShowAll={onShowAll}
-                />
-              }
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {renderContent()}
     </Box>
   );
 };
