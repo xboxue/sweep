@@ -23,44 +23,50 @@ const CartCard = ({ onCheckout }: Props) => {
   if (!data?.myCart?.cartBookings?.length) {
     return (
       <Box sx={{ p: 2 }}>
+        <Typography variant="subtitle1">Cart</Typography>
         <Typography>No items in cart</Typography>
       </Box>
     );
   }
 
   return (
-    <Stack spacing={2} sx={{ p: 2 }}>
+    <Stack
+      spacing={2}
+      sx={{ p: 2, display: "flex", flexDirection: "column", maxHeight: "30vh" }}
+    >
       <Typography variant="subtitle1">Cart</Typography>
-      {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
-        <CartItem
-          key={cartBooking.id}
-          cartBooking={cartBooking}
-          onRemove={async () => {
-            try {
-              await removeCartBookings({
-                variables: { input: { cartBookingIds: [cartBooking.id] } },
-              });
-              await refetch();
-            } catch (error) {
-              console.log(error);
-            }
-          }}
-          onUpdate={async (numGuests) => {
-            try {
-              await updateCartBookings({
-                variables: {
-                  input: {
-                    cartBookings: [{ id: cartBooking.id, numGuests }],
+      <Box sx={{ overflow: "auto" }}>
+        {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
+          <CartItem
+            key={cartBooking.id}
+            cartBooking={cartBooking}
+            onRemove={async () => {
+              try {
+                await removeCartBookings({
+                  variables: { input: { cartBookingIds: [cartBooking.id] } },
+                });
+                await refetch();
+              } catch (error) {
+                console.log(error);
+              }
+            }}
+            onUpdate={async (numGuests) => {
+              try {
+                await updateCartBookings({
+                  variables: {
+                    input: {
+                      cartBookings: [{ id: cartBooking.id, numGuests }],
+                    },
                   },
-                },
-              });
-              await refetch();
-            } catch (error) {
-              console.log(error);
-            }
-          }}
-        />
-      ))}
+                });
+                await refetch();
+              } catch (error) {
+                console.log(error);
+              }
+            }}
+          />
+        ))}
+      </Box>
       <Button variant="contained" onClick={onCheckout}>
         Check out
       </Button>

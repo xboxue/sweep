@@ -1,13 +1,15 @@
 import { CheckCircle } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { Box, Button, Grid, Link, Typography } from "@mui/material";
 import { sortBy } from "lodash";
 import { DateTime } from "luxon";
+import { useState } from "react";
 import { Offering, TimeSlot } from "../../generated/public/graphql";
 
 interface Props {
   date: DateTime;
   offering: Offering;
-  onTimeSlotClick: (timeSlot: TimeSlot) => void;
+  onTimeSlotClick: (timeSlot: TimeSlot) => Promise<void>;
   numGuests: number;
   showAll?: boolean;
   onShowAll: (offeringId: string, numGuests: number, date: string) => void;
@@ -25,6 +27,7 @@ const OfferingTimeSlots = ({
   onCheckout,
   cartTimeSlotIds = [],
 }: Props) => {
+  const [loadingTimeSlot, setLoadingTimeSlot] = useState<string | null>(null);
   const renderTimeSlot = (timeSlot: TimeSlot) => {
     if (cartTimeSlotIds.includes(timeSlot.id))
       return (
@@ -33,21 +36,26 @@ const OfferingTimeSlots = ({
           variant="contained"
           onClick={onCheckout}
           color="success"
-          sx={{ px: 1 }}
+          sx={{ px: 0.5 }}
         >
-          <CheckCircle fontSize="small" sx={{ mr: "4px" }} />
+          <CheckCircle sx={{ mr: "4px", height: 16, width: 16 }} />
           {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
         </Button>
       );
 
     return (
-      <Button
+      <LoadingButton
         fullWidth
         variant="contained"
-        onClick={() => onTimeSlotClick(timeSlot)}
+        onClick={async () => {
+          setLoadingTimeSlot(timeSlot.id);
+          await onTimeSlotClick(timeSlot);
+          setLoadingTimeSlot(null);
+        }}
+        loading={loadingTimeSlot === timeSlot.id}
       >
         {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
-      </Button>
+      </LoadingButton>
     );
   };
 
