@@ -16,6 +16,7 @@ import {
   useGetMyCartQuery,
 } from "../../generated/graphql";
 import { TimeSlot, useGetOfferingsQuery } from "../../generated/public/graphql";
+import usePrevious from "../../hooks/usePrevious";
 import CartCard from "../CartCard/CartCard";
 import OfferingCard from "../OfferingCard/OfferingCard";
 import OfferingTimeSlots from "../OfferingTimeSlots/OfferingTimeSlots";
@@ -24,12 +25,14 @@ import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
 interface Props {
   onCheckout: () => void;
   onShowAll: (offeringId: string, numGuests: number, date: string) => void;
+  dialogOpen: boolean;
 }
 
-const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
+const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
   const [date, setDate] = useState(DateTime.now());
   const [numGuests, setNumGuests] = useState(4);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const prevDialogOpen = usePrevious(dialogOpen);
 
   const [addCartBookings] = useAddCartBookingsMutation();
   const {
@@ -42,6 +45,13 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
     variables: { numGuests, date },
     fetchPolicy: "network-only",
   });
+
+  useEffect(() => {
+    if (prevDialogOpen && !dialogOpen) {
+      refetch();
+      refetchCart();
+    }
+  }, [dialogOpen, prevDialogOpen, refetch, refetchCart]);
 
   const onTimeSlotClick = async (timeSlot: TimeSlot, offeringId: string) => {
     try {

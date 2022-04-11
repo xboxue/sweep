@@ -95,12 +95,20 @@ const OfferingDialog = ({
               dangerouslySetInnerHTML={{ __html: data.offering.description }}
             />
             {hasOverflow && expanded && (
-              <Link onClick={() => setExpanded(false)} variant="body2">
+              <Link
+                component="button"
+                onClick={() => setExpanded(false)}
+                variant="body2"
+              >
                 Read less
               </Link>
             )}
             {hasOverflow && !expanded && (
-              <Link onClick={() => setExpanded(true)} variant="body2">
+              <Link
+                component="button"
+                onClick={() => setExpanded(true)}
+                variant="body2"
+              >
                 Read more
               </Link>
             )}

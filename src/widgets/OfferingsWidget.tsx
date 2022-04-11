@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import zoid from "zoid";
 import OfferingsList from "../components/OfferingsList/OfferingsList";
 
@@ -27,13 +27,23 @@ zoid.create({
       type: "number",
       required: true,
     },
+    dialogOpen: {
+      type: "boolean",
+      required: true,
+    },
   },
 });
 
 const OfferingsWidget = () => {
+  const [dialogOpen, setDialogOpen] = useState(window.xprops?.dialogOpen);
+
   useEffect(() => {
-    if (window.xprops)
+    if (window.xprops) {
+      window.xprops.onProps((props) => {
+        setDialogOpen(props.dialogOpen);
+      });
       localStorage.setItem("businessId", window.xprops.businessId);
+    }
   }, []);
 
   return (
@@ -41,6 +51,7 @@ const OfferingsWidget = () => {
       <OfferingsList
         onCheckout={() => window.xprops.onCheckout()}
         onShowAll={(...args) => window.xprops.onShowAll(...args)}
+        dialogOpen={dialogOpen}
       />
     </Box>
   );
