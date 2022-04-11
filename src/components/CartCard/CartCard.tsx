@@ -35,7 +35,7 @@ const CartCard = ({ onCheckout }: Props) => {
       sx={{ p: 2, display: "flex", flexDirection: "column", maxHeight: "30vh" }}
     >
       <Typography variant="subtitle1">Cart</Typography>
-      <Box sx={{ overflow: "auto" }}>
+      <Stack spacing={2} sx={{ overflow: "auto" }}>
         {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
           <CartItem
             key={cartBooking.id}
@@ -66,7 +66,7 @@ const CartCard = ({ onCheckout }: Props) => {
             }}
           />
         ))}
-      </Box>
+      </Stack>
       <Button variant="contained" onClick={onCheckout}>
         Check out
       </Button>

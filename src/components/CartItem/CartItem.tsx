@@ -51,8 +51,10 @@ const CartItem = ({
               value={cartBooking.numGuests}
               onChange={(event) => onUpdate(event.target.value)}
             >
-              {/* TODO: FIX */}
-              {range(1, 11).map((value) => (
+              {range(
+                cartBooking.offering.minGuests,
+                cartBooking.offering.maxGuests + 1
+              ).map((value) => (
                 <MenuItem key={value} value={value}>
                   {value}
                 </MenuItem>

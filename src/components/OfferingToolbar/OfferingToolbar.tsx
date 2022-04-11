@@ -68,7 +68,7 @@ const OfferingToolbar = ({
             value={numGuests}
             onChange={(event) => onNumGuestsChange(event.target.value)}
           >
-            {range(1, 21).map((value) => (
+            {range(2, 21).map((value) => (
               <MenuItem key={value} value={value}>
                 {value} players
               </MenuItem>
