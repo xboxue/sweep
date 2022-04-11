@@ -89,17 +89,12 @@ const CheckoutWidget = () => {
       />
     );
 
-  return (
-    <CheckoutDialog
-      open={open}
-      onClose={
-        () => window.xprops.onClose()
-        //   refetchCart();
-        //   refetch();
-        //   setCheckoutDialogOpen(false);
-      }
-    />
-  );
+  if (open)
+    return (
+      <CheckoutDialog open={open} onClose={() => window.xprops.onClose()} />
+    );
+
+  return null;
 };
 
 export default CheckoutWidget;

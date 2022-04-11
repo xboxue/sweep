@@ -20,10 +20,6 @@ const CartSummaryCard = ({ editable = false }: Props) => {
 
   if (loading) return <Skeleton />;
 
-  if (!data?.myCart?.cartBookings?.length) {
-    return null;
-  }
-
   return (
     <>
       <Stack spacing={1} sx={{ mb: 1, overflow: "auto" }}>

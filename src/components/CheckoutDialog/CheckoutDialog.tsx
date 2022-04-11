@@ -1,6 +1,6 @@
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { Elements } from "@stripe/react-stripe-js";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGetMyCartQuery } from "../../generated/graphql";
 import {
   Cart,
@@ -25,6 +25,12 @@ const CheckoutDialog = ({ open, onClose }: Props) => {
     fetchPolicy: "network-only",
   });
 
+  useEffect(() => {
+    if (data?.myCart && !data.myCart.cartBookings.length) {
+      onClose();
+    }
+  }, [data, onClose]);
+
   const handleEmailChange = useCallback(
     async (email) => {
       try {
@@ -36,9 +42,8 @@ const CheckoutDialog = ({ open, onClose }: Props) => {
   );
 
   const renderStep = () => {
-    if (loading) return <Skeleton />;
+    if (loading) return <Skeleton sx={{ flex: 1 }} />;
     const cart = data?.myCart;
-    if (!cart) return null;
 
     if (step === 0)
       return (
