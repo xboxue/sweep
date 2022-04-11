@@ -26,7 +26,7 @@ const CartSummaryCard = ({ editable = false }: Props) => {
 
   return (
     <>
-      <Stack spacing={1} sx={{ mb: 1 }}>
+      <Stack spacing={1} sx={{ mb: 1, overflow: "auto" }}>
         {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
           <CartItem
             key={cartBooking.id}

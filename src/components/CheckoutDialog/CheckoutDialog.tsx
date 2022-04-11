@@ -128,7 +128,15 @@ const CheckoutDialog = ({ open, onClose }: Props) => {
     >
       <Box sx={{ display: "flex" }}>
         {renderStep()}
-        <Box sx={{ ml: 5, width: 300 }}>
+        <Box
+          sx={{
+            ml: 5,
+            width: 300,
+            maxHeight: 400,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <CartSummaryCard editable={step !== 2} />
         </Box>
       </Box>

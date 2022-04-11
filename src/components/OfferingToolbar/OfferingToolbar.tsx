@@ -1,9 +1,10 @@
 import { CalendarToday, PersonOutline } from "@mui/icons-material";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
+import { CalendarPicker, LocalizationProvider } from "@mui/lab";
 import AdapterLuxon from "@mui/lab/AdapterLuxon";
 import {
   Avatar,
   Box,
+  Divider,
   InputAdornment,
   MenuItem,
   Stack,
@@ -11,7 +12,7 @@ import {
 } from "@mui/material";
 import { range } from "lodash";
 import { DateTime, Interval } from "luxon";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import TextField from "../common/TextField/TextField";
 
 interface Props {
@@ -31,8 +32,6 @@ const OfferingToolbar = ({
   onDateChange,
   cartIcon,
 }: Props) => {
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
-
   const inputFormat = useMemo(() => {
     if (date.toISODate() === DateTime.now().toISODate()) return "'Today'";
     if (date.toISODate() === DateTime.now().plus({ day: 1 }).toISODate())
@@ -43,58 +42,65 @@ const OfferingToolbar = ({
   return (
     <Box>
       <Box sx={{ display: "flex" }}>
-        <TextField
-          select
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <PersonOutline />
-              </InputAdornment>
-            ),
-            sx: {
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
-              width: 250,
-            },
+        <Stack
+          direction="row"
+          spacing="2px"
+          divider={<Divider orientation="vertical" />}
+          sx={{
+            border: 1,
+            borderColor: (theme) => theme.palette.divider,
+            borderRadius: 2,
+            p: "2px",
+            width: 400,
           }}
-          value={numGuests}
-          onChange={(event) => onNumGuestsChange(event.target.value)}
         >
-          {range(1, 50).map((value) => (
-            <MenuItem key={value} value={value}>
-              {value} players
-            </MenuItem>
-          ))}
-        </TextField>
-        <LocalizationProvider dateAdapter={AdapterLuxon}>
-          <DatePicker
-            open={datePickerOpen}
-            onClose={() => setDatePickerOpen(false)}
-            value={date}
-            onChange={onDateChange}
-            disableOpenPicker
-            views={["day"]}
-            minDate={DateTime.now()}
-            maxDate={DateTime.now().plus({ year: 1 })}
+          <TextField
+            select
+            fullWidth
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <CalendarToday fontSize="small" />
+                  <PersonOutline />
                 </InputAdornment>
               ),
-              sx: {
-                borderLeft: 0,
-                borderTopLeftRadius: 0,
-                borderBottomLeftRadius: 0,
-                width: 250,
-              },
+              sx: { border: 0 },
             }}
-            inputFormat={inputFormat}
-            renderInput={(params) => (
-              <TextField {...params} onClick={() => setDatePickerOpen(true)} />
-            )}
-          />
-        </LocalizationProvider>
+            value={numGuests}
+            onChange={(event) => onNumGuestsChange(event.target.value)}
+          >
+            {range(2, 21).map((value) => (
+              <MenuItem key={value} value={value}>
+                {value} players
+              </MenuItem>
+            ))}
+          </TextField>
+          <LocalizationProvider dateAdapter={AdapterLuxon}>
+            <TextField
+              select
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarToday fontSize="small" />
+                  </InputAdornment>
+                ),
+                sx: { border: 0 },
+              }}
+              SelectProps={{
+                displayEmpty: true,
+                renderValue: () => date.toFormat(inputFormat),
+                MenuProps: { sx: { maxHeight: "none" } },
+              }}
+            >
+              <CalendarPicker
+                date={date}
+                onChange={(date) => onDateChange(date)}
+                minDate={DateTime.now()}
+                maxDate={DateTime.now().plus({ year: 1 })}
+              />
+            </TextField>
+          </LocalizationProvider>
+        </Stack>
         <Box sx={{ ml: 2 }}>{cartIcon}</Box>
       </Box>
       {date.diff(DateTime.now().startOf("day"), "days").days <

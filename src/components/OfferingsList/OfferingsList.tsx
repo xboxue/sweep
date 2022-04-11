@@ -1,5 +1,14 @@
 import { LocalMallOutlined } from "@mui/icons-material";
-import { Badge, Box, Grid, IconButton, Popover, Skeleton } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Grid,
+  IconButton,
+  Popover,
+  Skeleton,
+  Typography,
+} from "@mui/material";
+import { range } from "lodash";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import {
@@ -7,6 +16,7 @@ import {
   useGetMyCartQuery,
 } from "../../generated/graphql";
 import { TimeSlot, useGetOfferingsQuery } from "../../generated/public/graphql";
+import usePrevious from "../../hooks/usePrevious";
 import CartCard from "../CartCard/CartCard";
 import OfferingCard from "../OfferingCard/OfferingCard";
 import OfferingTimeSlots from "../OfferingTimeSlots/OfferingTimeSlots";
@@ -15,12 +25,14 @@ import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";
 interface Props {
   onCheckout: () => void;
   onShowAll: (offeringId: string, numGuests: number, date: string) => void;
+  dialogOpen: boolean;
 }
 
-const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
+const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
   const [date, setDate] = useState(DateTime.now());
   const [numGuests, setNumGuests] = useState(4);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const prevDialogOpen = usePrevious(dialogOpen);
 
   const [addCartBookings] = useAddCartBookingsMutation();
   const {
@@ -33,6 +45,13 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
     variables: { numGuests, date },
     fetchPolicy: "network-only",
   });
+
+  useEffect(() => {
+    if (prevDialogOpen && !dialogOpen) {
+      refetch();
+      refetchCart();
+    }
+  }, [dialogOpen, prevDialogOpen, refetch, refetchCart]);
 
   const onTimeSlotClick = async (timeSlot: TimeSlot, offeringId: string) => {
     try {
@@ -50,7 +69,55 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
     }
   };
 
-  if (loading) return <Skeleton />;
+  const renderContent = () => {
+    if (loading || cartLoading)
+      return (
+        <Grid container spacing={3} sx={{ mt: 1 }}>
+          {range(0, 2).map((value) => (
+            <Grid item sm={6} key={value}>
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height={300}
+                sx={{ borderRadius: 2 }}
+              />
+              <Typography variant="h6" sx={{ mt: 1 }}>
+                <Skeleton />
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      );
+
+    // if (loading) return <Skeleton sx={{ mt: 1 }} />;
+
+    return (
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        {data?.offerings.map((offering) => (
+          <Grid item sm={6} key={offering.id}>
+            <OfferingCard
+              offering={offering}
+              timeSlotsComponent={
+                <OfferingTimeSlots
+                  date={date}
+                  numGuests={numGuests}
+                  onTimeSlotClick={(timeSlot: TimeSlot) =>
+                    onTimeSlotClick(timeSlot, offering.id)
+                  }
+                  offering={offering}
+                  onShowAll={onShowAll}
+                  cartTimeSlotIds={cartData?.myCart?.cartBookings.map(
+                    (cartBooking) => cartBooking.timeSlot.id
+                  )}
+                  onCheckout={onCheckout}
+                />
+              }
+            />
+          </Grid>
+        ))}
+      </Grid>
+    );
+  };
 
   return (
     <Box>
@@ -58,6 +125,7 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
+        PaperProps={{ sx: { width: 350 } }}
       >
         <CartCard
           onCheckout={() => {
@@ -79,32 +147,24 @@ const OfferingsList = ({ onCheckout, onShowAll }: Props) => {
             <Badge
               badgeContent={cartData?.myCart?.cartBookings?.length}
               color="primary"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              sx={{
+                "& .MuiBadge-badge": {
+                  height: 16,
+                  width: 16,
+                  minWidth: 16,
+                  bottom: 4,
+                  right: 4,
+                  fontSize: 12,
+                },
+              }}
             >
               <LocalMallOutlined />
             </Badge>
           </IconButton>
         }
       />
-      <Grid container spacing={3} sx={{ mt: 1 }}>
-        {data?.offerings.map((offering) => (
-          <Grid item sm={6} key={offering.id}>
-            <OfferingCard
-              offering={offering}
-              timeSlotsComponent={
-                <OfferingTimeSlots
-                  date={date}
-                  numGuests={numGuests}
-                  onTimeSlotClick={(timeSlot: TimeSlot) =>
-                    onTimeSlotClick(timeSlot, offering.id)
-                  }
-                  offering={offering}
-                  onShowAll={onShowAll}
-                />
-              }
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {renderContent()}
     </Box>
   );
 };

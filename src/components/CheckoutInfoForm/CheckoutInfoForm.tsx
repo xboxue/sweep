@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  InputAdornment,
   ListItemIcon,
   MenuItem,
   Stack,
@@ -28,43 +29,45 @@ const initialValues = {
   firstName: "",
   lastName: "",
   email: "",
-  // phoneNumber: "",
+  phoneNumber: "",
 };
 
-const PhoneCountrySelect = ({ options, onChange, iconComponent, ...props }) => {
+const CountryFlag = ({ country }: { country: string }) => (
+  <Box
+    component="img"
+    loading="lazy"
+    width="20"
+    src={`https://flagcdn.com/w20/${country.toLowerCase()}.png`}
+    srcSet={`https://flagcdn.com/w40/${country.toLowerCase()}.png 2x`}
+    alt={country}
+  />
+);
+
+const PhoneCountrySelect = ({
+  options,
+  onChange,
+  iconComponent: _,
+  ...props
+}) => {
   return (
     <TextField
       onChange={(event) => onChange(event.target.value)}
       select
-      sx={{ "& .MuiInputBase-input.MuiSelect-select": { pr: 0 }, width: 70 }}
+      InputProps={{
+        sx: { border: 0, px: 0, "&.Mui-focused": { boxShadow: "none" } },
+      }}
+      size="small"
       SelectProps={{
-        renderValue: (value) => (
-          <>
-            <Box
-              component="img"
-              loading="lazy"
-              width="20"
-              src={`https://flagcdn.com/w20/${value.toLowerCase()}.png`}
-              srcSet={`https://flagcdn.com/w40/${value.toLowerCase()}.png 2x`}
-              alt={`Flag of ${value}`}
-            />
-          </>
-        ),
+        renderValue: (value) => <CountryFlag country={value} />,
       }}
       {...props}
     >
       {/* Remove international option */}
       {options.slice(1).map((option) => (
         <MenuItem key={option.value} value={option.value}>
-          <Box
-            component="img"
-            loading="lazy"
-            width="20"
-            src={`https://flagcdn.com/w20/${option.value.toLowerCase()}.png`}
-            srcSet={`https://flagcdn.com/w40/${option.value.toLowerCase()}.png 2x`}
-            alt={`Flag of ${option.label}`}
-            sx={{ mr: 1 }}
-          />
+          <Box sx={{ mr: 1 }}>
+            <CountryFlag country={option.value} />
+          </Box>
           {option.label}
         </MenuItem>
       ))}
@@ -75,6 +78,18 @@ const PhoneCountrySelect = ({ options, onChange, iconComponent, ...props }) => {
 const PhoneTextField = React.forwardRef((props, ref) => {
   return <FormikTextField {...props} inputRef={ref} />;
 });
+
+const PhoneInputContainer = ({ children }) => {
+  return React.cloneElement(React.Children.toArray(children)[1], {
+    InputProps: {
+      startAdornment: (
+        <InputAdornment position="start" sx={{ mr: 0 }}>
+          {React.Children.toArray(children)[0]}
+        </InputAdornment>
+      ),
+    },
+  });
+};
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -135,20 +150,18 @@ const CheckoutInfoForm = ({ onSubmit, onEmailChange, cart }: Props) => {
           <FormikTextField label="Email" field="email" />
           <FormikTextField label="First name" field="firstName" />
           <FormikTextField label="Last name" field="lastName" />
-          <Box>
-            <Typography variant="subtitle2">Phone number</Typography>
-            <PhoneInput
-              inputComponent={PhoneTextField}
-              countrySelectComponent={PhoneCountrySelect}
-              style={{ display: "flex" }}
-              defaultCountry="CA"
-              international={false}
-              onChange={(value) => formik.setFieldValue("phoneNumber", value)}
-              value={formik.values.phoneNumber || ""}
-              field="phoneNumber"
-              fullWidth
-            />
-          </Box>
+          <PhoneInput
+            inputComponent={PhoneTextField}
+            countrySelectComponent={PhoneCountrySelect}
+            containerComponent={PhoneInputContainer}
+            style={{ display: "flex" }}
+            defaultCountry="CA"
+            international={false}
+            onChange={(value) => formik.setFieldValue("phoneNumber", value)}
+            value={formik.values.phoneNumber || ""}
+            field="phoneNumber"
+            label="Phone number"
+          />
 
           <Button size="large" variant="contained" type="submit">
             Continue

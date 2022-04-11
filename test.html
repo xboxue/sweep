@@ -33,6 +33,10 @@
             type: "number",
             required: true,
           },
+          dialogOpen: {
+            type: "boolean",
+            required: true,
+          },
         },
       });
 
@@ -94,13 +98,14 @@
           document.body.style.removeProperty("padding-right");
           document.body.style.removeProperty("overflow");
           checkoutWidgetInstance.updateProps({ open: false, offeringId: null });
+          offeringsWidgetInstance.updateProps({ dialogOpen: false });
         },
         open: false,
         businessId: 1,
       });
       checkoutWidgetInstance.render("#checkout-widget");
 
-      offeringsWidget({
+      const offeringsWidgetInstance = offeringsWidget({
         onCheckout: () => {
           document.querySelector("#checkout-widget").style.display = "block";
           document.body.style.paddingRight = `${
@@ -108,6 +113,7 @@
           }px`;
           document.body.style.overflow = "hidden";
           checkoutWidgetInstance.updateProps({ open: true });
+          offeringsWidgetInstance.updateProps({ dialogOpen: true });
         },
         onShowAll: (offeringId, numGuests, date) => {
           document.querySelector("#checkout-widget").style.display = "block";
@@ -121,9 +127,12 @@
             numGuests,
             date,
           });
+          offeringsWidgetInstance.updateProps({ dialogOpen: true });
         },
         businessId: 1,
-      }).render("#offerings-widget");
+        dialogOpen: false,
+      });
+      offeringsWidgetInstance.render("#offerings-widget");
     </script>
     <div id="offerings-widget" style="width: 100%; min-height: 800px"></div>
     <div id="checkout-widget" style="display: none"></div>

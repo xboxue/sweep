@@ -1,7 +1,10 @@
 import { Box, Link, Skeleton } from "@mui/material";
 import { DateTime } from "luxon";
 import { useCallback, useEffect, useState } from "react";
-import { useAddCartBookingsMutation } from "../../generated/graphql";
+import {
+  useAddCartBookingsMutation,
+  useGetMyCartQuery,
+} from "../../generated/graphql";
 import { TimeSlot, useGetOfferingQuery } from "../../generated/public/graphql";
 import Dialog from "../common/Dialog/Dialog";
 import OfferingTimeSlots from "../OfferingTimeSlots/OfferingTimeSlots";
@@ -27,6 +30,32 @@ const OfferingDialog = ({
   const [date, setDate] = useState(initialDate);
   const [numGuests, setNumGuests] = useState(initialNumGuests);
   const [addCartBookings] = useAddCartBookingsMutation();
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const {
+    data: cartData,
+    loading: cartLoading,
+    error: cartError,
+  } = useGetMyCartQuery({
+    fetchPolicy: "network-only",
+  });
+  const { data, loading, error } = useGetOfferingQuery({
+    variables: { id: offeringId, date, numGuests },
+    fetchPolicy: "network-only",
+  });
+
+  useEffect(() => {
+    setDate(initialDate);
+  }, [initialDate]);
+
+  useEffect(() => {
+    setNumGuests(initialNumGuests);
+  }, [initialNumGuests]);
+
+  const ref = useCallback((node) => {
+    if (node !== null) setHasOverflow(node.clientHeight < node.scrollHeight);
+  }, []);
 
   const onTimeSlotClick = async (timeSlot: TimeSlot) => {
     try {
@@ -43,28 +72,8 @@ const OfferingDialog = ({
     }
   };
 
-  useEffect(() => {
-    setDate(initialDate);
-  }, [initialDate]);
-
-  useEffect(() => {
-    setNumGuests(initialNumGuests);
-  }, [initialNumGuests]);
-
-  const [hasOverflow, setHasOverflow] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-
-  const { data, loading, error } = useGetOfferingQuery({
-    variables: { id: offeringId, date, numGuests },
-    fetchPolicy: "network-only",
-  });
-
-  const ref = useCallback((node) => {
-    if (node !== null) setHasOverflow(node.clientHeight < node.scrollHeight);
-  }, []);
-
   const renderContent = () => {
-    if (loading) return <Skeleton />;
+    if (loading || cartLoading) return <Skeleton />;
 
     return (
       <>
@@ -79,19 +88,27 @@ const OfferingDialog = ({
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                 }),
-                "& p, & h4": {
+                "& p": {
                   margin: 0,
                 },
               }}
               dangerouslySetInnerHTML={{ __html: data.offering.description }}
             />
             {hasOverflow && expanded && (
-              <Link onClick={() => setExpanded(false)} variant="body2">
+              <Link
+                component="button"
+                onClick={() => setExpanded(false)}
+                variant="body2"
+              >
                 Read less
               </Link>
             )}
             {hasOverflow && !expanded && (
-              <Link onClick={() => setExpanded(true)} variant="body2">
+              <Link
+                component="button"
+                onClick={() => setExpanded(true)}
+                variant="body2"
+              >
                 Read more
               </Link>
             )}
@@ -110,6 +127,10 @@ const OfferingDialog = ({
             numGuests={numGuests}
             onTimeSlotClick={onTimeSlotClick}
             offering={data?.offering}
+            cartTimeSlotIds={cartData?.myCart?.cartBookings.map(
+              (cartBooking) => cartBooking.timeSlot.id
+            )}
+            onCheckout={onCheckout}
           />
         </Box>
         {/* <Box

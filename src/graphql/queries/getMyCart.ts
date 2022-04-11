@@ -28,6 +28,8 @@ const GET_MY_CART = gql`
             altText
           }
           paymentType
+          minGuests
+          maxGuests
         }
         numGuests
       }
