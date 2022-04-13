@@ -1,4 +1,4 @@
-import { Close, EditOutlined } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import {
   Button,
   ButtonProps,
@@ -8,13 +8,14 @@ import {
   DialogProps,
   DialogTitle,
   IconButton,
-  Typography,
 } from "@mui/material";
 
 interface Props {
-  title: string;
+  title?: string;
   children: React.ReactNode;
   actions?: ButtonProps[];
+  titleComponent?: React.ReactNode;
+  onClose: () => void;
 }
 
 const Dialog = ({
@@ -23,23 +24,26 @@ const Dialog = ({
   onClose,
   actions,
   open,
+  titleComponent,
   ...props
 }: Props & DialogProps) => (
   <MuiDialog onClose={onClose} open={open} {...props}>
-    <DialogTitle>
-      {title}
-      <IconButton
-        aria-label="close"
-        onClick={onClose}
-        sx={{
-          position: "absolute",
-          right: 8,
-          top: 8,
-        }}
-      >
-        <Close />
-      </IconButton>
-    </DialogTitle>
+    {titleComponent || (
+      <DialogTitle>
+        {title}
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+          }}
+        >
+          <Close />
+        </IconButton>
+      </DialogTitle>
+    )}
     <DialogContent dividers>{children}</DialogContent>
     {actions && (
       <DialogActions>

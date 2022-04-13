@@ -1,4 +1,4 @@
-import { Box, Link, Skeleton } from "@mui/material";
+import { Box, Link, Skeleton, useMediaQuery } from "@mui/material";
 import { DateTime } from "luxon";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -32,6 +32,7 @@ const OfferingDialog = ({
   const [addCartBookings] = useAddCartBookingsMutation();
   const [hasOverflow, setHasOverflow] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const {
     data: cartData,
@@ -151,6 +152,7 @@ const OfferingDialog = ({
       onClose={onClose}
       fullWidth
       PaperProps={{ sx: { maxWidth: 700 } }}
+      fullScreen={isMobile}
     >
       {renderContent()}
     </Dialog>

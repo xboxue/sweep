@@ -1,63 +1,22 @@
-import { Box, Divider, Skeleton, Stack, Typography } from "@mui/material";
-import { sortBy } from "lodash";
-import {
-  useGetMyCartQuery,
-  useRemoveCartBookingsMutation,
-  useUpdateCartBookingsMutation,
-} from "../../generated/graphql";
-import CartItem from "../CartItem/CartItem";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Cart } from "../../generated/public/graphql";
+import CartItemList from "../CartItemList/CartItemList";
 
 interface Props {
   editable: boolean;
+  cart: Cart;
+  onUpdate: () => void;
 }
 
-const CartSummaryCard = ({ editable = false }: Props) => {
-  const { loading, error, data, refetch } = useGetMyCartQuery({
-    fetchPolicy: "network-only",
-  });
-  const [removeCartBookings] = useRemoveCartBookingsMutation();
-  const [updateCartBookings] = useUpdateCartBookingsMutation();
-
-  if (loading) return <Skeleton />;
-
-  if (!data?.myCart?.cartBookings?.length) {
-    return null;
-  }
-
+const CartSummaryCard = ({ cart, editable, onUpdate }: Props) => {
   return (
     <>
       <Stack spacing={1} sx={{ mb: 1, overflow: "auto" }}>
-        {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
-          <CartItem
-            key={cartBooking.id}
-            cartBooking={cartBooking}
-            editable={editable}
-            onRemove={async () => {
-              try {
-                await removeCartBookings({
-                  variables: { input: { cartBookingIds: [cartBooking.id] } },
-                });
-                await refetch();
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-            onUpdate={async (numGuests) => {
-              try {
-                await updateCartBookings({
-                  variables: {
-                    input: {
-                      cartBookings: [{ id: cartBooking.id, numGuests }],
-                    },
-                  },
-                });
-                await refetch();
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-          />
-        ))}
+        <CartItemList
+          cartBookings={cart.cartBookings}
+          onUpdate={onUpdate}
+          editable={editable}
+        />
       </Stack>
 
       <Divider />
@@ -67,9 +26,9 @@ const CartSummaryCard = ({ editable = false }: Props) => {
         </Typography>
 
         {[
-          { label: "Subtotal", value: data.myCart.subtotal },
-          { label: "Taxes", value: data.myCart.tax },
-          { label: "Total", value: data.myCart.total, variant: "subtitle1" },
+          { label: "Subtotal", value: cart.subtotal },
+          { label: "Taxes", value: cart.tax },
+          { label: "Total", value: cart.total, variant: "subtitle1" },
         ].map(({ label, value, ...props }) => (
           <Box display="flex" justifyContent="space-between" key={label}>
             <Typography variant="body2" {...props}>

@@ -9,6 +9,7 @@ import {
   MenuItem,
   Stack,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { range } from "lodash";
 import { DateTime, Interval } from "luxon";
@@ -38,14 +39,15 @@ const OfferingToolbar = ({
       return "'Tomorrow'";
     return "EEE, MMM d";
   }, [date]);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   return (
     <Box>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <Stack
           direction="row"
           spacing="2px"
-          divider={<Divider orientation="vertical" />}
+          divider={<Divider orientation="vertical" flexItem />}
           sx={{
             border: 1,
             borderColor: (theme) => theme.palette.divider,
@@ -57,20 +59,31 @@ const OfferingToolbar = ({
           <TextField
             select
             fullWidth
+            size={isMobile ? "small" : "medium"}
             InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonOutline />
-                </InputAdornment>
-              ),
-              sx: { border: 0 },
+              // startAdornment: (
+              //   <InputAdornment
+              //     position="start"
+              //     sx={(theme) => ({
+              //       [theme.breakpoints.down("sm")]: { mr: 0.5 },
+              //     })}
+              //   >
+              //     <PersonOutline />
+              //   </InputAdornment>
+              // ),
+              sx: (theme) => ({
+                border: 0,
+                [theme.breakpoints.up("sm")]: {
+                  p: 1,
+                },
+              }),
             }}
             value={numGuests}
             onChange={(event) => onNumGuestsChange(event.target.value)}
           >
             {range(2, 21).map((value) => (
               <MenuItem key={value} value={value}>
-                {value} players
+                {value} guests
               </MenuItem>
             ))}
           </TextField>
@@ -78,13 +91,24 @@ const OfferingToolbar = ({
             <TextField
               select
               fullWidth
+              size={isMobile ? "small" : "medium"}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CalendarToday fontSize="small" />
-                  </InputAdornment>
-                ),
-                sx: { border: 0 },
+                // startAdornment: (
+                //   <InputAdornment
+                //     position="start"
+                //     sx={(theme) => ({
+                //       [theme.breakpoints.down("sm")]: { mr: 0.5 },
+                //     })}
+                //   >
+                //     <CalendarToday sx={{ height: 18, width: 18 }} />
+                //   </InputAdornment>
+                // ),
+                sx: (theme) => ({
+                  border: 0,
+                  [theme.breakpoints.up("sm")]: {
+                    p: 1,
+                  },
+                }),
               }}
               SelectProps={{
                 displayEmpty: true,
@@ -101,11 +125,11 @@ const OfferingToolbar = ({
             </TextField>
           </LocalizationProvider>
         </Stack>
-        <Box sx={{ ml: 2 }}>{cartIcon}</Box>
+        <Box sx={{ ml: [1, 2] }}>{cartIcon}</Box>
       </Box>
       {date.diff(DateTime.now().startOf("day"), "days").days <
         NUM_DAYS_TO_SHOW && (
-        <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+        <Stack direction="row" spacing={2} sx={{ mt: 1, overflow: "auto" }}>
           {Interval.fromDateTimes(
             DateTime.now(),
             DateTime.now().plus({ days: NUM_DAYS_TO_SHOW })
@@ -124,7 +148,7 @@ const OfferingToolbar = ({
                   {interval.start.toFormat("EEE")}
                 </Typography>
                 <Avatar
-                  sx={{
+                  sx={(theme) => ({
                     bgcolor: "inherit",
                     border: 1,
                     borderColor: (theme) => theme.palette.divider,
@@ -132,7 +156,13 @@ const OfferingToolbar = ({
                       bgcolor: (theme) => theme.palette.primary.main,
                     }),
                     cursor: "pointer",
-                  }}
+                    height: 36,
+                    width: 36,
+                    [theme.breakpoints.down("sm")]: {
+                      height: 32,
+                      width: 32,
+                    },
+                  })}
                   onClick={() => onDateChange(interval.start.startOf("day"))}
                 >
                   <Typography
@@ -151,16 +181,6 @@ const OfferingToolbar = ({
             ))}
         </Stack>
       )}
-      {/* <TextField
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <AccessTime />
-            </InputAdornment>
-          ),
-        }}
-        sx={{ mr: 2 }}
-      /> */}
     </Box>
   );
 };
