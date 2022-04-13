@@ -94,7 +94,7 @@
 
       const checkoutWidgetInstance = checkoutWidget({
         onClose: () => {
-          document.querySelector("#checkout-widget").style.display = "none";
+          checkoutWidgetInstance.hide();
           document.body.style.removeProperty("padding-right");
           document.body.style.removeProperty("overflow");
           checkoutWidgetInstance.updateProps({ open: false, offeringId: null });
@@ -103,11 +103,12 @@
         open: false,
         businessId: 1,
       });
-      checkoutWidgetInstance.render("#checkout-widget");
+      checkoutWidgetInstance.render("body");
+      checkoutWidgetInstance.hide();
 
       const offeringsWidgetInstance = offeringsWidget({
         onCheckout: () => {
-          document.querySelector("#checkout-widget").style.display = "block";
+          checkoutWidgetInstance.show();
           document.body.style.paddingRight = `${
             window.innerWidth - document.documentElement.clientWidth
           }px`;
@@ -116,7 +117,7 @@
           offeringsWidgetInstance.updateProps({ dialogOpen: true });
         },
         onShowAll: (offeringId, numGuests, date) => {
-          document.querySelector("#checkout-widget").style.display = "block";
+          checkoutWidgetInstance.show();
           document.body.style.paddingRight = `${
             window.innerWidth - document.documentElement.clientWidth
           }px`;
@@ -135,6 +136,5 @@
       offeringsWidgetInstance.render("#offerings-widget");
     </script>
     <div id="offerings-widget" style="width: 100%; min-height: 800px"></div>
-    <div id="checkout-widget" style="display: none"></div>
   </body>
 </html>
