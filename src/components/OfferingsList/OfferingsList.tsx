@@ -72,16 +72,14 @@ const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
   const renderContent = () => {
     if (loading || cartLoading)
       return (
-        <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid container spacing={3} sx={{ mt: [-1, 0] }}>
           {range(0, 2).map((value) => (
-            <Grid item sm={6} key={value}>
+            <Grid item xs={12} sm={6} key={value}>
               <Skeleton
                 variant="rectangular"
-                width="100%"
-                height={300}
-                sx={{ borderRadius: 2 }}
+                sx={{ borderRadius: 1, height: [144, 200] }}
               />
-              <Typography variant="h6" sx={{ mt: 1 }}>
+              <Typography variant="subtitle1" sx={{ mt: 1 }}>
                 <Skeleton />
               </Typography>
             </Grid>
@@ -89,12 +87,10 @@ const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
         </Grid>
       );
 
-    // if (loading) return <Skeleton sx={{ mt: 1 }} />;
-
     return (
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={3} sx={{ mt: [-1, 0] }}>
         {data?.offerings.map((offering) => (
-          <Grid item sm={6} key={offering.id}>
+          <Grid item xs={12} sm={6} key={offering.id}>
             <OfferingCard
               offering={offering}
               timeSlotsComponent={
@@ -120,18 +116,29 @@ const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ width: 1 }}>
       <Popover
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
-        PaperProps={{ sx: { width: 350 } }}
+        PaperProps={{
+          sx: {
+            width: 350,
+            maxHeight: 500,
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+          },
+        }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <CartCard
           onCheckout={() => {
             setAnchorEl(null);
             onCheckout();
           }}
+          onUpdate={refetch}
+          cartBookings={cartData?.myCart?.cartBookings}
         />
       </Popover>
       <OfferingToolbar
@@ -142,7 +149,7 @@ const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
         cartIcon={
           <IconButton
             onClick={(event) => setAnchorEl(event.currentTarget)}
-            sx={{ mr: 2 }}
+            size="small"
           >
             <Badge
               badgeContent={cartData?.myCart?.cartBookings?.length}
@@ -159,7 +166,16 @@ const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
                 },
               }}
             >
-              <LocalMallOutlined />
+              <LocalMallOutlined
+                sx={(theme) => ({
+                  height: 22,
+                  width: 22,
+                  [theme.breakpoints.down("sm")]: {
+                    height: 20,
+                    width: 20,
+                  },
+                })}
+              />
             </Badge>
           </IconButton>
         }

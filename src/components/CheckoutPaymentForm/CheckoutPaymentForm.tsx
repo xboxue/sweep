@@ -58,14 +58,17 @@ const CheckoutPaymentForm = ({ onBack, onSuccess }) => {
         variant="contained"
         fullWidth
         onClick={handleSubmit}
-        sx={{ mt: 2 }}
+        sx={{ mt: 3 }}
         loading={loading}
       >
         Pay now
       </LoadingButton>
       <Button
+        size="small"
+        fullWidth
         onClick={onBack}
-        startIcon={<ArrowBackIosNew sx={{ width: 14, height: 14 }} />}
+        startIcon={<ArrowBackIosNew sx={{ width: 12, height: 12 }} />}
+        sx={{ mt: 1, "& .MuiButton-startIcon": { mr: 0.5 } }}
       >
         Back
       </Button>

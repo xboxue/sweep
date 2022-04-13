@@ -1,6 +1,13 @@
 import { CheckCircle } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Box, Button, Grid, Link, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Link,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { sortBy } from "lodash";
 import { DateTime } from "luxon";
 import { useState } from "react";
@@ -28,6 +35,9 @@ const OfferingTimeSlots = ({
   cartTimeSlotIds = [],
 }: Props) => {
   const [loadingTimeSlot, setLoadingTimeSlot] = useState<string | null>(null);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const NUM_TIME_SLOTS = 4;
+
   const renderTimeSlot = (timeSlot: TimeSlot) => {
     if (cartTimeSlotIds.includes(timeSlot.id))
       return (
@@ -36,10 +46,21 @@ const OfferingTimeSlots = ({
           variant="contained"
           onClick={onCheckout}
           color="success"
-          sx={{ px: 0.5 }}
+          size={isMobile ? "small" : "medium"}
+          sx={(theme) => ({
+            px: 0.5,
+            [theme.breakpoints.up("sm")]: { py: 0.5 },
+            height: 1,
+          })}
         >
-          <CheckCircle sx={{ mr: "4px", height: 16, width: 16 }} />
-          {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
+          {isMobile ? (
+            <CheckCircle fontSize="small" />
+          ) : (
+            <>
+              <CheckCircle sx={{ height: 16, width: 16, mr: "4px" }} />
+              {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
+            </>
+          )}
         </Button>
       );
 
@@ -53,6 +74,13 @@ const OfferingTimeSlots = ({
           setLoadingTimeSlot(null);
         }}
         loading={loadingTimeSlot === timeSlot.id}
+        size={isMobile ? "small" : "medium"}
+        sx={(theme) => ({
+          px: 0.5,
+          [theme.breakpoints.up("sm")]: {
+            py: 0.5,
+          },
+        })}
       >
         {DateTime.fromISO(timeSlot.startDateTime).toFormat("h:mm a")}
       </LoadingButton>
@@ -68,7 +96,7 @@ const OfferingTimeSlots = ({
         sx={{
           borderRadius: 1,
           bgcolor: "#F6F6F7",
-          p: 2,
+          p: 1,
           display: "flex",
           justifyContent: "center",
         }}
@@ -88,7 +116,7 @@ const OfferingTimeSlots = ({
         sx={{
           borderRadius: 1,
           bgcolor: "#F6F6F7",
-          p: 2,
+          p: 1,
           display: "flex",
           justifyContent: "center",
         }}
@@ -100,7 +128,7 @@ const OfferingTimeSlots = ({
     );
   }
 
-  if (showAll) {
+  if (showAll || offering.availableTimeSlots.length <= NUM_TIME_SLOTS) {
     return (
       <Grid container spacing={1}>
         {sortBy(offering.availableTimeSlots, "startDateTime").map(
@@ -117,22 +145,20 @@ const OfferingTimeSlots = ({
   return (
     <Grid container spacing={1}>
       {sortBy(offering.availableTimeSlots, "startDateTime")
-        .slice(0, 7)
+        .slice(0, NUM_TIME_SLOTS - 1)
         .map((timeSlot) => (
           <Grid item key={timeSlot.id} xs={3}>
             {renderTimeSlot(timeSlot)}
           </Grid>
         ))}
-      {offering.availableTimeSlots.length > 7 && (
-        <Grid item xs={3}>
-          <Link
-            component="button"
-            onClick={() => onShowAll(offering.id, numGuests, date.toISO())}
-          >
-            +{offering.availableTimeSlots.length - 7} more
-          </Link>
-        </Grid>
-      )}
+      <Grid item xs={3}>
+        <Link
+          component="button"
+          onClick={() => onShowAll(offering.id, numGuests, date.toISO())}
+        >
+          +{offering.availableTimeSlots.length - NUM_TIME_SLOTS + 1} more
+        </Link>
+      </Grid>
     </Grid>
   );
 };

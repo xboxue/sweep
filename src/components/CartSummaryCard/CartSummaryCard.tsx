@@ -1,59 +1,26 @@
 import { Box, Divider, Skeleton, Stack, Typography } from "@mui/material";
-import { sortBy } from "lodash";
-import {
-  useGetMyCartQuery,
-  useRemoveCartBookingsMutation,
-  useUpdateCartBookingsMutation,
-} from "../../generated/graphql";
-import CartItem from "../CartItem/CartItem";
+import { useGetMyCartQuery } from "../../generated/graphql";
+import CartItemList from "../CartItemList/CartItemList";
 
 interface Props {
   editable: boolean;
 }
 
-const CartSummaryCard = ({ editable = false }: Props) => {
+const CartSummaryCard = ({ editable }: Props) => {
   const { loading, error, data, refetch } = useGetMyCartQuery({
     fetchPolicy: "network-only",
   });
-  const [removeCartBookings] = useRemoveCartBookingsMutation();
-  const [updateCartBookings] = useUpdateCartBookingsMutation();
 
   if (loading) return <Skeleton />;
 
   return (
     <>
       <Stack spacing={1} sx={{ mb: 1, overflow: "auto" }}>
-        {sortBy(data.myCart.cartBookings, "id").map((cartBooking) => (
-          <CartItem
-            key={cartBooking.id}
-            cartBooking={cartBooking}
-            editable={editable}
-            onRemove={async () => {
-              try {
-                await removeCartBookings({
-                  variables: { input: { cartBookingIds: [cartBooking.id] } },
-                });
-                await refetch();
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-            onUpdate={async (numGuests) => {
-              try {
-                await updateCartBookings({
-                  variables: {
-                    input: {
-                      cartBookings: [{ id: cartBooking.id, numGuests }],
-                    },
-                  },
-                });
-                await refetch();
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-          />
-        ))}
+        <CartItemList
+          cartBookings={data?.myCart?.cartBookings}
+          onUpdate={refetch}
+          editable={editable}
+        />
       </Stack>
 
       <Divider />

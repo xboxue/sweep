@@ -1,23 +1,22 @@
 import {
-  ArrowBackIos,
   ArrowBackIosNew,
   ArrowForwardIos,
   LocalMallOutlined,
 } from "@mui/icons-material";
 import {
   Badge,
-  IconButton,
-  Typography,
   Box,
+  Button,
   ButtonGroup,
+  IconButton,
   Popover,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { Navigate, ToolbarProps } from "react-big-calendar";
 import { useNavigate } from "react-router-dom";
 import { useGetMyCartQuery } from "../../generated/graphql";
 import CartCard from "../CartCard/CartCard";
-import Button from "../common/Button/Button";
 
 const CalendarToolbar = ({
   localizer: { messages },
@@ -28,7 +27,7 @@ const CalendarToolbar = ({
   onNavigate,
 }: ToolbarProps) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const { loading, error, data } = useGetMyCartQuery();
+  const { loading, error, data, refetch } = useGetMyCartQuery();
   const navigate = useNavigate();
 
   return (
@@ -43,6 +42,7 @@ const CalendarToolbar = ({
     >
       <Button
         variant="contained"
+        color="background"
         size="small"
         onClick={() => onNavigate(Navigate.TODAY)}
         sx={{ mr: 1 }}
@@ -74,12 +74,31 @@ const CalendarToolbar = ({
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
+        PaperProps={{
+          sx: {
+            width: 350,
+            maxHeight: 500,
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+          },
+        }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <CartCard onCheckout={() => navigate("/orders/new")} />
+        <CartCard
+          onCheckout={() => navigate("/orders/new")}
+          onUpdate={refetch}
+          cartBookings={data?.myCart?.cartBookings}
+        />
       </Popover>
       <ButtonGroup size="small">
         {views.map((view) => (
-          <Button variant="contained" key={view} onClick={() => onView(view)}>
+          <Button
+            variant="contained"
+            color="background"
+            key={view}
+            onClick={() => onView(view)}
+          >
             {messages[view]}
           </Button>
         ))}
