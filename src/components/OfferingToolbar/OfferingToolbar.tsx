@@ -129,7 +129,17 @@ const OfferingToolbar = ({
       </Box>
       {date.diff(DateTime.now().startOf("day"), "days").days <
         NUM_DAYS_TO_SHOW && (
-        <Stack direction="row" spacing={2} sx={{ mt: 1, overflow: "auto" }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            mt: 1,
+            overflow: "auto",
+            "&::-webkit-scrollbar": { display: "none" },
+            msOverflowStyle: "none",
+            scrollbarWidth: "none",
+          }}
+        >
           {Interval.fromDateTimes(
             DateTime.now(),
             DateTime.now().plus({ days: NUM_DAYS_TO_SHOW })
