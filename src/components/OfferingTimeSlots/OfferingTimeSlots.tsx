@@ -54,7 +54,7 @@ const OfferingTimeSlots = ({
           })}
         >
           {isMobile ? (
-            <CheckCircle fontSize="small" />
+            <CheckCircle sx={{ height: 18, width: 18 }} />
           ) : (
             <>
               <CheckCircle sx={{ height: 16, width: 16, mr: "4px" }} />

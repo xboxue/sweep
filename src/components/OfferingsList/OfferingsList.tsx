@@ -137,7 +137,7 @@ const OfferingsList = ({ onCheckout, onShowAll, dialogOpen }: Props) => {
             setAnchorEl(null);
             onCheckout();
           }}
-          onUpdate={refetch}
+          onUpdate={refetchCart}
           cartBookings={cartData?.myCart?.cartBookings}
         />
       </Popover>

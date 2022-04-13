@@ -1,24 +1,20 @@
-import { Box, Divider, Skeleton, Stack, Typography } from "@mui/material";
-import { useGetMyCartQuery } from "../../generated/graphql";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Cart } from "../../generated/public/graphql";
 import CartItemList from "../CartItemList/CartItemList";
 
 interface Props {
   editable: boolean;
+  cart: Cart;
+  onUpdate: () => void;
 }
 
-const CartSummaryCard = ({ editable }: Props) => {
-  const { loading, error, data, refetch } = useGetMyCartQuery({
-    fetchPolicy: "network-only",
-  });
-
-  if (loading) return <Skeleton />;
-
+const CartSummaryCard = ({ cart, editable, onUpdate }: Props) => {
   return (
     <>
       <Stack spacing={1} sx={{ mb: 1, overflow: "auto" }}>
         <CartItemList
-          cartBookings={data?.myCart?.cartBookings}
-          onUpdate={refetch}
+          cartBookings={cart.cartBookings}
+          onUpdate={onUpdate}
           editable={editable}
         />
       </Stack>
@@ -30,9 +26,9 @@ const CartSummaryCard = ({ editable }: Props) => {
         </Typography>
 
         {[
-          { label: "Subtotal", value: data.myCart.subtotal },
-          { label: "Taxes", value: data.myCart.tax },
-          { label: "Total", value: data.myCart.total, variant: "subtitle1" },
+          { label: "Subtotal", value: cart.subtotal },
+          { label: "Taxes", value: cart.tax },
+          { label: "Total", value: cart.total, variant: "subtitle1" },
         ].map(({ label, value, ...props }) => (
           <Box display="flex" justifyContent="space-between" key={label}>
             <Typography variant="body2" {...props}>
