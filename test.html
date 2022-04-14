@@ -9,8 +9,9 @@
   <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zoid/9.0.87/zoid.min.js"></script>
     <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+
       import {
-        initializeApp,
         getAuth,
         onAuthStateChanged,
         signInAnonymously,
