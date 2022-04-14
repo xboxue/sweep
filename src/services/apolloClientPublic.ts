@@ -3,18 +3,15 @@ import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_PUBLIC_API_URL,
-  credentials: "include",
 });
 
 const authLink = setContext(async (_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const businessId = await localStorage.getItem("businessId");
-
   // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      "business-id": businessId,
+      "business-id": window.xprops.businessId,
+      authorization: window.xprops.token ? `Bearer ${window.xprops.token}` : "",
     },
   };
 });

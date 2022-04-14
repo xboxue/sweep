@@ -8,7 +8,37 @@
   </head>
   <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zoid/9.0.87/zoid.min.js"></script>
-    <script>
+    <script type="module">
+      import {
+        initializeApp,
+        getAuth,
+        onAuthStateChanged,
+        signInAnonymously,
+      } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+      initializeApp({
+        apiKey: "AIzaSyAgj1MwO36BkL273OpzPGyTbcHTvyFmgdM",
+        authDomain: "sweep-a4b1d.firebaseapp.com",
+        projectId: "sweep-a4b1d",
+        storageBucket: "sweep-a4b1d.appspot.com",
+        messagingSenderId: "77801253117",
+        appId: "1:77801253117:web:eacc23459d5aea0414f694",
+        measurementId: "G-EWCLP7TXQZ",
+      });
+
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          user.getIdTokenResult().then(({ token }) => {
+            offeringsWidgetInstance.updateProps({ token });
+            checkoutWidgetInstance.updateProps({ token });
+            localStorage.setItem("token", token);
+          });
+        } else {
+          signInAnonymously(auth).catch((error) => console.log(error));
+        }
+      });
+
       const offeringsWidget = zoid.create({
         tag: "offerings-widget",
         url: "http://localhost:3000/widget",
@@ -21,6 +51,10 @@
           width: false,
         },
         props: {
+          token: {
+            type: "string",
+            required: false,
+          },
           onCheckout: {
             type: "function",
             required: true,
@@ -65,6 +99,10 @@
           return container;
         },
         props: {
+          token: {
+            type: "string",
+            required: false,
+          },
           onClose: {
             type: "function",
             required: true,
@@ -102,6 +140,7 @@
         },
         open: false,
         businessId: 1,
+        token: localStorage.getItem("token"),
       });
       checkoutWidgetInstance.render("body");
       checkoutWidgetInstance.hide();
@@ -132,6 +171,7 @@
         },
         businessId: 1,
         dialogOpen: false,
+        token: localStorage.getItem("token"),
       });
       offeringsWidgetInstance.render("#offerings-widget");
     </script>

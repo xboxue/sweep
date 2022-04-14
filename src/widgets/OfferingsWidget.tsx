@@ -15,6 +15,10 @@ zoid.create({
     width: false,
   },
   props: {
+    token: {
+      type: "string",
+      required: false,
+    },
     onCheckout: {
       type: "function",
       required: true,
@@ -42,7 +46,6 @@ const OfferingsWidget = () => {
       window.xprops.onProps((props) => {
         setDialogOpen(props.dialogOpen);
       });
-      localStorage.setItem("businessId", window.xprops.businessId);
     }
   }, []);
 

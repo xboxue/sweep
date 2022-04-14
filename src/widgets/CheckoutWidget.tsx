@@ -23,6 +23,10 @@ zoid.create({
     return container;
   },
   props: {
+    token: {
+      type: "string",
+      required: false,
+    },
     onClose: {
       type: "function",
       required: true,
@@ -70,7 +74,6 @@ const CheckoutWidget = () => {
           });
         }
       });
-      localStorage.setItem("businessId", window.xprops.businessId);
     }
   }, []);
 
