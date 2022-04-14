@@ -59,7 +59,7 @@ const CartItem = ({
               select
               size="small"
               value={cartBooking.numGuests}
-              onChange={(event) => onUpdate(event.target.value)}
+              onChange={(event) => onUpdate(parseInt(event.target.value, 10))}
               SelectProps={{ native: isMobile }}
             >
               {range(

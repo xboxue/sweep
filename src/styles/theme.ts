@@ -63,6 +63,7 @@ const theme = createTheme(
       MuiMenu: {
         defaultProps: {
           elevation: 1,
+          transitionDuration: 100,
         },
         styleOverrides: {
           root: {
@@ -76,6 +77,7 @@ const theme = createTheme(
       MuiPopover: {
         defaultProps: {
           elevation: 1,
+          transitionDuration: 100,
         },
         styleOverrides: {
           paper: {

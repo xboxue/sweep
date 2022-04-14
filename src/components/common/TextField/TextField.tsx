@@ -15,14 +15,18 @@ const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-const StyledInput = styled(InputBase)(({ size, theme }) => ({
+const StyledInput = styled(InputBase, {
+  shouldForwardProp: (prop) => prop !== "select",
+})<{ select: boolean }>(({ select, size, theme }) => ({
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
   border: "1px solid #ced4da",
   fontSize: theme.typography.body2.fontSize,
-  [theme.breakpoints.down("sm")]: {
-    fontSize: theme.typography.body1.fontSize,
-  },
+  ...(!select && {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: theme.typography.body1.fontSize,
+    },
+  }),
   padding: size === "small" ? "6px 10px" : "10px 12px",
   transition: theme.transitions.create([
     "border-color",
@@ -117,6 +121,7 @@ const TextField = (props: TextFieldProps) => {
       placeholder={placeholder}
       inputProps={inputProps}
       size={size}
+      select={select}
       {...InputMore}
       {...InputProps}
     />

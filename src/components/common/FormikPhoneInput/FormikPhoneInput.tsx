@@ -1,6 +1,6 @@
-import { Box, InputAdornment, MenuItem } from "@mui/material";
+import { Box, InputAdornment, MenuItem, useMediaQuery } from "@mui/material";
 import React from "react";
-import PhoneInput from "react-phone-number-input";
+import PhoneInput, { getCountryCallingCode } from "react-phone-number-input";
 import FormikTextField from "../FormikTextField/FormikTextField";
 import TextField from "../TextField/TextField";
 
@@ -21,6 +21,8 @@ const PhoneCountrySelect = ({
   iconComponent: _,
   ...props
 }) => {
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
   return (
     <TextField
       onChange={(event) => onChange(event.target.value)}
@@ -35,14 +37,20 @@ const PhoneCountrySelect = ({
       {...props}
     >
       {/* Remove international option */}
-      {options.slice(1).map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          <Box sx={{ mr: 1 }}>
-            <CountryFlag country={option.value} />
-          </Box>
-          {option.label}
-        </MenuItem>
-      ))}
+      {options.slice(1).map((option) => {
+        if (isMobile)
+          return (
+            <option key={option.value} value={option.value}>
+              {option.label} (+{getCountryCallingCode(option.value)})
+            </option>
+          );
+
+        return (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label} (+{getCountryCallingCode(option.value)})
+          </MenuItem>
+        );
+      })}
     </TextField>
   );
 };

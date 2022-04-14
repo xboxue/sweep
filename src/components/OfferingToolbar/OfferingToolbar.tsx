@@ -80,7 +80,9 @@ const OfferingToolbar = ({
               }),
             }}
             value={numGuests}
-            onChange={(event) => onNumGuestsChange(event.target.value)}
+            onChange={(event) =>
+              onNumGuestsChange(parseInt(event.target.value, 10))
+            }
           >
             {range(2, 21).map((value) => {
               if (isMobile)
