@@ -1,4 +1,12 @@
-import { Avatar, Box, Link, MenuItem, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Link,
+  MenuItem,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { range } from "lodash";
 import { DateTime } from "luxon";
 import { CartBooking } from "../../generated/graphql";
@@ -18,6 +26,8 @@ const CartItem = ({
   onRemove,
   editable = true,
 }: Props) => {
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
   return (
     <Box sx={{ display: "flex" }}>
       <Avatar
@@ -50,15 +60,25 @@ const CartItem = ({
               size="small"
               value={cartBooking.numGuests}
               onChange={(event) => onUpdate(event.target.value)}
+              SelectProps={{ native: isMobile }}
             >
               {range(
                 cartBooking.offering.minGuests,
                 cartBooking.offering.maxGuests + 1
-              ).map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
-                </MenuItem>
-              ))}
+              ).map((value) => {
+                if (isMobile)
+                  return (
+                    <option key={value} value={value}>
+                      {value} guests
+                    </option>
+                  );
+
+                return (
+                  <MenuItem key={value} value={value}>
+                    {value} guests
+                  </MenuItem>
+                );
+              })}
             </TextField>
             <Link component="button" sx={{ ml: 1 }} onClick={onRemove}>
               Remove

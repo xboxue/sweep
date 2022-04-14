@@ -60,6 +60,7 @@ const OfferingToolbar = ({
             select
             fullWidth
             size={isMobile ? "small" : "medium"}
+            SelectProps={{ native: isMobile }}
             InputProps={{
               // startAdornment: (
               //   <InputAdornment
@@ -81,11 +82,20 @@ const OfferingToolbar = ({
             value={numGuests}
             onChange={(event) => onNumGuestsChange(event.target.value)}
           >
-            {range(2, 21).map((value) => (
-              <MenuItem key={value} value={value}>
-                {value} guests
-              </MenuItem>
-            ))}
+            {range(2, 21).map((value) => {
+              if (isMobile)
+                return (
+                  <option key={value} value={value}>
+                    {value} guests
+                  </option>
+                );
+
+              return (
+                <MenuItem key={value} value={value}>
+                  {value} guests
+                </MenuItem>
+              );
+            })}
           </TextField>
           <LocalizationProvider dateAdapter={AdapterLuxon}>
             <TextField
