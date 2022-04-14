@@ -20,6 +20,9 @@ const StyledInput = styled(InputBase)(({ size, theme }) => ({
   backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
   border: "1px solid #ced4da",
   fontSize: theme.typography.body2.fontSize,
+  [theme.breakpoints.down("sm")]: {
+    fontSize: theme.typography.body1.fontSize,
+  },
   padding: size === "small" ? "6px 10px" : "10px 12px",
   transition: theme.transitions.create([
     "border-color",
