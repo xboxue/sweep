@@ -12,7 +12,7 @@ const CartCard = ({ onCheckout, onUpdate, cartBookings }: Props) => {
   if (!cartBookings?.length)
     return (
       <>
-        <Typography variant="subtitle1">Cart</Typography>
+        <Typography variant="subtitle1">Your cart</Typography>
         <Typography>No items in cart</Typography>
       </>
     );

@@ -37,3 +37,13 @@ export const refreshToken = () => {
   if (!auth.currentUser) throw new Error();
   return auth.currentUser.getIdToken(true);
 };
+
+export const onAuthStateChanged = (
+  nextOrObserver: Parameters<typeof firebase.onAuthStateChanged>[1]
+) => {
+  return firebase.onAuthStateChanged(auth, nextOrObserver);
+};
+
+export const signInAnonymously = () => {
+  return firebase.signInAnonymously(auth);
+};
