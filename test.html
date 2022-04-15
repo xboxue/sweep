@@ -29,15 +29,7 @@
 
       const auth = getAuth();
       onAuthStateChanged(auth, (user) => {
-        if (user) {
-          user.getIdTokenResult().then(({ token }) => {
-            offeringsWidgetInstance.updateProps({ token });
-            checkoutWidgetInstance.updateProps({ token });
-            localStorage.setItem("token", token);
-          });
-        } else {
-          signInAnonymously(auth).catch((error) => console.log(error));
-        }
+        if (!user) signInAnonymously(auth).catch((error) => console.log(error));
       });
 
       const offeringsWidget = zoid.create({
@@ -52,9 +44,9 @@
           width: false,
         },
         props: {
-          token: {
-            type: "string",
-            required: false,
+          getToken: {
+            type: "function",
+            required: true,
           },
           onCheckout: {
             type: "function",
@@ -100,9 +92,9 @@
           return container;
         },
         props: {
-          token: {
-            type: "string",
-            required: false,
+          getToken: {
+            type: "function",
+            required: true,
           },
           onClose: {
             type: "function",
@@ -141,7 +133,7 @@
         },
         open: false,
         businessId: 1,
-        token: localStorage.getItem("token"),
+        getToken: () => auth.currentUser?.getIdToken(),
       });
       checkoutWidgetInstance.render("body");
       checkoutWidgetInstance.hide();
@@ -172,7 +164,7 @@
         },
         businessId: 1,
         dialogOpen: false,
-        token: localStorage.getItem("token"),
+        getToken: () => auth.currentUser?.getIdToken(),
       });
       offeringsWidgetInstance.render("#offerings-widget");
     </script>

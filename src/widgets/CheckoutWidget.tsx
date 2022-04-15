@@ -23,9 +23,9 @@ zoid.create({
     return container;
   },
   props: {
-    token: {
-      type: "string",
-      required: false,
+    getToken: {
+      type: "function",
+      required: true,
     },
     onClose: {
       type: "function",

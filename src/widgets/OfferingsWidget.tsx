@@ -15,9 +15,9 @@ zoid.create({
     width: false,
   },
   props: {
-    token: {
-      type: "string",
-      required: false,
+    getToken: {
+      type: "function",
+      required: true,
     },
     onCheckout: {
       type: "function",

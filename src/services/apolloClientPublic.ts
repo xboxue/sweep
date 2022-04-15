@@ -7,11 +7,13 @@ const httpLink = createHttpLink({
 
 const authLink = setContext(async (_, { headers }) => {
   // return the headers to the context so httpLink can read them
+  const token = await window.xprops.getToken();
+
   return {
     headers: {
       ...headers,
       "business-id": window.xprops.businessId,
-      authorization: window.xprops.token ? `Bearer ${window.xprops.token}` : "",
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });
