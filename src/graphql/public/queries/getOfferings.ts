@@ -17,6 +17,7 @@ const GET_OFFERINGS = gql`
       depositFixedAmount
       depositPercent
       duration
+      difficulty
       availableTimeSlots(date: $date, time: $time, numGuests: $numGuests) {
         id
         startDateTime

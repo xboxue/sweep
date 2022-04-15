@@ -50,7 +50,7 @@ const OfferingCard = ({ offering, timeSlotsComponent }: Props) => {
         </Box>{" "}
         players •{" "}
         <Box component="span" sx={{ fontWeight: 500 }}>
-          7/10
+          {offering.difficulty}/10
         </Box>{" "}
         difficulty
       </Typography>

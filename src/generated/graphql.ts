@@ -289,6 +289,7 @@ export type Offering = {
   depositPercent?: Maybe<Scalars['Int']>;
   depositType?: Maybe<DepositType>;
   description?: Maybe<Scalars['String']>;
+  difficulty?: Maybe<Scalars['Int']>;
   duration: Scalars['Int'];
   featuredImage: Image;
   id: Scalars['ID'];

@@ -136,6 +136,7 @@ export type Offering = {
   depositPercent?: Maybe<Scalars['Int']>;
   depositType?: Maybe<DepositType>;
   description?: Maybe<Scalars['String']>;
+  difficulty?: Maybe<Scalars['Int']>;
   duration: Scalars['Int'];
   featuredImage: Image;
   id: Scalars['ID'];
@@ -277,7 +278,7 @@ export type GetOfferingsQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
+export type GetOfferingsQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, description?: string | null, pricingType: PricingType, pricePerPerson?: number | null, priceTotalAmount?: number | null, paymentType: PaymentType, depositType?: DepositType | null, depositPerPerson?: number | null, depositFixedAmount?: number | null, depositPercent?: number | null, duration: number, difficulty?: number | null, availableTimeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any }>, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } }> };
 
 
 export const UpdateCartContactInfoDocument = gql`
@@ -427,6 +428,7 @@ export const GetOfferingsDocument = gql`
     depositFixedAmount
     depositPercent
     duration
+    difficulty
     availableTimeSlots(date: $date, time: $time, numGuests: $numGuests) {
       id
       startDateTime
