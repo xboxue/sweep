@@ -33,19 +33,11 @@ const PhoneCountrySelect = ({
       size="small"
       SelectProps={{
         renderValue: (value) => <CountryFlag country={value} />,
-        native: isMobile,
       }}
       {...props}
     >
       {/* Remove international option */}
       {options.slice(1).map((option) => {
-        if (isMobile)
-          return (
-            <option key={option.value} value={option.value}>
-              {option.label} (+{getCountryCallingCode(option.value)})
-            </option>
-          );
-
         return (
           <MenuItem key={option.value} value={option.value}>
             {option.label} (+{getCountryCallingCode(option.value)})
