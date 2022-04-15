@@ -154,6 +154,7 @@ const OfferingTimeSlots = ({
       <Grid item xs={3}>
         <Link
           component="button"
+          variant="body2"
           onClick={() => onShowAll(offering.id, numGuests, date.toISO())}
         >
           +{offering.availableTimeSlots.length - NUM_TIME_SLOTS + 1} more

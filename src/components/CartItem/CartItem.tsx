@@ -80,7 +80,12 @@ const CartItem = ({
                 );
               })}
             </TextField>
-            <Link component="button" sx={{ ml: 1 }} onClick={onRemove}>
+            <Link
+              component="button"
+              variant="body2"
+              sx={{ ml: 1 }}
+              onClick={onRemove}
+            >
               Remove
             </Link>
           </Box>

@@ -33,6 +33,7 @@ const PhoneCountrySelect = ({
       size="small"
       SelectProps={{
         renderValue: (value) => <CountryFlag country={value} />,
+        native: isMobile,
       }}
       {...props}
     >
