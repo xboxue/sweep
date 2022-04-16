@@ -1,4 +1,9 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  createHttpLink,
+  fromPromise,
+  InMemoryCache,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
@@ -10,7 +15,9 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
     for (const error of graphQLErrors) {
       if (error.extensions.code === "UNAUTHENTICATED") {
-        return forward(operation);
+        return fromPromise(
+          window.xprops.getToken(true).catch((error) => console.log(error))
+        ).flatMap(() => forward(operation));
       }
     }
   }

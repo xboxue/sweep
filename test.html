@@ -32,6 +32,21 @@
         if (!user) signInAnonymously(auth).catch((error) => console.log(error));
       });
 
+      const getToken = (force = false) => {
+        if (auth.currentUser) return auth.currentUser.getIdToken();
+
+        if (force) {
+          return new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+              if (user) {
+                unsubscribe();
+                resolve(user.getIdToken());
+              }
+            });
+          });
+        }
+      };
+
       const offeringsWidget = zoid.create({
         tag: "offerings-widget",
         url: "http://localhost:3000/widget",
@@ -133,7 +148,7 @@
         },
         open: false,
         businessId: 1,
-        getToken: () => auth.currentUser?.getIdToken(),
+        getToken,
       });
       checkoutWidgetInstance.render("body");
       checkoutWidgetInstance.hide();
@@ -164,7 +179,7 @@
         },
         businessId: 1,
         dialogOpen: false,
-        getToken: () => auth.currentUser?.getIdToken(),
+        getToken,
       });
       offeringsWidgetInstance.render("#offerings-widget");
     </script>
