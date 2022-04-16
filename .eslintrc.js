@@ -41,6 +41,7 @@ module.exports = {
     "no-shadow": "off",
     "react/prop-types": "off",
     "jsx-a11y/anchor-is-valid": "off",
+    "no-restricted-syntax": "off",
   },
   overrides: [
     {

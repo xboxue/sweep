@@ -1,8 +1,19 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_PUBLIC_API_URL,
+});
+
+const errorLink = onError(({ graphQLErrors, operation, forward }) => {
+  if (graphQLErrors) {
+    for (const error of graphQLErrors) {
+      if (error.extensions.code === "UNAUTHENTICATED") {
+        return forward(operation);
+      }
+    }
+  }
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -19,7 +30,7 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: errorLink.concat(authLink.concat(httpLink)),
   cache: new InMemoryCache(),
 });
 
