@@ -44,6 +44,31 @@ export const onAuthStateChanged = (
   return firebase.onAuthStateChanged(auth, nextOrObserver);
 };
 
+export const onIdTokenChanged = (
+  nextOrObserver: Parameters<typeof firebase.onIdTokenChanged>[1]
+) => {
+  return firebase.onIdTokenChanged(auth, nextOrObserver);
+};
+
 export const signInAnonymously = () => {
   return firebase.signInAnonymously(auth);
+};
+
+export const getToken = async (force = false) => {
+  if (auth.currentUser) return auth.currentUser.getIdToken();
+
+  if (force) {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = firebase.onAuthStateChanged(
+        auth,
+        (user) => {
+          if (user) {
+            unsubscribe();
+            resolve(user.getIdToken());
+          }
+        },
+        reject
+      );
+    });
+  }
 };
