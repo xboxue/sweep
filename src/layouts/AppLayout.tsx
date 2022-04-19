@@ -170,7 +170,7 @@ const AppLayout = () => {
           >
             <ListItemButton
               component="a"
-              href="https://xboxue.github.io/captive-demo/captive"
+              href="https://captivetoronto.com/?redirect"
               target="_blank"
               sx={{ borderRadius: 1, my: "2px" }}
             >
