@@ -84,8 +84,7 @@ const StyledCalendar = styled(withDragAndDrop(Calendar))({
 
 const CalendarPage = () => {
   const [date, setDate] = useState(DateTime.now().startOf("day").toJSDate());
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [previewEventId, setPreviewEventId] = useState<Event | null>(null);
+  const [previewEventId, setPreviewEventId] = useState<string | null>(null);
   const { loading, error, data, refetch } = useGetOfferingSchedulesQuery({
     variables: { date },
     fetchPolicy: "network-only",
@@ -139,22 +138,54 @@ const CalendarPage = () => {
     "start"
   );
 
+  const renderSidebar = () => {
+    if (previewEvent)
+      return (
+        <EventPreviewCard
+          event={previewEvent}
+          onBlockChange={refetch}
+          onCartChange={refetchCart}
+        />
+      );
+
+    return (
+      <>
+        <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          Upcoming bookings
+        </Typography>
+        <Stack spacing={2}>
+          {upcomingEvents.map((event) => (
+            <Box
+              key={event.id}
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                bgcolor: (theme) => theme.palette.grey[200],
+              }}
+            >
+              <Typography variant="caption">
+                {DateTime.fromJSDate(event.start).toFormat("t")}
+              </Typography>
+              <Typography variant="subtitle2">
+                {event.booking.order.customer.firstName}{" "}
+                {event.booking.order.customer.lastName}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {event.offering.name} | {event.booking.numGuests} players
+              </Typography>
+              <Button variant="contained" fullWidth size="small">
+                Check in
+              </Button>
+            </Box>
+          ))}
+        </Stack>
+      </>
+    );
+  };
+
   return (
     <Box sx={{ display: "flex", m: -3, height: "calc(100vh - 56px)" }}>
       <Box sx={{ flex: 1, overflowY: "auto", pt: 2 }}>
-        <Popover
-          open={!!anchorEl}
-          anchorEl={anchorEl}
-          anchorOrigin={{ vertical: "center", horizontal: "left" }}
-          transformOrigin={{ vertical: "center", horizontal: "right" }}
-          onClose={() => setAnchorEl(null)}
-        >
-          <EventPreviewCard
-            event={previewEvent}
-            onBlockChange={refetch}
-            onCartChange={refetchCart}
-          />
-        </Popover>
         <StyledCalendar
           date={date}
           onNavigate={(date) => setDate(date)}
@@ -211,7 +242,6 @@ const CalendarPage = () => {
           // onEventDrop={onEventDrop}
           onSelectEvent={(event, e) => {
             setPreviewEventId(event.id);
-            setAnchorEl(e.currentTarget);
           }}
           showMultiDayTimes
           scrollToTime={DateTime.fromISO("09:00").toJSDate()}
@@ -229,37 +259,7 @@ const CalendarPage = () => {
         }}
       >
         <Toolbar />
-        <Box sx={{ p: 2 }}>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            Upcoming bookings
-          </Typography>
-          <Stack spacing={2}>
-            {upcomingEvents.map((event) => (
-              <Box
-                key={event.id}
-                sx={{
-                  p: 2,
-                  borderRadius: 1,
-                  bgcolor: (theme) => theme.palette.grey[200],
-                }}
-              >
-                <Typography variant="caption">
-                  {DateTime.fromJSDate(event.start).toFormat("t")}
-                </Typography>
-                <Typography variant="subtitle2">
-                  {event.booking.order.customer.firstName}{" "}
-                  {event.booking.order.customer.lastName}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  {event.offering.name} | {event.booking.numGuests} players
-                </Typography>
-                <Button variant="contained" fullWidth size="small">
-                  Check in
-                </Button>
-              </Box>
-            ))}
-          </Stack>
-        </Box>
+        <Box sx={{ p: 2 }}>{renderSidebar()}</Box>
       </Drawer>
     </Box>
   );

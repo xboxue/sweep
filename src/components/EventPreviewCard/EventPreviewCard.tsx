@@ -4,20 +4,26 @@ import { DateTime } from "luxon";
 import { Event } from "react-big-calendar";
 import { useNavigate } from "react-router-dom";
 import {
+  Booking,
+  CartBooking,
+  Offering,
+  TimeSlotBlock,
   useAddCartBookingsMutation,
   useCreateTimeSlotBlockMutation,
-  useGetMyCartQuery,
-  useRemoveTimeSlotBlockMutation,
   useRemoveCartBookingsMutation,
+  useRemoveTimeSlotBlockMutation,
 } from "../../generated/graphql";
 import TextField from "../common/TextField/TextField";
+import BookingDetailsForm from "../BookingDetailsForm/BookingDetailsForm";
 
 interface Props {
   event: Event & {
     resourceId: number;
     resourceTitle: string;
-    block: any;
-    cartBooking: any;
+    block: TimeSlotBlock;
+    cartBooking: CartBooking;
+    booking: Booking;
+    offering: Offering;
   };
   onCartChange: () => void;
   onBlockChange: () => void;
@@ -96,11 +102,10 @@ const EventPreviewCard = ({ event, onBlockChange, onCartChange }: Props) => {
               await addCartBookings({
                 variables: {
                   input: {
-                    // TODO: Fix
                     cartBookings: [
                       {
                         timeSlotId: event.id,
-                        numGuests: 2,
+                        numGuests: event.offering.minGuests,
                         offeringId: event.resourceId,
                       },
                     ],
@@ -131,8 +136,12 @@ const EventPreviewCard = ({ event, onBlockChange, onCartChange }: Props) => {
     );
   };
 
+  if (event.booking) {
+    return <BookingDetailsForm event={event} />;
+  }
+
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       <Box
         sx={{
           display: "flex",
@@ -148,13 +157,10 @@ const EventPreviewCard = ({ event, onBlockChange, onCartChange }: Props) => {
       <Typography>
         {DateTime.fromJSDate(event.start).toFormat("DDDD t")}
       </Typography>
+
       <Typography>Notes</Typography>
       <TextField multiline minRows={2} />
-      <Stack
-        spacing={1}
-        direction="row"
-        sx={{ justifyContent: "flex-end", mt: 1 }}
-      >
+      <Stack spacing={1} sx={{ mt: 1 }}>
         {renderActions(event)}
       </Stack>
     </Box>

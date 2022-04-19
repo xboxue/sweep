@@ -644,7 +644,7 @@ export type GetOfferingSchedulesQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, maxGuests: number, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, booking?: { __typename?: 'Booking', id: string, numGuests: number, order: { __typename?: 'Order', id: string, customer?: { __typename?: 'Customer', firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, email: string } | null } } | null, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
+export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', url: string, altText?: string | null }, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, booking?: { __typename?: 'Booking', id: string, numGuests: number, total: number, order: { __typename?: 'Order', id: string, subtotal: number, total: number, tax: number, customer?: { __typename?: 'Customer', firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, email: string } | null, transactions: Array<{ __typename?: 'Transaction', id: string, amount: number, createdAt: any }> } } | null, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
 
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1267,7 +1267,12 @@ export const GetOfferingSchedulesDocument = gql`
   offerings {
     id
     name
+    minGuests
     maxGuests
+    featuredImage {
+      url
+      altText
+    }
     timeSlots(date: $date) {
       id
       startDateTime
@@ -1275,13 +1280,22 @@ export const GetOfferingSchedulesDocument = gql`
       booking {
         id
         numGuests
+        total
         order {
           id
+          subtotal
+          total
+          tax
           customer {
             firstName
             lastName
             phoneNumber
             email
+          }
+          transactions {
+            id
+            amount
+            createdAt
           }
         }
       }

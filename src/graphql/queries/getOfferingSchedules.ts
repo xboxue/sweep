@@ -5,7 +5,12 @@ const GET_OFFERING_SCHEDULES = gql`
     offerings {
       id
       name
+      minGuests
       maxGuests
+      featuredImage {
+        url
+        altText
+      }
       timeSlots(date: $date) {
         id
         startDateTime
@@ -13,13 +18,22 @@ const GET_OFFERING_SCHEDULES = gql`
         booking {
           id
           numGuests
+          total
           order {
             id
+            subtotal
+            total
+            tax
             customer {
               firstName
               lastName
               phoneNumber
               email
+            }
+            transactions {
+              id
+              amount
+              createdAt
             }
           }
         }
