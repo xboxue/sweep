@@ -1,17 +1,21 @@
-import { PersonOutline, ShoppingCartOutlined } from "@mui/icons-material";
+import {
+  CreditCardOutlined,
+  PersonOutline,
+  ShoppingCartOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { Booking, Customer, Offering } from "../../generated/graphql";
+import { Order } from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
-import OrderCustomerForm from "./OrderCustomerForm";
 import ExperiencesForm from "./ExperiencesForm";
+import OrderCustomerForm from "./OrderCustomerForm";
+import OrderPaymentSummary from "./OrderPaymentSummary";
 
 interface Props {
   title: string;
-  customer?: Customer;
-  bookings: Booking[];
+  order: Order;
 }
 
-const OrderForm = ({ title, customer, bookings }: Props) => {
+const OrderForm = ({ title, order }: Props) => {
   const navigate = useNavigate();
 
   const sections = [
@@ -19,13 +23,19 @@ const OrderForm = ({ title, customer, bookings }: Props) => {
       title: "Experiences",
       description: "Add experiences to the booking.",
       Icon: ShoppingCartOutlined,
-      children: <ExperiencesForm bookings={bookings} />,
+      children: <ExperiencesForm bookings={order.bookings} />,
     },
     {
       title: "Customer",
       description: "Add information about your customer.",
       Icon: PersonOutline,
-      children: <OrderCustomerForm customer={customer} />,
+      children: <OrderCustomerForm customer={order.customer} />,
+    },
+    {
+      title: "Payment",
+      description: "Payment information",
+      Icon: CreditCardOutlined,
+      children: <OrderPaymentSummary order={order} />,
     },
   ];
 

@@ -30,6 +30,11 @@ const GET_ORDER = gql`
           }
         }
       }
+      transactions {
+        id
+        amount
+        createdAt
+      }
       customer {
         id
         firstName

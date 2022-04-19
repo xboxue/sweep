@@ -86,11 +86,7 @@ const OrderDetailsForm = () => {
               setDiscardDialogOpen(false);
             }}
           />
-          <OrderForm
-            title={`Order #${id}`}
-            customer={data?.order.customer}
-            bookings={data?.order.bookings}
-          />
+          <OrderForm title={`Order #${id}`} order={data?.order} />
 
           {formik.dirty && (
             <SaveBar
