@@ -1,5 +1,7 @@
-import { Box, Button, Chip, Paper, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Paper, Skeleton, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { DateTime } from "luxon";
+import pluralize from "pluralize";
 import { useNavigate } from "react-router-dom";
 import { useGetOrdersQuery } from "../generated/graphql";
 
@@ -31,14 +33,38 @@ const OrdersPage = () => {
             {
               field: "id",
               headerName: "Order",
-              valueGetter: (params) => `#${params.value}`,
-              flex: 1,
+              valueFormatter: (params) => `#${params.value}`,
             },
-            // {
-            //   field: "status",
-            //   headerName: "Status",
-            //   renderCell: (params) => <Chip label={params.value} />,
-            // },
+            {
+              field: "createdAt",
+              headerName: "Date",
+              valueFormatter: (params) =>
+                DateTime.fromISO(params.value).toFormat("MMM d, t"),
+              width: 150,
+            },
+            {
+              field: "customer",
+              headerName: "Customer",
+              valueGetter: (params) =>
+                `${params.value.firstName} ${params.value.lastName}`,
+              width: 150,
+            },
+            {
+              field: "total",
+              headerName: "Total",
+              valueFormatter: (params) => `$${(params.value / 100).toFixed(2)}`,
+              width: 100,
+            },
+            {
+              field: "bookings",
+              headerName: "Bookings",
+              valueGetter: (params) =>
+                `${params.value.length} ${pluralize(
+                  "booking",
+                  params.value.length
+                )}`,
+              width: 100,
+            },
           ]}
           autoHeight
           // pageSize={5}

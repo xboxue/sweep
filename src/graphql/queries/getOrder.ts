@@ -6,9 +6,13 @@ const GET_ORDER = gql`
       id
       createdAt
       updatedAt
+      subtotal
+      tax
+      total
       bookings {
         id
         numGuests
+        total
         timeSlot {
           id
           startDateTime
@@ -17,6 +21,8 @@ const GET_ORDER = gql`
         offering {
           id
           name
+          minGuests
+          maxGuests
           featuredImage {
             id
             url

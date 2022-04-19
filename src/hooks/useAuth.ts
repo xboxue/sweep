@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/auth/authSlice";
-import { onAuthStateChanged } from "../services/firebase";
+import { onAuthStateChanged, onIdTokenChanged } from "../services/firebase";
 
 const useAuth = () => {
   const dispatch = useDispatch();
@@ -26,6 +26,17 @@ const useAuth = () => {
 
     return unsubscribe;
   }, [dispatch]);
+
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        localStorage.setItem("token", token);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 };
 
 export default useAuth;

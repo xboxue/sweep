@@ -35,6 +35,7 @@ export type Booking = {
   offering: Offering;
   order: Order;
   timeSlot: TimeSlot;
+  total: Scalars['Int'];
 };
 
 export type BookingInput = {
@@ -357,6 +358,10 @@ export type Order = {
   createdAt: Scalars['DateTime'];
   customer?: Maybe<Customer>;
   id: Scalars['ID'];
+  subtotal: Scalars['Int'];
+  tax: Scalars['Int'];
+  total: Scalars['Int'];
+  transactions: Array<Transaction>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -377,7 +382,6 @@ export enum PricingType {
 
 export type Query = {
   __typename?: 'Query';
-  booking: Booking;
   business: Business;
   customer: Customer;
   customers: Array<Customer>;
@@ -386,11 +390,6 @@ export type Query = {
   offerings: Array<Offering>;
   order: Order;
   orders: Array<Order>;
-};
-
-
-export type QueryBookingArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -475,6 +474,15 @@ export type TimeSlotBlock = {
   __typename?: 'TimeSlotBlock';
   id: Scalars['ID'];
   timeSlot: TimeSlot;
+};
+
+export type Transaction = {
+  __typename?: 'Transaction';
+  amount: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  currency: Scalars['String'];
+  id: Scalars['ID'];
+  order: Order;
 };
 
 export type UpdateCartBookingInput = {
@@ -648,12 +656,12 @@ export type GetOrderQueryVariables = Exact<{
 }>;
 
 
-export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
+export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, subtotal: number, tax: number, total: number, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
 
 export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', id: string, createdAt: any, updatedAt: any, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null }> };
+export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', id: string, createdAt: any, updatedAt: any, total: number, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, offering: { __typename?: 'Offering', id: string, name: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null }> };
 
 
 export const AddCartBookingsDocument = gql`
@@ -1375,9 +1383,13 @@ export const GetOrderDocument = gql`
     id
     createdAt
     updatedAt
+    subtotal
+    tax
+    total
     bookings {
       id
       numGuests
+      total
       timeSlot {
         id
         startDateTime
@@ -1386,6 +1398,8 @@ export const GetOrderDocument = gql`
       offering {
         id
         name
+        minGuests
+        maxGuests
         featuredImage {
           id
           url
@@ -1437,6 +1451,7 @@ export const GetOrdersDocument = gql`
     id
     createdAt
     updatedAt
+    total
     bookings {
       id
       numGuests

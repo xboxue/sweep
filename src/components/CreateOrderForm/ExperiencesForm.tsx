@@ -37,24 +37,20 @@ const ExperiencesForm = ({ bookings }: Props) => {
       field: "timeSlot",
       headerName: "Date",
       width: 250,
-      valueGetter: (params) =>
-        DateTime.fromISO(params.value.startDateTime).toFormat("DDDD t"),
+      valueGetter: (params) => params.value.startDateTime,
+      valueFormatter: (params) =>
+        DateTime.fromISO(params.value).toFormat("DDDD t"),
     },
 
     {
       field: "numGuests",
       headerName: "Guests",
     },
-    // {
-    // field: "total",
-    // headerName: "Total",
-    // valueGetter: (params) => {
-    //   return offering?.pricingType === PricingType.PerPerson
-    //     ? (offering?.pricePerPerson / 100) * params.row.numGuests
-    //     : offering?.priceTotalAmount / 100;
-    // },
-    // valueFormatter: (params) => `$${params.value}`,
-    // },
+    {
+      field: "total",
+      headerName: "Total",
+      valueFormatter: (params) => `$${(params.value / 100).toFixed(2)}`,
+    },
   ];
 
   return (
