@@ -17,6 +17,7 @@ const OrderDetailsForm = () => {
 
   const { loading, error, data, refetch } = useGetOrderQuery({
     variables: { id },
+    fetchPolicy: "network-only",
   });
   // const { loading: loadingOfferings, data: offeringsData } =
   //   useGetOfferingSchedulesQuery();

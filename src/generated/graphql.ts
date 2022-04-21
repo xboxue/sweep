@@ -38,17 +38,37 @@ export type Booking = {
   total: Scalars['Int'];
 };
 
-export type BookingInput = {
+export type Business = {
+  __typename?: 'Business';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type CalculatedBooking = {
+  __typename?: 'CalculatedBooking';
+  id: Scalars['ID'];
+  numGuests: Scalars['Int'];
+  offering: Offering;
+  timeSlot: TimeSlot;
+  total: Scalars['Int'];
+};
+
+export type CalculatedBookingInput = {
   id?: InputMaybe<Scalars['ID']>;
   numGuests: Scalars['Int'];
   offeringId: Scalars['ID'];
   timeSlotId: Scalars['ID'];
 };
 
-export type Business = {
-  __typename?: 'Business';
+export type CalculatedOrder = {
+  __typename?: 'CalculatedOrder';
+  calculatedBookings: Array<CalculatedBooking>;
+  createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  name: Scalars['String'];
+  subtotal: Scalars['Int'];
+  tax: Scalars['Int'];
+  total: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type Cart = {
@@ -172,6 +192,54 @@ export enum DurationFormat {
   Minute = 'MINUTE'
 }
 
+export type EditOrderAddBookingsInput = {
+  calculatedBookings: Array<CalculatedBookingInput>;
+  id: Scalars['ID'];
+};
+
+export type EditOrderAddBookingsPayload = {
+  __typename?: 'EditOrderAddBookingsPayload';
+  calculatedOrder?: Maybe<CalculatedOrder>;
+};
+
+export type EditOrderBeginInput = {
+  orderId: Scalars['ID'];
+};
+
+export type EditOrderBeginPayload = {
+  __typename?: 'EditOrderBeginPayload';
+  calculatedOrder?: Maybe<CalculatedOrder>;
+};
+
+export type EditOrderCommitInput = {
+  id: Scalars['ID'];
+};
+
+export type EditOrderCommitPayload = {
+  __typename?: 'EditOrderCommitPayload';
+  order?: Maybe<Order>;
+};
+
+export type EditOrderRemoveBookingsInput = {
+  calculatedBookingIds: Array<Scalars['ID']>;
+  id: Scalars['ID'];
+};
+
+export type EditOrderRemoveBookingsPayload = {
+  __typename?: 'EditOrderRemoveBookingsPayload';
+  calculatedOrder?: Maybe<CalculatedOrder>;
+};
+
+export type EditOrderUpdateBookingsInput = {
+  calculatedBookings: Array<UpdateCalculatedBookingInput>;
+  id: Scalars['ID'];
+};
+
+export type EditOrderUpdateBookingsPayload = {
+  __typename?: 'EditOrderUpdateBookingsPayload';
+  calculatedOrder?: Maybe<CalculatedOrder>;
+};
+
 export type FileUploadUrl = {
   __typename?: 'FileUploadUrl';
   fields: Scalars['JSON'];
@@ -215,6 +283,11 @@ export type Mutation = {
   createOrder: CreateOrderPayload;
   createTimeSlotBlock: CreateTimeSlotBlockPayload;
   createUser: CreateUserPayload;
+  editOrderAddBookings: EditOrderAddBookingsPayload;
+  editOrderBegin: EditOrderBeginPayload;
+  editOrderCommit: EditOrderCommitPayload;
+  editOrderRemoveBookings: EditOrderRemoveBookingsPayload;
+  editOrderUpdateBookings: EditOrderUpdateBookingsPayload;
   removeCartBookings: RemoveCartBookingsPayload;
   removeTimeSlotBlock: RemoveTimeSlotBlockPayload;
   updateCartBookings: UpdateCartBookingsPayload;
@@ -259,6 +332,31 @@ export type MutationCreateTimeSlotBlockArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationEditOrderAddBookingsArgs = {
+  input: EditOrderAddBookingsInput;
+};
+
+
+export type MutationEditOrderBeginArgs = {
+  input: EditOrderBeginInput;
+};
+
+
+export type MutationEditOrderCommitArgs = {
+  input: EditOrderCommitInput;
+};
+
+
+export type MutationEditOrderRemoveBookingsArgs = {
+  input: EditOrderRemoveBookingsInput;
+};
+
+
+export type MutationEditOrderUpdateBookingsArgs = {
+  input: EditOrderUpdateBookingsInput;
 };
 
 
@@ -485,6 +583,11 @@ export type Transaction = {
   order: Order;
 };
 
+export type UpdateCalculatedBookingInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  numGuests: Scalars['Int'];
+};
+
 export type UpdateCartBookingInput = {
   id?: InputMaybe<Scalars['ID']>;
   numGuests: Scalars['Int'];
@@ -591,6 +694,34 @@ export type CreateUserMutationVariables = Exact<{
 
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'CreateUserPayload', user?: { __typename?: 'User', uid: string } | null } };
+
+export type EditOrderBeginMutationVariables = Exact<{
+  input: EditOrderBeginInput;
+}>;
+
+
+export type EditOrderBeginMutation = { __typename?: 'Mutation', editOrderBegin: { __typename?: 'EditOrderBeginPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
+
+export type EditOrderCommitMutationVariables = Exact<{
+  input: EditOrderCommitInput;
+}>;
+
+
+export type EditOrderCommitMutation = { __typename?: 'Mutation', editOrderCommit: { __typename?: 'EditOrderCommitPayload', order?: { __typename?: 'Order', id: string } | null } };
+
+export type EditOrderRemoveBookingsMutationVariables = Exact<{
+  input: EditOrderRemoveBookingsInput;
+}>;
+
+
+export type EditOrderRemoveBookingsMutation = { __typename?: 'Mutation', editOrderRemoveBookings: { __typename?: 'EditOrderRemoveBookingsPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
+
+export type EditOrderUpdateBookingsMutationVariables = Exact<{
+  input: EditOrderUpdateBookingsInput;
+}>;
+
+
+export type EditOrderUpdateBookingsMutation = { __typename?: 'Mutation', editOrderUpdateBookings: { __typename?: 'EditOrderUpdateBookingsPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
 
 export type RemoveCartBookingsMutationVariables = Exact<{
   input: RemoveCartBookingsInput;
@@ -953,6 +1084,218 @@ export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
+export const EditOrderBeginDocument = gql`
+    mutation editOrderBegin($input: EditOrderBeginInput!) {
+  editOrderBegin(input: $input) {
+    calculatedOrder {
+      id
+      subtotal
+      tax
+      total
+      calculatedBookings {
+        id
+        numGuests
+        total
+        timeSlot {
+          id
+          startDateTime
+          endDateTime
+        }
+        offering {
+          id
+          name
+          minGuests
+          maxGuests
+          featuredImage {
+            id
+            url
+            altText
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type EditOrderBeginMutationFn = Apollo.MutationFunction<EditOrderBeginMutation, EditOrderBeginMutationVariables>;
+
+/**
+ * __useEditOrderBeginMutation__
+ *
+ * To run a mutation, you first call `useEditOrderBeginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditOrderBeginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editOrderBeginMutation, { data, loading, error }] = useEditOrderBeginMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditOrderBeginMutation(baseOptions?: Apollo.MutationHookOptions<EditOrderBeginMutation, EditOrderBeginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditOrderBeginMutation, EditOrderBeginMutationVariables>(EditOrderBeginDocument, options);
+      }
+export type EditOrderBeginMutationHookResult = ReturnType<typeof useEditOrderBeginMutation>;
+export type EditOrderBeginMutationResult = Apollo.MutationResult<EditOrderBeginMutation>;
+export type EditOrderBeginMutationOptions = Apollo.BaseMutationOptions<EditOrderBeginMutation, EditOrderBeginMutationVariables>;
+export const EditOrderCommitDocument = gql`
+    mutation editOrderCommit($input: EditOrderCommitInput!) {
+  editOrderCommit(input: $input) {
+    order {
+      id
+    }
+  }
+}
+    `;
+export type EditOrderCommitMutationFn = Apollo.MutationFunction<EditOrderCommitMutation, EditOrderCommitMutationVariables>;
+
+/**
+ * __useEditOrderCommitMutation__
+ *
+ * To run a mutation, you first call `useEditOrderCommitMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditOrderCommitMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editOrderCommitMutation, { data, loading, error }] = useEditOrderCommitMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditOrderCommitMutation(baseOptions?: Apollo.MutationHookOptions<EditOrderCommitMutation, EditOrderCommitMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditOrderCommitMutation, EditOrderCommitMutationVariables>(EditOrderCommitDocument, options);
+      }
+export type EditOrderCommitMutationHookResult = ReturnType<typeof useEditOrderCommitMutation>;
+export type EditOrderCommitMutationResult = Apollo.MutationResult<EditOrderCommitMutation>;
+export type EditOrderCommitMutationOptions = Apollo.BaseMutationOptions<EditOrderCommitMutation, EditOrderCommitMutationVariables>;
+export const EditOrderRemoveBookingsDocument = gql`
+    mutation editOrderRemoveBookings($input: EditOrderRemoveBookingsInput!) {
+  editOrderRemoveBookings(input: $input) {
+    calculatedOrder {
+      id
+      subtotal
+      tax
+      total
+      calculatedBookings {
+        id
+        numGuests
+        total
+        timeSlot {
+          id
+          startDateTime
+          endDateTime
+        }
+        offering {
+          id
+          name
+          minGuests
+          maxGuests
+          featuredImage {
+            id
+            url
+            altText
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type EditOrderRemoveBookingsMutationFn = Apollo.MutationFunction<EditOrderRemoveBookingsMutation, EditOrderRemoveBookingsMutationVariables>;
+
+/**
+ * __useEditOrderRemoveBookingsMutation__
+ *
+ * To run a mutation, you first call `useEditOrderRemoveBookingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditOrderRemoveBookingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editOrderRemoveBookingsMutation, { data, loading, error }] = useEditOrderRemoveBookingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditOrderRemoveBookingsMutation(baseOptions?: Apollo.MutationHookOptions<EditOrderRemoveBookingsMutation, EditOrderRemoveBookingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditOrderRemoveBookingsMutation, EditOrderRemoveBookingsMutationVariables>(EditOrderRemoveBookingsDocument, options);
+      }
+export type EditOrderRemoveBookingsMutationHookResult = ReturnType<typeof useEditOrderRemoveBookingsMutation>;
+export type EditOrderRemoveBookingsMutationResult = Apollo.MutationResult<EditOrderRemoveBookingsMutation>;
+export type EditOrderRemoveBookingsMutationOptions = Apollo.BaseMutationOptions<EditOrderRemoveBookingsMutation, EditOrderRemoveBookingsMutationVariables>;
+export const EditOrderUpdateBookingsDocument = gql`
+    mutation editOrderUpdateBookings($input: EditOrderUpdateBookingsInput!) {
+  editOrderUpdateBookings(input: $input) {
+    calculatedOrder {
+      id
+      subtotal
+      tax
+      total
+      calculatedBookings {
+        id
+        numGuests
+        total
+        timeSlot {
+          id
+          startDateTime
+          endDateTime
+        }
+        offering {
+          id
+          name
+          minGuests
+          maxGuests
+          featuredImage {
+            id
+            url
+            altText
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type EditOrderUpdateBookingsMutationFn = Apollo.MutationFunction<EditOrderUpdateBookingsMutation, EditOrderUpdateBookingsMutationVariables>;
+
+/**
+ * __useEditOrderUpdateBookingsMutation__
+ *
+ * To run a mutation, you first call `useEditOrderUpdateBookingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditOrderUpdateBookingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editOrderUpdateBookingsMutation, { data, loading, error }] = useEditOrderUpdateBookingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditOrderUpdateBookingsMutation(baseOptions?: Apollo.MutationHookOptions<EditOrderUpdateBookingsMutation, EditOrderUpdateBookingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditOrderUpdateBookingsMutation, EditOrderUpdateBookingsMutationVariables>(EditOrderUpdateBookingsDocument, options);
+      }
+export type EditOrderUpdateBookingsMutationHookResult = ReturnType<typeof useEditOrderUpdateBookingsMutation>;
+export type EditOrderUpdateBookingsMutationResult = Apollo.MutationResult<EditOrderUpdateBookingsMutation>;
+export type EditOrderUpdateBookingsMutationOptions = Apollo.BaseMutationOptions<EditOrderUpdateBookingsMutation, EditOrderUpdateBookingsMutationVariables>;
 export const RemoveCartBookingsDocument = gql`
     mutation removeCartBookings($input: RemoveCartBookingsInput!) {
   removeCartBookings(input: $input) {

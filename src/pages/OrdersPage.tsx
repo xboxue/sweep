@@ -8,7 +8,9 @@ import { useGetOrdersQuery } from "../generated/graphql";
 const OrdersPage = () => {
   const navigate = useNavigate();
 
-  const { loading, error, data } = useGetOrdersQuery();
+  const { loading, error, data } = useGetOrdersQuery({
+    fetchPolicy: "network-only",
+  });
 
   if (loading) return <Skeleton />;
 

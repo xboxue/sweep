@@ -1,6 +1,7 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Cart } from "../../generated/public/graphql";
 import CartItemList from "../CartItemList/CartItemList";
+import PaymentSummary from "../common/PaymentSummary/PaymenSummary";
 
 interface Props {
   editable: boolean;
@@ -24,21 +25,11 @@ const CartSummaryCard = ({ cart, editable, onUpdate }: Props) => {
         <Typography variant="subtitle1" mt={1}>
           Pricing details
         </Typography>
-
-        {[
-          { label: "Subtotal", value: cart.subtotal },
-          { label: "Taxes", value: cart.tax },
-          { label: "Total", value: cart.total, variant: "subtitle1" },
-        ].map(({ label, value, ...props }) => (
-          <Box display="flex" justifyContent="space-between" key={label}>
-            <Typography variant="body2" {...props}>
-              {label}
-            </Typography>
-            <Typography variant="body2" {...props}>
-              ${(value / 100).toFixed(2)}
-            </Typography>
-          </Box>
-        ))}
+        <PaymentSummary
+          tax={cart.tax}
+          total={cart.total}
+          subtotal={cart.subtotal}
+        />
       </Stack>
     </>
   );

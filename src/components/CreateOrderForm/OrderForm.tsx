@@ -3,10 +3,12 @@ import {
   PersonOutline,
   ShoppingCartOutlined,
 } from "@mui/icons-material";
+import { Button, Stack } from "@mui/material";
+import { sortBy } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { Order } from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
-import ExperiencesForm from "./ExperiencesForm";
+import CartItem from "../CartItem/CartItem";
 import OrderCustomerForm from "./OrderCustomerForm";
 import OrderPaymentSummary from "./OrderPaymentSummary";
 
@@ -23,7 +25,13 @@ const OrderForm = ({ title, order }: Props) => {
       title: "Experiences",
       description: "Add experiences to the booking.",
       Icon: ShoppingCartOutlined,
-      children: <ExperiencesForm bookings={order.bookings} />,
+      children: (
+        <Stack spacing={2} sx={{ maxWidth: 400 }}>
+          {sortBy(order.bookings, "id").map((booking) => (
+            <CartItem key={booking.id} cartBooking={booking} editable={false} />
+          ))}
+        </Stack>
+      ),
     },
     {
       title: "Customer",
@@ -35,16 +43,22 @@ const OrderForm = ({ title, order }: Props) => {
       title: "Payment",
       description: "Payment information",
       Icon: CreditCardOutlined,
-      children: <OrderPaymentSummary order={order} />,
+      children: (
+        <OrderPaymentSummary order={order} transactions={order.transactions} />
+      ),
     },
   ];
 
   return (
     <FormLayout
       title={title}
-      onBack={() => navigate(-1)}
+      onBack={() => navigate("/orders")}
       sections={sections}
-      //   error={error}
+      headerComponent={
+        <Button sx={{ ml: "auto" }} onClick={() => navigate("edit")}>
+          Edit
+        </Button>
+      }
     />
   );
 };
