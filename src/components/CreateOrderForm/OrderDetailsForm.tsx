@@ -87,7 +87,11 @@ const OrderDetailsForm = () => {
               setDiscardDialogOpen(false);
             }}
           />
-          <OrderForm title={`Order #${id}`} order={data?.order} />
+          <OrderForm
+            title={`Order #${id}`}
+            order={data?.order}
+            onPaymentSuccess={refetch}
+          />
 
           {formik.dirty && (
             <SaveBar

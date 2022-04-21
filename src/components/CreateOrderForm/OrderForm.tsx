@@ -15,9 +15,10 @@ import OrderPaymentSummary from "./OrderPaymentSummary";
 interface Props {
   title: string;
   order: Order;
+  onPaymentSuccess: () => void;
 }
 
-const OrderForm = ({ title, order }: Props) => {
+const OrderForm = ({ title, order, onPaymentSuccess }: Props) => {
   const navigate = useNavigate();
 
   const sections = [
@@ -44,7 +45,11 @@ const OrderForm = ({ title, order }: Props) => {
       description: "Payment information",
       Icon: CreditCardOutlined,
       children: (
-        <OrderPaymentSummary order={order} transactions={order.transactions} />
+        <OrderPaymentSummary
+          order={order}
+          transactions={order.transactions}
+          onPaymentSuccess={onPaymentSuccess}
+        />
       ),
     },
   ];

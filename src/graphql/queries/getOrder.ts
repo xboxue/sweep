@@ -9,6 +9,7 @@ const GET_ORDER = gql`
       subtotal
       tax
       total
+      stripeClientSecret
       bookings {
         id
         numGuests

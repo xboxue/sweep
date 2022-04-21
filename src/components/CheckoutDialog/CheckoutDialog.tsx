@@ -12,7 +12,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { useCallback, useEffect, useState } from "react";
 import { useGetMyCartQuery } from "../../generated/graphql";
 import { useUpdateCartEmailMutation } from "../../generated/public/graphql";
-import theme from "../../styles/theme";
+import stripeTheme from "../../styles/stripeTheme";
 import getStripe from "../../utils/getStripe";
 import CartSummaryCard from "../CartSummaryCard/CartSummaryCard";
 import CheckoutInfoForm from "../CheckoutInfoForm/CheckoutInfoForm";
@@ -113,18 +113,8 @@ const CheckoutDialog = ({ open, onClose }: Props) => {
       <Elements
         stripe={getStripe()}
         options={{
-          fonts: [
-            {
-              family: "Roboto",
-              cssSrc:
-                "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap",
-            },
-          ],
+          ...stripeTheme,
           clientSecret: cart.stripeClientSecret,
-          appearance: {
-            variables: { fontFamily: theme.typography.fontFamily },
-            rules: { ".Label": { ...theme.typography.subtitle2 } },
-          },
         }}
       >
         <Box sx={{ flex: 1 }}>
