@@ -47,7 +47,6 @@ const OrderForm = ({ title, order, onPaymentSuccess }: Props) => {
       children: (
         <OrderPaymentSummary
           order={order}
-          transactions={order.transactions}
           onPaymentSuccess={onPaymentSuccess}
         />
       ),

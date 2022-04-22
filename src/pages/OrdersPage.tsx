@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Chip, Paper, Skeleton, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { DateTime } from "luxon";
 import pluralize from "pluralize";
@@ -66,6 +66,29 @@ const OrdersPage = () => {
                   params.value.length
                 )}`,
               width: 100,
+            },
+            {
+              field: "totalPaid",
+              headerName: "Payment status",
+              valueGetter: (params) => {
+                if (params.value < params.row.total) {
+                  if (params.value === 0) return "Unpaid";
+                  return "Partially paid";
+                }
+                return "Paid";
+              },
+              renderCell: (params) => (
+                <Chip
+                  label={params.value}
+                  size="small"
+                  sx={{
+                    ...(params.value !== "Paid" && {
+                      bgcolor: "rgba(255, 215, 157, 1)",
+                    }),
+                  }}
+                />
+              ),
+              width: 150,
             },
           ]}
           autoHeight

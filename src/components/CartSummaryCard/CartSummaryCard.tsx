@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Cart } from "../../generated/public/graphql";
 import CartItemList from "../CartItemList/CartItemList";
-import PaymentSummary from "../common/PaymentSummary/PaymenSummary";
+import PaymentSummary from "../common/PaymentSummary/PaymentSummary";
 
 interface Props {
   editable: boolean;

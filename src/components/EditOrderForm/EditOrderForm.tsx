@@ -13,10 +13,10 @@ import {
 } from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
 import CartItem from "../CartItem/CartItem";
+import PaymentSummary from "../common/PaymentSummary/PaymentSummary";
 import SaveBar from "../common/SaveBar/SaveBar";
-import OrderPaymentSummary from "../CreateOrderForm/OrderPaymentSummary";
 
-const OrderForm = () => {
+const EditOrderForm = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { loading, error, data } = useGetOrderQuery({
@@ -108,10 +108,14 @@ const OrderForm = () => {
       description: "Payment summary",
       Icon: CreditCardOutlined,
       children: (
-        <OrderPaymentSummary
-          order={calculatedOrder}
-          transactions={data?.order.transactions}
-        />
+        <Stack spacing={1}>
+          <PaymentSummary
+            tax={calculatedOrder.tax}
+            subtotal={calculatedOrder.subtotal}
+            total={calculatedOrder.total}
+            totalPaid={data?.order.totalPaid}
+          />
+        </Stack>
       ),
     },
   ];
@@ -145,4 +149,4 @@ const OrderForm = () => {
   );
 };
 
-export default OrderForm;
+export default EditOrderForm;

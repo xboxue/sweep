@@ -9,6 +9,7 @@ const GET_ORDER = gql`
       subtotal
       tax
       total
+      totalPaid
       stripeClientSecret
       bookings {
         id
@@ -35,6 +36,13 @@ const GET_ORDER = gql`
         id
         amount
         createdAt
+        creditCard {
+          id
+          lastDigits
+          expiryMonth
+          expiryYear
+          brand
+        }
       }
       customer {
         id
