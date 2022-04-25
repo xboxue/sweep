@@ -1,6 +1,6 @@
 import { Box, Skeleton } from "@mui/material";
 import { Formik, FormikConfig } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetOrderQuery } from "../../generated/graphql";
 import FormDiscardDialog from "../common/FormDiscardDialog/FormDiscardDialog";
@@ -12,26 +12,26 @@ const OrderDetailsForm = () => {
   const { id } = useParams();
 
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
-  // const [updateOrder, { loading: updating, error: updateError }] =
-  //   useUpdateOrderMutation();
 
-  const { loading, error, data, refetch } = useGetOrderQuery({
-    variables: { id },
-    fetchPolicy: "network-only",
+  const { loading, error, data, startPolling, stopPolling, previousData } =
+    useGetOrderQuery({
+      variables: { id },
+      fetchPolicy: "network-only",
+    });
+
+  useEffect(() => {
+    if (
+      previousData &&
+      previousData.order.transactions.length + 1 ===
+        data?.order.transactions.length
+    ) {
+      stopPolling();
+    }
   });
-  // const { loading: loadingOfferings, data: offeringsData } =
-  //   useGetOfferingSchedulesQuery();
 
   if (loading) return <Skeleton />;
 
   const initialValues = {
-    // bookings: data?.order.bookings.map((booking) => ({
-    //   id: booking.id,
-    //   offeringId: booking.offering.id,
-    //   date: DateTime.fromISO(booking.startDateTime).startOf("day"),
-    //   time: DateTime.fromISO(booking.startDateTime).toFormat("HH:mm:ss"),
-    //   numGuests: booking.numGuests,
-    // })),
     customerId: data?.order.customer?.id,
   };
 
@@ -90,7 +90,9 @@ const OrderDetailsForm = () => {
           <OrderForm
             title={`Order #${id}`}
             order={data?.order}
-            onPaymentSuccess={refetch}
+            onPaymentSuccess={() => {
+              startPolling(1000);
+            }}
           />
 
           {formik.dirty && (
