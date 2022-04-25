@@ -1,17 +1,24 @@
-import { PersonOutline, ShoppingCartOutlined } from "@mui/icons-material";
+import {
+  CreditCardOutlined,
+  PersonOutline,
+  ShoppingCartOutlined,
+} from "@mui/icons-material";
+import { Button, Stack } from "@mui/material";
+import { sortBy } from "lodash";
 import { useNavigate } from "react-router-dom";
-import { Booking, Customer, Offering } from "../../generated/graphql";
+import { Order } from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
+import CartItem from "../CartItem/CartItem";
 import OrderCustomerForm from "./OrderCustomerForm";
-import ExperiencesForm from "./ExperiencesForm";
+import OrderPaymentSummary from "./OrderPaymentSummary";
 
 interface Props {
   title: string;
-  customer?: Customer;
-  bookings: Booking[];
+  order: Order;
+  onPaymentSuccess: () => void;
 }
 
-const OrderForm = ({ title, customer, bookings }: Props) => {
+const OrderForm = ({ title, order, onPaymentSuccess }: Props) => {
   const navigate = useNavigate();
 
   const sections = [
@@ -19,22 +26,43 @@ const OrderForm = ({ title, customer, bookings }: Props) => {
       title: "Experiences",
       description: "Add experiences to the booking.",
       Icon: ShoppingCartOutlined,
-      children: <ExperiencesForm bookings={bookings} />,
+      children: (
+        <Stack spacing={2} sx={{ maxWidth: 400 }}>
+          {sortBy(order.bookings, "id").map((booking) => (
+            <CartItem key={booking.id} cartBooking={booking} editable={false} />
+          ))}
+        </Stack>
+      ),
     },
     {
       title: "Customer",
       description: "Add information about your customer.",
       Icon: PersonOutline,
-      children: <OrderCustomerForm customer={customer} />,
+      children: <OrderCustomerForm customer={order.customer} />,
+    },
+    {
+      title: "Payment",
+      description: "Payment information",
+      Icon: CreditCardOutlined,
+      children: (
+        <OrderPaymentSummary
+          order={order}
+          onPaymentSuccess={onPaymentSuccess}
+        />
+      ),
     },
   ];
 
   return (
     <FormLayout
       title={title}
-      onBack={() => navigate(-1)}
+      onBack={() => navigate("/orders")}
       sections={sections}
-      //   error={error}
+      headerComponent={
+        <Button sx={{ ml: "auto" }} onClick={() => navigate("edit")}>
+          Edit
+        </Button>
+      }
     />
   );
 };

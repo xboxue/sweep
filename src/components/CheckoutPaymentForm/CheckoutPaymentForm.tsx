@@ -1,41 +1,16 @@
 import { ArrowBackIosNew } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Button, Typography } from "@mui/material";
-import {
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
-import { useState } from "react";
+import { Alert, Button } from "@mui/material";
+import { PaymentElement } from "@stripe/react-stripe-js";
+import useStripePayment from "../../hooks/useStripePayment";
 
-const CheckoutPaymentForm = ({ onBack, onSuccess }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+interface Props {
+  onBack: () => void;
+  onSuccess: () => void;
+}
 
-  const handleSubmit = async (user) => {
-    if (!stripe || !elements) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await stripe.confirmPayment({
-        elements,
-        confirmParams: { return_url: "" },
-        redirect: "if_required",
-      });
-
-      if (result.error) {
-        setError(result.error.message);
-      } else if (result.paymentIntent.status === "succeeded") {
-        onSuccess();
-      }
-    } catch (err) {
-      setError("Something went wrong");
-    }
-    setLoading(false);
-  };
+const CheckoutPaymentForm = ({ onBack, onSuccess }: Props) => {
+  const [confirmPayment, { loading, error }] = useStripePayment(onSuccess);
 
   return (
     <>
@@ -57,7 +32,7 @@ const CheckoutPaymentForm = ({ onBack, onSuccess }) => {
         size="large"
         variant="contained"
         fullWidth
-        onClick={handleSubmit}
+        onClick={confirmPayment}
         sx={{ mt: 3 }}
         loading={loading}
       >

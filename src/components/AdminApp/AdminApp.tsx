@@ -16,6 +16,7 @@ import SignUpPage from "../../pages/SignUpPage";
 import CreateOfferingForm from "../CreateOfferingForm/CreateOfferingForm";
 import OfferingDetailsForm from "../CreateOfferingForm/OfferingDetailsForm";
 import CreateOrderForm from "../CreateOrderForm/CreateOrderForm";
+import EditOrderForm from "../EditOrderForm/EditOrderForm";
 import OrderDetailsForm from "../CreateOrderForm/OrderDetailsForm";
 
 const AdminApp = () => {
@@ -65,6 +66,14 @@ const AdminApp = () => {
             element={
               <Box mx="auto" maxWidth="960px">
                 <OrderDetailsForm />
+              </Box>
+            }
+          />
+          <Route
+            path="orders/:id/edit"
+            element={
+              <Box mx="auto" maxWidth="960px">
+                <EditOrderForm />
               </Box>
             }
           />

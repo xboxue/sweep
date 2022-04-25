@@ -3,10 +3,11 @@ import { AppBar, Button, Toolbar } from "@mui/material";
 
 interface Props {
   onDiscard: () => void;
-  loading: boolean;
+  onSave?: () => void;
+  loading?: boolean;
 }
 
-const SaveBar = ({ onDiscard, loading }: Props) => {
+const SaveBar = ({ onDiscard, loading = false, onSave }: Props) => {
   return (
     <>
       <AppBar
@@ -21,7 +22,12 @@ const SaveBar = ({ onDiscard, loading }: Props) => {
           <Button onClick={onDiscard} sx={{ ml: "auto" }}>
             Discard
           </Button>
-          <LoadingButton loading={loading} variant="contained" type="submit">
+          <LoadingButton
+            loading={loading}
+            variant="contained"
+            type="submit"
+            onClick={onSave}
+          >
             Save
           </LoadingButton>
         </Toolbar>

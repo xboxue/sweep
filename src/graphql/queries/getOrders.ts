@@ -7,6 +7,7 @@ const GET_ORDERS = gql`
       createdAt
       updatedAt
       total
+      totalPaid
       bookings {
         id
         numGuests
