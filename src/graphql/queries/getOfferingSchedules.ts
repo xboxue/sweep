@@ -23,7 +23,9 @@ const GET_OFFERING_SCHEDULES = gql`
             id
             subtotal
             total
+            totalPaid
             tax
+            stripeClientSecret
             customer {
               firstName
               lastName
@@ -34,6 +36,13 @@ const GET_OFFERING_SCHEDULES = gql`
               id
               amount
               createdAt
+              creditCard {
+                id
+                lastDigits
+                expiryMonth
+                expiryYear
+                brand
+              }
             }
           }
         }

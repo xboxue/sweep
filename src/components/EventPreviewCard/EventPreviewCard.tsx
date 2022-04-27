@@ -137,7 +137,7 @@ const EventPreviewCard = ({ event, onBlockChange, onCartChange }: Props) => {
   };
 
   if (event.booking) {
-    return <BookingDetailsForm event={event} />;
+    return <BookingDetailsForm event={event} onEdit={onBlockChange} />;
   }
 
   return (

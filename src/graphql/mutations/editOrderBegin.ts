@@ -12,6 +12,7 @@ const EDIT_ORDER_BEGIN = gql`
           id
           numGuests
           total
+          bookingId
           timeSlot {
             id
             startDateTime

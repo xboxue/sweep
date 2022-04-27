@@ -12,6 +12,7 @@ const EDIT_ORDER_UPDATE_BOOKINGS = gql`
           id
           numGuests
           total
+          bookingId
           timeSlot {
             id
             startDateTime

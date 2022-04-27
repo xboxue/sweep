@@ -46,6 +46,7 @@ export type Business = {
 
 export type CalculatedBooking = {
   __typename?: 'CalculatedBooking';
+  bookingId: Scalars['ID'];
   id: Scalars['ID'];
   numGuests: Scalars['Int'];
   offering: Offering;
@@ -735,7 +736,7 @@ export type EditOrderBeginMutationVariables = Exact<{
 }>;
 
 
-export type EditOrderBeginMutation = { __typename?: 'Mutation', editOrderBegin: { __typename?: 'EditOrderBeginPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
+export type EditOrderBeginMutation = { __typename?: 'Mutation', editOrderBegin: { __typename?: 'EditOrderBeginPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, bookingId: string, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
 
 export type EditOrderCommitMutationVariables = Exact<{
   input: EditOrderCommitInput;
@@ -756,7 +757,7 @@ export type EditOrderUpdateBookingsMutationVariables = Exact<{
 }>;
 
 
-export type EditOrderUpdateBookingsMutation = { __typename?: 'Mutation', editOrderUpdateBookings: { __typename?: 'EditOrderUpdateBookingsPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
+export type EditOrderUpdateBookingsMutation = { __typename?: 'Mutation', editOrderUpdateBookings: { __typename?: 'EditOrderUpdateBookingsPayload', calculatedOrder?: { __typename?: 'CalculatedOrder', id: string, subtotal: number, tax: number, total: number, calculatedBookings: Array<{ __typename?: 'CalculatedBooking', id: string, numGuests: number, total: number, bookingId: string, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }> } | null } };
 
 export type RemoveCartBookingsMutationVariables = Exact<{
   input: RemoveCartBookingsInput;
@@ -810,7 +811,7 @@ export type GetOfferingSchedulesQueryVariables = Exact<{
 }>;
 
 
-export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', url: string, altText?: string | null }, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, booking?: { __typename?: 'Booking', id: string, numGuests: number, total: number, order: { __typename?: 'Order', id: string, subtotal: number, total: number, tax: number, customer?: { __typename?: 'Customer', firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, email: string } | null, transactions: Array<{ __typename?: 'Transaction', id: string, amount: number, createdAt: any }> } } | null, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
+export type GetOfferingSchedulesQuery = { __typename?: 'Query', offerings: Array<{ __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', url: string, altText?: string | null }, timeSlots: Array<{ __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any, booking?: { __typename?: 'Booking', id: string, numGuests: number, total: number, order: { __typename?: 'Order', id: string, subtotal: number, total: number, totalPaid: number, tax: number, stripeClientSecret?: string | null, customer?: { __typename?: 'Customer', firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, email: string } | null, transactions: Array<{ __typename?: 'Transaction', id: string, amount: number, createdAt: any, creditCard: { __typename?: 'CreditCard', id: string, lastDigits: string, expiryMonth: number, expiryYear: number, brand: string } }> } } | null, block?: { __typename?: 'TimeSlotBlock', id: string } | null }> }> };
 
 export type GetOfferingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1166,6 +1167,7 @@ export const EditOrderBeginDocument = gql`
         id
         numGuests
         total
+        bookingId
         timeSlot {
           id
           startDateTime
@@ -1319,6 +1321,7 @@ export const EditOrderUpdateBookingsDocument = gql`
         id
         numGuests
         total
+        bookingId
         timeSlot {
           id
           startDateTime
@@ -1698,7 +1701,9 @@ export const GetOfferingSchedulesDocument = gql`
           id
           subtotal
           total
+          totalPaid
           tax
+          stripeClientSecret
           customer {
             firstName
             lastName
@@ -1709,6 +1714,13 @@ export const GetOfferingSchedulesDocument = gql`
             id
             amount
             createdAt
+            creditCard {
+              id
+              lastDigits
+              expiryMonth
+              expiryYear
+              brand
+            }
           }
         }
       }
