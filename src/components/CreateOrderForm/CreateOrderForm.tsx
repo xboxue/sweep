@@ -57,7 +57,7 @@ const CreateOrderForm = () => {
       Icon: PersonOutline,
       children: (
         <OrderCustomerForm
-          customerId={data?.myCart?.customer?.id}
+          customer={data?.myCart?.customer}
           onAdd={async (customer) => {
             try {
               await updateCartCustomer({

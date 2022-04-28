@@ -312,10 +312,12 @@ export type Mutation = {
   editOrderUpdateBookings: EditOrderUpdateBookingsPayload;
   removeCartBookings: RemoveCartBookingsPayload;
   removeCartCustomer: RemoveCartCustomerPayload;
+  removeOrderCustomer: RemoveOrderCustomerPayload;
   removeTimeSlotBlock: RemoveTimeSlotBlockPayload;
   updateCartBookings: UpdateCartBookingsPayload;
   updateCartCustomer: UpdateCartCustomerPayload;
   updateOffering: UpdateOfferingPayload;
+  updateOrderCustomer: UpdateOrderCustomerPayload;
 };
 
 
@@ -394,6 +396,11 @@ export type MutationRemoveCartBookingsArgs = {
 };
 
 
+export type MutationRemoveOrderCustomerArgs = {
+  input: RemoveOrderCustomerInput;
+};
+
+
 export type MutationRemoveTimeSlotBlockArgs = {
   input: RemoveTimeSlotBlockInput;
 };
@@ -411,6 +418,11 @@ export type MutationUpdateCartCustomerArgs = {
 
 export type MutationUpdateOfferingArgs = {
   input: OfferingInput;
+};
+
+
+export type MutationUpdateOrderCustomerArgs = {
+  input: UpdateOrderCustomerInput;
 };
 
 export type Offering = {
@@ -522,7 +534,7 @@ export type Query = {
   myCart?: Maybe<Cart>;
   offering: Offering;
   offerings: Array<Offering>;
-  order: Order;
+  order?: Maybe<Order>;
   orders: Array<Order>;
 };
 
@@ -562,12 +574,21 @@ export type RemoveCartBookingsPayload = {
 };
 
 export type RemoveCartCustomerInput = {
-  customerId: Scalars['String'];
+  customerId: Scalars['ID'];
 };
 
 export type RemoveCartCustomerPayload = {
   __typename?: 'RemoveCartCustomerPayload';
   cart?: Maybe<Cart>;
+};
+
+export type RemoveOrderCustomerInput = {
+  orderId: Scalars['ID'];
+};
+
+export type RemoveOrderCustomerPayload = {
+  __typename?: 'RemoveOrderCustomerPayload';
+  order?: Maybe<Order>;
 };
 
 export type RemoveTimeSlotBlockInput = {
@@ -650,7 +671,7 @@ export type UpdateCartBookingsPayload = {
 };
 
 export type UpdateCartCustomerInput = {
-  customerId: Scalars['String'];
+  customerId: Scalars['ID'];
 };
 
 export type UpdateCartCustomerPayload = {
@@ -661,6 +682,16 @@ export type UpdateCartCustomerPayload = {
 export type UpdateOfferingPayload = {
   __typename?: 'UpdateOfferingPayload';
   offering?: Maybe<Offering>;
+};
+
+export type UpdateOrderCustomerInput = {
+  customerId: Scalars['ID'];
+  orderId: Scalars['ID'];
+};
+
+export type UpdateOrderCustomerPayload = {
+  __typename?: 'UpdateOrderCustomerPayload';
+  order?: Maybe<Order>;
 };
 
 export type User = {
@@ -798,6 +829,13 @@ export type RemoveCartCustomerMutationVariables = Exact<{ [key: string]: never; 
 
 export type RemoveCartCustomerMutation = { __typename?: 'Mutation', removeCartCustomer: { __typename?: 'RemoveCartCustomerPayload', cart?: { __typename?: 'Cart', id: string, customer?: { __typename?: 'Customer', id: string } | null } | null } };
 
+export type RemoveOrderCustomerMutationVariables = Exact<{
+  input: RemoveOrderCustomerInput;
+}>;
+
+
+export type RemoveOrderCustomerMutation = { __typename?: 'Mutation', removeOrderCustomer: { __typename?: 'RemoveOrderCustomerPayload', order?: { __typename?: 'Order', id: string, customer?: { __typename?: 'Customer', id: string } | null } | null } };
+
 export type RemoveTimeSlotBlockMutationVariables = Exact<{
   input: RemoveTimeSlotBlockInput;
 }>;
@@ -826,6 +864,13 @@ export type UpdateOfferingMutationVariables = Exact<{
 
 export type UpdateOfferingMutation = { __typename?: 'Mutation', updateOffering: { __typename?: 'UpdateOfferingPayload', offering?: { __typename?: 'Offering', id: string } | null } };
 
+export type UpdateOrderCustomerMutationVariables = Exact<{
+  input: UpdateOrderCustomerInput;
+}>;
+
+
+export type UpdateOrderCustomerMutation = { __typename?: 'Mutation', updateOrderCustomer: { __typename?: 'UpdateOrderCustomerPayload', order?: { __typename?: 'Order', id: string, customer?: { __typename?: 'Customer', id: string } | null } | null } };
+
 export type GetCustomerQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -843,7 +888,7 @@ export type GetCustomersQuery = { __typename?: 'Query', customers: Array<{ __typ
 export type GetMyCartQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, email?: string | null, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, subtotal: number, total: number, tax: number, stripeClientSecret?: string | null, customer?: { __typename?: 'Customer', id: string } | null, cartBookings: Array<{ __typename?: 'CartBooking', id: string, total: number, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, paymentType: PaymentType, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', url: string, altText?: string | null } } }> } | null };
+export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, email?: string | null, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, subtotal: number, total: number, tax: number, stripeClientSecret?: string | null, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null, cartBookings: Array<{ __typename?: 'CartBooking', id: string, total: number, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, paymentType: PaymentType, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', url: string, altText?: string | null } } }> } | null };
 
 export type GetOfferingQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -870,7 +915,7 @@ export type GetOrderQueryVariables = Exact<{
 }>;
 
 
-export type GetOrderQuery = { __typename?: 'Query', order: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, subtotal: number, tax: number, total: number, totalPaid: number, stripeClientSecret?: string | null, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }>, transactions: Array<{ __typename?: 'Transaction', id: string, amount: number, createdAt: any, creditCard: { __typename?: 'CreditCard', id: string, lastDigits: string, expiryMonth: number, expiryYear: number, brand: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } };
+export type GetOrderQuery = { __typename?: 'Query', order?: { __typename?: 'Order', id: string, createdAt: any, updatedAt: any, subtotal: number, tax: number, total: number, totalPaid: number, stripeClientSecret?: string | null, bookings: Array<{ __typename?: 'Booking', id: string, numGuests: number, total: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', id: string, url: string, altText?: string | null } } }>, transactions: Array<{ __typename?: 'Transaction', id: string, amount: number, createdAt: any, creditCard: { __typename?: 'CreditCard', id: string, lastDigits: string, expiryMonth: number, expiryYear: number, brand: string } }>, customer?: { __typename?: 'Customer', id: string, firstName?: string | null, lastName?: string | null, email: string, phoneNumber?: string | null } | null } | null };
 
 export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1488,6 +1533,44 @@ export function useRemoveCartCustomerMutation(baseOptions?: Apollo.MutationHookO
 export type RemoveCartCustomerMutationHookResult = ReturnType<typeof useRemoveCartCustomerMutation>;
 export type RemoveCartCustomerMutationResult = Apollo.MutationResult<RemoveCartCustomerMutation>;
 export type RemoveCartCustomerMutationOptions = Apollo.BaseMutationOptions<RemoveCartCustomerMutation, RemoveCartCustomerMutationVariables>;
+export const RemoveOrderCustomerDocument = gql`
+    mutation removeOrderCustomer($input: RemoveOrderCustomerInput!) {
+  removeOrderCustomer(input: $input) {
+    order {
+      id
+      customer {
+        id
+      }
+    }
+  }
+}
+    `;
+export type RemoveOrderCustomerMutationFn = Apollo.MutationFunction<RemoveOrderCustomerMutation, RemoveOrderCustomerMutationVariables>;
+
+/**
+ * __useRemoveOrderCustomerMutation__
+ *
+ * To run a mutation, you first call `useRemoveOrderCustomerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveOrderCustomerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeOrderCustomerMutation, { data, loading, error }] = useRemoveOrderCustomerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveOrderCustomerMutation(baseOptions?: Apollo.MutationHookOptions<RemoveOrderCustomerMutation, RemoveOrderCustomerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveOrderCustomerMutation, RemoveOrderCustomerMutationVariables>(RemoveOrderCustomerDocument, options);
+      }
+export type RemoveOrderCustomerMutationHookResult = ReturnType<typeof useRemoveOrderCustomerMutation>;
+export type RemoveOrderCustomerMutationResult = Apollo.MutationResult<RemoveOrderCustomerMutation>;
+export type RemoveOrderCustomerMutationOptions = Apollo.BaseMutationOptions<RemoveOrderCustomerMutation, RemoveOrderCustomerMutationVariables>;
 export const RemoveTimeSlotBlockDocument = gql`
     mutation removeTimeSlotBlock($input: RemoveTimeSlotBlockInput!) {
   removeTimeSlotBlock(input: $input) {
@@ -1629,6 +1712,44 @@ export function useUpdateOfferingMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateOfferingMutationHookResult = ReturnType<typeof useUpdateOfferingMutation>;
 export type UpdateOfferingMutationResult = Apollo.MutationResult<UpdateOfferingMutation>;
 export type UpdateOfferingMutationOptions = Apollo.BaseMutationOptions<UpdateOfferingMutation, UpdateOfferingMutationVariables>;
+export const UpdateOrderCustomerDocument = gql`
+    mutation updateOrderCustomer($input: UpdateOrderCustomerInput!) {
+  updateOrderCustomer(input: $input) {
+    order {
+      id
+      customer {
+        id
+      }
+    }
+  }
+}
+    `;
+export type UpdateOrderCustomerMutationFn = Apollo.MutationFunction<UpdateOrderCustomerMutation, UpdateOrderCustomerMutationVariables>;
+
+/**
+ * __useUpdateOrderCustomerMutation__
+ *
+ * To run a mutation, you first call `useUpdateOrderCustomerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOrderCustomerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOrderCustomerMutation, { data, loading, error }] = useUpdateOrderCustomerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateOrderCustomerMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrderCustomerMutation, UpdateOrderCustomerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOrderCustomerMutation, UpdateOrderCustomerMutationVariables>(UpdateOrderCustomerDocument, options);
+      }
+export type UpdateOrderCustomerMutationHookResult = ReturnType<typeof useUpdateOrderCustomerMutation>;
+export type UpdateOrderCustomerMutationResult = Apollo.MutationResult<UpdateOrderCustomerMutation>;
+export type UpdateOrderCustomerMutationOptions = Apollo.BaseMutationOptions<UpdateOrderCustomerMutation, UpdateOrderCustomerMutationVariables>;
 export const GetCustomerDocument = gql`
     query getCustomer($id: ID!) {
   customer(id: $id) {
@@ -1725,6 +1846,10 @@ export const GetMyCartDocument = gql`
     stripeClientSecret
     customer {
       id
+      firstName
+      lastName
+      email
+      phoneNumber
     }
     cartBookings {
       id

@@ -6,7 +6,6 @@ import {
   IconButton,
   Paper,
   PaperProps,
-  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -15,7 +14,6 @@ import { useEffect, useState } from "react";
 import {
   Customer,
   useCreateCustomerMutation,
-  useGetCustomerQuery,
   useGetCustomersLazyQuery,
 } from "../../generated/graphql";
 import useDebounce from "../../hooks/useDebounce";
@@ -29,21 +27,13 @@ const DialogFormWrapper = (props: PaperProps<"form">) => {
 };
 
 interface Props {
-  customerId?: string;
+  customer?: Customer;
   onAdd: (customer: Customer) => void;
   onRemove: () => void;
 }
 
-const OrderCustomerForm = ({ customerId, onAdd, onRemove }: Props) => {
+const OrderCustomerForm = ({ customer, onAdd, onRemove }: Props) => {
   const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
-  const {
-    loading,
-    data: customerData,
-    error,
-  } = useGetCustomerQuery({
-    variables: { id: customerId },
-    skip: !customerId,
-  });
 
   const [createCustomer] = useCreateCustomerMutation();
   const [getCustomers, { data }] = useGetCustomersLazyQuery();
@@ -60,9 +50,6 @@ const OrderCustomerForm = ({ customerId, onAdd, onRemove }: Props) => {
       });
     }
   }, [getCustomers, debouncedSearchTerm]);
-
-  if (loading) return <Skeleton />;
-  const customer = customerData?.customer;
 
   return (
     <Stack spacing={2}>

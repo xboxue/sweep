@@ -4,11 +4,13 @@ import {
   ShoppingCartOutlined,
 } from "@mui/icons-material";
 import { Button, Stack } from "@mui/material";
-import { sortBy } from "lodash";
 import { useNavigate } from "react-router-dom";
-import { Order } from "../../generated/graphql";
+import {
+  Order,
+  useRemoveOrderCustomerMutation,
+  useUpdateOrderCustomerMutation,
+} from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
-import CartItem from "../CartItem/CartItem";
 import CartItemList from "../CartItemList/CartItemList";
 import OrderCustomerForm from "./OrderCustomerForm";
 import OrderPaymentSummary from "./OrderPaymentSummary";
@@ -21,6 +23,8 @@ interface Props {
 
 const OrderForm = ({ title, order, onPaymentSuccess }: Props) => {
   const navigate = useNavigate();
+  const [updateOrderCustomer] = useUpdateOrderCustomerMutation();
+  const [removeOrderCustomer] = useRemoveOrderCustomerMutation();
 
   const sections = [
     {
@@ -37,7 +41,31 @@ const OrderForm = ({ title, order, onPaymentSuccess }: Props) => {
       title: "Customer",
       description: "Add information about your customer.",
       Icon: PersonOutline,
-      children: <OrderCustomerForm customer={order.customer} />,
+      children: (
+        <OrderCustomerForm
+          customer={order.customer}
+          onAdd={async (customer) => {
+            try {
+              await updateOrderCustomer({
+                variables: {
+                  input: { orderId: order.id, customerId: customer.id },
+                },
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+          onRemove={async () => {
+            try {
+              await removeOrderCustomer({
+                variables: { input: { orderId: order.id } },
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+        />
+      ),
     },
     {
       title: "Payment",

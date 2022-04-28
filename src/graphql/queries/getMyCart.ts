@@ -14,6 +14,10 @@ const GET_MY_CART = gql`
       stripeClientSecret
       customer {
         id
+        firstName
+        lastName
+        email
+        phoneNumber
       }
       cartBookings {
         id
