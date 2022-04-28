@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Order } from "../../generated/graphql";
 import FormLayout from "../../layouts/FormLayout/FormLayout";
 import CartItem from "../CartItem/CartItem";
+import CartItemList from "../CartItemList/CartItemList";
 import OrderCustomerForm from "./OrderCustomerForm";
 import OrderPaymentSummary from "./OrderPaymentSummary";
 
@@ -28,9 +29,7 @@ const OrderForm = ({ title, order, onPaymentSuccess }: Props) => {
       Icon: ShoppingCartOutlined,
       children: (
         <Stack spacing={2} sx={{ maxWidth: 400 }}>
-          {sortBy(order.bookings, "id").map((booking) => (
-            <CartItem key={booking.id} cartBooking={booking} editable={false} />
-          ))}
+          <CartItemList cartBookings={order.bookings} editable={false} />
         </Stack>
       ),
     },

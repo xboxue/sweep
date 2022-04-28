@@ -12,6 +12,9 @@ const GET_MY_CART = gql`
       total
       tax
       stripeClientSecret
+      customer {
+        id
+      }
       cartBookings {
         id
         total

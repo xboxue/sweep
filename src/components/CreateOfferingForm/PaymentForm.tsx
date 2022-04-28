@@ -9,7 +9,7 @@ import { useFormikContext } from "formik";
 import * as yup from "yup";
 import { DepositType, PaymentType } from "../../generated/graphql";
 import FormikTextField from "../common/FormikTextField/FormikTextField";
-import CardSelect from "./CardSelect";
+import CardSelect from "../common/CardSelect/CardSelect";
 
 export const validationSchema = yup.object({
   paymentType: yup.string(),

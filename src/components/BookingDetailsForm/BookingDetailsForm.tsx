@@ -13,6 +13,7 @@ import {
 import { isEqual, range, sortBy } from "lodash";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CalculatedOrder,
   useEditOrderBeginMutation,
@@ -25,6 +26,7 @@ import OrderPaymentSummary from "../CreateOrderForm/OrderPaymentSummary";
 interface Props {}
 
 const BookingDetailsForm = ({ event, onEdit }: Props) => {
+  const navigate = useNavigate();
   const [editable, setEditable] = useState(false);
 
   const [initialCalculatedOrder, setInitialCalculatedOrder] =
@@ -228,9 +230,17 @@ const BookingDetailsForm = ({ event, onEdit }: Props) => {
         <TextField multiline minRows={2} />
       </Box>
 
-      <Button variant="contained" onClick={() => setEditable(true)}>
-        Edit
-      </Button>
+      <Box>
+        <Button fullWidth variant="contained" onClick={() => setEditable(true)}>
+          Edit
+        </Button>
+        <Button
+          fullWidth
+          onClick={() => navigate(`/orders/${event.booking.order.id}`)}
+        >
+          Show order
+        </Button>
+      </Box>
     </Stack>
   );
 };
