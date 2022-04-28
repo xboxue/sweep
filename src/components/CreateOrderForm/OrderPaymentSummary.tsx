@@ -12,9 +12,14 @@ import PaymentDialog from "../PaymentDialog/PaymentDialog";
 interface Props {
   order: Order;
   onPaymentSuccess: () => void;
+  showTransactions?: boolean;
 }
 
-const OrderPaymentSummary = ({ order, onPaymentSuccess }: Props) => {
+const OrderPaymentSummary = ({
+  order,
+  onPaymentSuccess,
+  showTransactions = true,
+}: Props) => {
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
 
   return (
@@ -61,22 +66,33 @@ const OrderPaymentSummary = ({ order, onPaymentSuccess }: Props) => {
           </>
         )}
       </Stack>
-      <Typography variant="subtitle2" sx={{ mt: 2 }}>
-        Payments
-      </Typography>
-      {order.transactions.map((transaction) => (
-        <Box
-          key={transaction.id}
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Typography variant="body2">
-            {DateTime.fromISO(transaction.createdAt).toFormat("MMM d, h:mm a")}
+      {order.transactions.length > 0 && showTransactions && (
+        <>
+          <Typography variant="subtitle2" sx={{ mt: 2 }}>
+            Payments
           </Typography>
-          <Typography variant="body2">
-            ${(transaction.amount / 100).toFixed(2)}
-          </Typography>
-        </Box>
-      ))}
+          {order.transactions.map((transaction) => (
+            <Box
+              key={transaction.id}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="body2">
+                {DateTime.fromISO(transaction.createdAt).toFormat(
+                  "MMM d, h:mm a"
+                )}
+              </Typography>
+              <Typography variant="body2">
+                ${(transaction.amount / 100).toFixed(2)}
+              </Typography>
+              <Button onClick={() => {}}>Refund</Button>
+            </Box>
+          ))}
+        </>
+      )}
     </Box>
   );
 };

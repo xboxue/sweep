@@ -11,7 +11,7 @@ import {
 import useStripePayment from "../../hooks/useStripePayment";
 import Dialog from "../common/Dialog/Dialog";
 import TextField from "../common/TextField/TextField";
-import CardSelect from "../CreateOfferingForm/CardSelect";
+import CardSelect from "../common/CardSelect/CardSelect";
 
 interface Props {
   open: boolean;

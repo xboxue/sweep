@@ -3,10 +3,9 @@ import {
   Autocomplete,
   Avatar,
   Box,
-  Button,
-  DialogProps,
   IconButton,
   Paper,
+  PaperProps,
   Stack,
   Typography,
 } from "@mui/material";
@@ -22,21 +21,22 @@ import Dialog from "../common/Dialog/Dialog";
 import TextField from "../common/TextField/TextField";
 import CustomerForm, { initialValues } from "../CustomerForm/CustomerForm";
 
-const DialogFormWrapper = (props) => {
+const DialogFormWrapper = (props: PaperProps<"form">) => {
   const formik = useFormikContext();
   return <Paper component="form" onSubmit={formik.handleSubmit} {...props} />;
 };
 
 interface Props {
   customer?: Customer;
+  onAdd: (customer: Customer) => void;
+  onRemove: () => void;
 }
 
-const OrderCustomerForm = ({ customer: initialCustomer }: Props) => {
+const OrderCustomerForm = ({ customer, onAdd, onRemove }: Props) => {
   const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
-  const [customer, setCustomer] = useState(initialCustomer);
 
   const [createCustomer] = useCreateCustomerMutation();
-  const [getCustomers, { loading, error, data }] = useGetCustomersLazyQuery();
+  const [getCustomers, { data }] = useGetCustomersLazyQuery();
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -51,20 +51,6 @@ const OrderCustomerForm = ({ customer: initialCustomer }: Props) => {
     }
   }, [getCustomers, debouncedSearchTerm]);
 
-  const formik = useFormikContext();
-
-  const handleAddCustomer = (customer) => {
-    if (customer) {
-      formik.setFieldValue("customerId", customer.id);
-      setCustomer(customer);
-    }
-  };
-
-  const handleRemoveCustomer = () => {
-    formik.setFieldValue("customerId", undefined);
-    setCustomer(null);
-  };
-
   return (
     <Stack spacing={2}>
       <Formik
@@ -76,7 +62,7 @@ const OrderCustomerForm = ({ customer: initialCustomer }: Props) => {
               variables: { input: values },
             });
             const customer = data?.createCustomer?.customer;
-            handleAddCustomer(customer);
+            onAdd(customer);
             setCustomerDialogOpen(false);
           } catch (error) {
             console.log(error);
@@ -103,7 +89,7 @@ const OrderCustomerForm = ({ customer: initialCustomer }: Props) => {
       </Formik>
       {customer ? (
         <Box sx={{ display: "flex" }}>
-          <Avatar></Avatar>
+          <Avatar />
           <Box ml={1}>
             <Typography variant="subtitle2">
               {customer.firstName} {customer.lastName}
@@ -112,7 +98,7 @@ const OrderCustomerForm = ({ customer: initialCustomer }: Props) => {
             <Typography variant="body2">{customer.phoneNumber}</Typography>
           </Box>
           <Box>
-            <IconButton size="small" onClick={handleRemoveCustomer}>
+            <IconButton size="small" onClick={onRemove}>
               <Close fontSize="small" />
             </IconButton>
           </Box>
@@ -154,7 +140,7 @@ const OrderCustomerForm = ({ customer: initialCustomer }: Props) => {
                   component="li"
                   {...props}
                   sx={{ display: "block !important" }}
-                  onClick={() => handleAddCustomer(option)}
+                  onClick={() => onAdd(option)}
                 >
                   <Typography variant="body2">
                     {option.firstName} {option.lastName}
