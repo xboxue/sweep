@@ -1,11 +1,12 @@
 import { Box, Link, Skeleton, useMediaQuery } from "@mui/material";
 import { DateTime } from "luxon";
 import { useCallback, useEffect, useState } from "react";
+import { useAddCartBookingsMutation } from "../../generated/graphql";
 import {
-  useAddCartBookingsMutation,
+  TimeSlot,
   useGetMyCartQuery,
-} from "../../generated/graphql";
-import { TimeSlot, useGetOfferingQuery } from "../../generated/public/graphql";
+  useGetOfferingQuery,
+} from "../../generated/public/graphql";
 import Dialog from "../common/Dialog/Dialog";
 import OfferingTimeSlots from "../OfferingTimeSlots/OfferingTimeSlots";
 import OfferingToolbar from "../OfferingToolbar/OfferingToolbar";

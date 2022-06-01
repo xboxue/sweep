@@ -11,11 +11,12 @@ import {
 import { range } from "lodash";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
+import { useAddCartBookingsMutation } from "../../generated/graphql";
 import {
-  useAddCartBookingsMutation,
+  TimeSlot,
   useGetMyCartQuery,
-} from "../../generated/graphql";
-import { TimeSlot, useGetOfferingsQuery } from "../../generated/public/graphql";
+  useGetOfferingsQuery,
+} from "../../generated/public/graphql";
 import usePrevious from "../../hooks/usePrevious";
 import CartCard from "../CartCard/CartCard";
 import OfferingCard from "../OfferingCard/OfferingCard";
