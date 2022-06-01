@@ -261,6 +261,11 @@ export type UpdateCartEmailMutationVariables = Exact<{
 
 export type UpdateCartEmailMutation = { __typename?: 'Mutation', updateCartEmail: { __typename?: 'UpdateCartEmailPayload', cart?: { __typename?: 'Cart', id: string } | null } };
 
+export type GetMyCartQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, email?: string | null, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, subtotal: number, total: number, tax: number, stripeClientSecret?: string | null, cartBookings: Array<{ __typename?: 'CartBooking', id: string, total: number, numGuests: number, timeSlot: { __typename?: 'TimeSlot', id: string, startDateTime: any, endDateTime: any }, offering: { __typename?: 'Offering', id: string, name: string, paymentType: PaymentType, minGuests: number, maxGuests: number, featuredImage: { __typename?: 'Image', url: string, altText?: string | null } } }> } | null };
+
 export type GetOfferingQueryVariables = Exact<{
   id: Scalars['ID'];
   date: Scalars['DateTime'];
@@ -351,6 +356,69 @@ export function useUpdateCartEmailMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateCartEmailMutationHookResult = ReturnType<typeof useUpdateCartEmailMutation>;
 export type UpdateCartEmailMutationResult = Apollo.MutationResult<UpdateCartEmailMutation>;
 export type UpdateCartEmailMutationOptions = Apollo.BaseMutationOptions<UpdateCartEmailMutation, UpdateCartEmailMutationVariables>;
+export const GetMyCartDocument = gql`
+    query getMyCart {
+  myCart {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    subtotal
+    total
+    tax
+    stripeClientSecret
+    cartBookings {
+      id
+      total
+      timeSlot {
+        id
+        startDateTime
+        endDateTime
+      }
+      offering {
+        id
+        name
+        featuredImage {
+          url
+          altText
+        }
+        paymentType
+        minGuests
+        maxGuests
+      }
+      numGuests
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMyCartQuery__
+ *
+ * To run a query within a React component, call `useGetMyCartQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyCartQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyCartQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyCartQuery(baseOptions?: Apollo.QueryHookOptions<GetMyCartQuery, GetMyCartQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyCartQuery, GetMyCartQueryVariables>(GetMyCartDocument, options);
+      }
+export function useGetMyCartLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyCartQuery, GetMyCartQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyCartQuery, GetMyCartQueryVariables>(GetMyCartDocument, options);
+        }
+export type GetMyCartQueryHookResult = ReturnType<typeof useGetMyCartQuery>;
+export type GetMyCartLazyQueryHookResult = ReturnType<typeof useGetMyCartLazyQuery>;
+export type GetMyCartQueryResult = Apollo.QueryResult<GetMyCartQuery, GetMyCartQueryVariables>;
 export const GetOfferingDocument = gql`
     query getOffering($id: ID!, $date: DateTime!, $time: String, $numGuests: Int) {
   offering(id: $id) {

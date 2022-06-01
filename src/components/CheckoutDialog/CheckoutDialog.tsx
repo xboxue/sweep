@@ -10,8 +10,10 @@ import {
 } from "@mui/material";
 import { Elements } from "@stripe/react-stripe-js";
 import { useCallback, useEffect, useState } from "react";
-import { useGetMyCartQuery } from "../../generated/graphql";
-import { useUpdateCartEmailMutation } from "../../generated/public/graphql";
+import {
+  useGetMyCartQuery,
+  useUpdateCartEmailMutation,
+} from "../../generated/public/graphql";
 import stripeTheme from "../../styles/stripeTheme";
 import getStripe from "../../utils/getStripe";
 import CartSummaryCard from "../CartSummaryCard/CartSummaryCard";
